@@ -1,0 +1,83 @@
+﻿@*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*@
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Lending Library</h1>
+    <p class="lead">Lending Library is a fun, free website to meet other bibliophiles online, browse their bookshelves and trade books!</p>
+    <p>
+        <a class="btn btn-primary" href="@Url.Action("About")">
+            Learn more <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        </a>
+    </p>
+</div>
+
+<div class="row">
+    @if (!Request.IsAuthenticated)
+    {
+        <div class="col-md-4">
+            <h2>Log In</h2>
+            <p>
+                Already a member? Welcome back!
+            </p>
+            <p>
+                <a class="btn btn-default" href="@Url.Action("Login", "Account")">
+                    Log in <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </a>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h2>Register</h2>
+            <p>Not a member? Come on in! All you need is an e-mail address and a mailing address for your new friends to send books to. No credit card required!</p>
+            <p>
+                <a class="btn btn-default" href="@Url.Action("Register", "Account")">
+                    Register <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </a>
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-4">
+            <h2>Your Bookshelf</h2>
+            <p>
+                The bigger your library, the more books you can lend out.
+            </p>
+            <p>
+                <a class="btn btn-default" href="@Url.Action("Index", "Books")">
+                    View Bookshelf <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </a>
+            </p>
+
+        </div>
+        <div class="col-md-4">
+            <h2>Your Friends</h2>
+            <p>
+                The more friends you have, the more books you can borrow.
+            </p>
+            <p>
+                <a class="btn btn-default" href="@Url.Action("SearchForNew", "Friendships")">
+                    Find Friends <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </a>
+            </p>
+        </div>
+    }
+</div>

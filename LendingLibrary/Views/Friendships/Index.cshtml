@@ -1,0 +1,129 @@
+﻿@*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*@
+
+@using Microsoft.AspNet.Identity
+
+@model IEnumerable<LendingLibrary.Models.Friendship>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@if (ViewBag.RequestSent)
+{
+    <h3>Request Sent!</h3>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            User Name
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestSent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestApproved)
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+    @using (Html.BeginForm("Confirm", "Friendships"))
+    {
+        @Html.AntiForgeryToken();
+        @Html.Hidden("userId", item.UserId);
+        <td>
+            @{ 
+                string FriendName;
+                string FriendId;
+
+                if (item.UserId == User.Identity.GetUserId())
+                {
+                    // A Request I initiated, show other user name
+                    FriendName = item.Friend.GivenName + " " + item.Friend.FamilyName;
+                    FriendId = item.FriendId;
+                }
+                else
+                {
+                    // A Request sent to me, show owning user name
+                    FriendName = item.User.GivenName + " " + item.User.FamilyName;
+                    FriendId = item.UserId;
+                }
+
+                @Html.ActionLink(FriendName, "Details", "Account", new { id = FriendId }, null);
+            }
+        </td>
+        <td class="utc-datetime">
+			@Html.DisplayFor(modelItem => item.RequestSent)
+        </td>
+        <td class="utc-datetime">
+            @if (item.RequestApproved.HasValue)
+            {
+                @Html.DisplayFor(modelItem => item.RequestApproved.Value)
+            }
+        </td>
+
+        <td>
+            @{ 
+                string deleteText;
+                if (item.RequestApproved == null)
+                {
+                    if (item.UserId == User.Identity.GetUserId())
+                    {
+                        // A request I sent, allow cancel
+                        deleteText = "Cancel";
+                    }
+                    else
+                    {
+                        // A request sent to me, allow ignore and create cancel button
+                        <button type="submit" class="btn btn-success">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Confirm
+                        </button>
+                        deleteText = "Ignore";
+                    }
+                }
+                else
+                {
+                    // Approved, either side can delete
+                    deleteText = "Delete";
+                    <a class="btn btn-primary" href="@Url.Action("Index", "Books", new { userId = item.FriendId })">
+                        <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Browse Bookshelf
+                    </a>
+                }
+            }
+        </td>
+
+        <td>
+            <a class="btn btn-danger" href="@Url.Action("Delete", new { userId = item.UserId, friendId = item.FriendId })">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> @deleteText
+            </a>
+        </td>
+    }
+    </tr>
+}
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/utc-date.js")
+}

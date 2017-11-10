@@ -1,0 +1,77 @@
+﻿@*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*@
+
+@using Microsoft.AspNet.Identity
+@model IEnumerable<LendingLibrary.Models.Book>
+
+<table class="table">
+
+<tr>
+    <th>
+        @Html.DisplayNameFor(model => model.ISBN)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Title)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Author)
+    </th>
+    <th></th>
+</tr>
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ISBN)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Author)
+        </td>
+        <td>
+            @if (item.Owner.Id == User.Identity.GetUserId())
+                {
+                <a class="btn btn-primary" href="@Url.Action("Edit", new { id = item.ID })">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="@Url.Action("Request", new { id = item.ID })">
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Request
+                </a>
+            }
+
+            <a class="btn btn-info" href="@Url.Action("Details", new { id = item.ID })">
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Details
+            </a>
+
+            @if (item.Owner.Id == User.Identity.GetUserId())
+                {
+                <a class="btn btn-danger" href="@Url.Action("Delete", new { id = item.ID })">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete
+                </a>
+            }
+        </td>
+    </tr>
+}
+
+</table>

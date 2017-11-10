@@ -1,0 +1,77 @@
+﻿@*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*@
+
+@model IEnumerable<LendingLibrary.Models.Friendship>
+
+@{
+    ViewBag.Title = "Approve Pending Friendship Requests";
+}
+
+<h2>Approve Pending Friendship Requests</h2>
+
+@if (ViewBag.RequestConfirmed)
+{
+    <h3>Request Confirmed!</h3>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            Request By
+        </th>
+        <th>
+            Request To
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RequestSent)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @using (Html.BeginForm("Confirm", "Friendships"))
+        {
+            @Html.AntiForgeryToken();
+            @Html.Hidden("userId", item.UserId);
+            <td>
+                @Html.ActionLink(item.User.GivenName + " " + item.User.FamilyName, "Details", "Account", new { id = item.UserId }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Friend.UserName)
+            </td>
+            <td class="utc-datetime">
+			    @Html.DisplayFor(modelItem => item.RequestSent)
+            </td>
+            <td>
+                <button type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Confirm
+                </button>
+                <a class="btn btn-danger" href="@Url.Action("Delete", new { userId = item.UserId, friendId = item.FriendId })">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Ignore
+                </a>
+            </td>
+        }
+    </tr>
+}
+
+</table>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/utc-date.js")
+}

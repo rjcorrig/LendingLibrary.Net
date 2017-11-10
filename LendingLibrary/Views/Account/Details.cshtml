@@ -1,0 +1,166 @@
+﻿@*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*@
+
+@using Microsoft.AspNet.Identity
+
+@model LendingLibrary.Models.ApplicationUser
+
+<div>
+    <h4>@Html.DisplayFor(model => model.GivenName) @Html.DisplayFor(model => model.FamilyName) </h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+		@if (ViewBag.FullDetails) {
+		
+    		<dt>
+                @Html.DisplayNameFor(model => model.GivenName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.GivenName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FamilyName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FamilyName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BirthDate)
+            </dt>
+
+            <dd class="utc-date">
+                @Html.DisplayFor(model => model.BirthDate)
+            </dd>
+
+		}
+
+		<dt>
+            @Html.DisplayNameFor(model => model.About)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.About)
+        </dd>
+
+		@if (ViewBag.FullDetails) {
+            <dt>
+                @Html.DisplayNameFor(model => model.Address1)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address1)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Address2)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address2)
+            </dd>
+		}
+
+        <dt>
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.City)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.State)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.State)
+        </dd>
+
+		@if (ViewBag.FullDetails) {
+
+		    <dt>
+                @Html.DisplayNameFor(model => model.Postal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Postal)
+            </dd>
+
+		}
+
+		<dt>
+            @Html.DisplayNameFor(model => model.Country)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Country)
+        </dd>
+
+        @if (ViewBag.FullDetails) {
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+
+		}
+
+    </dl>
+</div>
+<p>
+	<!-- We could come here from multiple places, so just use the browser history to go back -->
+    <a class="btn btn-default" href="javascript:window.history.back()">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back
+    </a>
+
+	@if (Model.Id == User.Identity.GetUserId())
+    {
+        <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
+        </a>
+    }
+
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/utc-date.js")
+}
+
