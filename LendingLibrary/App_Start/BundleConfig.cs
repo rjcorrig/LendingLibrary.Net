@@ -23,7 +23,8 @@ namespace LendingLibrary
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/bootstrap.css", 
+                      "~/Content/bootstrap-rating.css",
                       "~/Content/site.css"));
         }
     }

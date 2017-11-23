@@ -31,6 +31,9 @@
     <th>
         @Html.DisplayNameFor(model => model.Author)
     </th>
+	<th>
+		@Html.DisplayNameFor(model => model.Rating)
+	</th>
     <th></th>
 </tr>
 
@@ -46,6 +49,9 @@
         <td>
             @Html.DisplayFor(modelItem => item.Author)
         </td>
+		<td>
+			@Html.BootstrapRating(modelItem => item.Rating).ReadOnly
+		</td>
         <td>
             @if (item.Owner.Id == User.Identity.GetUserId())
                 {
@@ -75,3 +81,4 @@
 }
 
 </table>
+

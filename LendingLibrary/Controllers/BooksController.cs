@@ -97,7 +97,7 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "ID,ISBN,Title,Author")] Book book)
+        public async Task<ActionResult> Create([Bind(Include = "ID,ISBN,Title,Author,Rating")] Book book)
         {
             var currentUser = await GetCurrentUserAsync();
 
@@ -142,7 +142,7 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author")] Book book)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Rating")] Book book)
         {
             if (ModelState.IsValid)
             {

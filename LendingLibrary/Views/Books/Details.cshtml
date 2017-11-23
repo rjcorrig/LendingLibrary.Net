@@ -53,6 +53,13 @@
             @Html.DisplayFor(model => model.Author)
         </dd>
 
+		<dt>
+			@Html.DisplayNameFor(model => model.Rating)
+		</dt>
+
+		<dd>
+			@Html.BootstrapRating(model => model.Rating).ReadOnly
+		</dd>
     </dl>
 </div>
 <p>
@@ -66,3 +73,7 @@
         </a>
     }
 </p>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/bootstrap-rating/bootstrap-rating.js")
+}

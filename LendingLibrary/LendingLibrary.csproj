@@ -124,6 +124,9 @@
       <HintPath>..\packages\Markdig.0.14.3\lib\net40\Markdig.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="BootstrapRating">
+      <HintPath>..\packages\bootstrap-rating.mvc.1.0.0\lib\net452\BootstrapRating.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
@@ -229,6 +232,9 @@
     <Content Include="Scripts\utc-date.js" />
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="connectionStrings.config" />
+    <Content Include="Scripts\bootstrap-rating\bootstrap-rating.min.js" />
+    <Content Include="Scripts\bootstrap-rating\bootstrap-rating.js" />
+    <Content Include="Content\bootstrap-rating.css" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.9.1.min.map" />
