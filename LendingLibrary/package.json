@@ -1,0 +1,14 @@
+{
+  "name": "lendinglibrary",
+  "version": "1.0.0",
+  "description": "Lending Library is a fun, free website to meet other bibliophiles online, browse their bookshelves and trade books!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robert Corrigan",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "node-isbn": "^1.3.0"
+  }
+}
