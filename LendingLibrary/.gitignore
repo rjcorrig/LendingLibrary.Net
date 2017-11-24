@@ -2,4 +2,5 @@ docs/MySql*
 
 connectionStrings.config
 node_modules
+Scripts/lendinglibrary.js
 

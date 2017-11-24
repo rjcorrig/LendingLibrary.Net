@@ -135,6 +135,7 @@
     <Folder Include="App_Code\" />
     <Folder Include="Utils\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
+    <Folder Include="NodeScripts\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -235,6 +236,8 @@
     <Content Include="Scripts\bootstrap-rating\bootstrap-rating.min.js" />
     <Content Include="Scripts\bootstrap-rating\bootstrap-rating.js" />
     <Content Include="Content\bootstrap-rating.css" />
+    <Content Include="NodeScripts\index.js" />
+    <Content Include="webpack.config.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.9.1.min.map" />
@@ -256,6 +259,8 @@
     <None Include="docs\MySqlCommandBuilder.xml" />
     <None Include="docs\MySqlCommand.xml" />
     <None Include="Content\README.md" />
+    <None Include="package.json" />
+    <None Include="package-lock.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
