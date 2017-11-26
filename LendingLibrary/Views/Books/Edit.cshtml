@@ -97,13 +97,13 @@
 
 <script>
     $("#ISBNLookup").on("click", function (e) {
-	    lendingLibrary.isbn.resolve($("#ISBN").val(), function (err, book) {
-	        if (err) {
-	            console.log(err);
-	        } else {
-	            $("#Title").val(book.title);
-	            $("#Author").val(book.authors.join(", "));
-	        }
+	    lendingLibrary.isbn.resolve( $("#ISBN").val() )
+	    .then(function (book) {
+            $("#Title").val(book.title);
+            $("#Author").val(book.authors.join(", "));
+	    })
+	    .catch(function (err) {
+	        console.log(err);
 	    });
     });
 </script>

@@ -7,11 +7,6 @@ module.exports = {
     filename: 'lendinglibrary.js',
     library: 'lendingLibrary'
   },
-  target: 'web',
-  node: {
-    fs: 'empty',
-    tls: 'empty',
-    net: 'empty'
-  }
+  target: 'web'
 };
 
