@@ -29,6 +29,10 @@ then, build with Webpack:
 
 Released under the [GNU Affero GPL License v3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 
+See also [Google Books API Terms of Service](https://developers.google.com/books/terms),
+[Open Library Licensing](https://openlibrary.org/developers/licensing) and
+[WorldCat xISBN Terms of Service](http://www.oclc.org/worldcat/community/terms.en.html).
+
 ## Credits
 
 Star rating control provided by [bootstrap-rating.mvc](https://github.com/simonray/bootstrap-rating.mvc) 
