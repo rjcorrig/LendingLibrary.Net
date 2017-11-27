@@ -89,7 +89,8 @@ namespace LendingLibrary.Controllers
         // GET: Books/Create
         public ActionResult Create()
         {
-            return View();
+            Book book = new Book();
+            return View(book);
         }
 
         // POST: Books/Create
