@@ -39,10 +39,10 @@
             @Html.LabelFor(model => model.ISBN, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
 			    <div class="input-group">
-                    @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.ISBN, new { htmlAttributes = new { @class = "form-control google-search" } })
                     <span class="input-group-btn">
                         <button id="ISBNLookup" type="button" class="btn btn-info">
-                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Lookup
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search
                         </button>
                     </span>
 				</div>
