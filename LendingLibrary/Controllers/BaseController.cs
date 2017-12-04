@@ -28,18 +28,20 @@ namespace LendingLibrary.Controllers
     {
         protected IApplicationDbContext db;
         protected IApplicationUserManager manager;
+        protected IRepository repo;
 
         public BaseController()
         {
-            var context = new ApplicationDbContext();
-            db = context;
-            manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
+            repo = new Repository();
+            db = repo.Db;
+            manager = repo.Manager;
         }
 
         public BaseController(IApplicationDbContext db, IApplicationUserManager manager)
         {
-            this.db = db;
-            this.manager = manager;
+            repo = new Repository(db, manager);
+            this.db = repo.Db;
+            this.manager = repo.Manager;
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()

@@ -163,6 +163,8 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utils\CrossPlatform.cs" />
+    <Compile Include="Models\IRepository.cs" />
+    <Compile Include="Models\Repository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
