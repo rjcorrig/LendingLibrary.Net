@@ -27,31 +27,28 @@ namespace LendingLibrary.Controllers
     public class BaseController : Controller
     {
         protected IApplicationDbContext db;
-        protected IApplicationUserManager manager;
         protected IRepository repo;
 
         public BaseController()
         {
             repo = new Repository();
             db = repo.Db;
-            manager = repo.Manager;
         }
 
         public BaseController(IApplicationDbContext db, IApplicationUserManager manager)
         {
             repo = new Repository(db, manager);
             this.db = repo.Db;
-            this.manager = repo.Manager;
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await manager.FindByIdAsync(User.Identity.GetUserId());
+            return await repo.GetUserByIdAsync(User.Identity.GetUserId());
         }
 
         protected ApplicationUser GetCurrentUser()
         {
-            return manager.FindById(User.Identity.GetUserId());
+            return repo.GetUserById(User.Identity.GetUserId());
         }
 
         protected override void Dispose(bool disposing)

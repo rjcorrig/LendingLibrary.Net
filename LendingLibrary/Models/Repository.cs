@@ -17,6 +17,7 @@
 */
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace LendingLibrary.Models
@@ -33,9 +34,22 @@ namespace LendingLibrary.Models
             Manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
         }
 
-        public Repository(IApplicationDbContext db, IApplicationUserManager manager) {
+        public Repository(IApplicationDbContext db, IApplicationUserManager manager)
+        {
             this.Db = db;
             this.Manager = manager;
         }
+
+        #region User
+        public async Task<ApplicationUser> GetUserByIdAsync(string userId)
+        {
+            return await Manager.FindByIdAsync(userId);
+        }
+
+        public ApplicationUser GetUserById(string userId)
+        {
+            return Manager.FindById(userId);
+        }
+        #endregion
     }
 }

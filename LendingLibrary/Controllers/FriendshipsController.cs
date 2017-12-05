@@ -84,7 +84,7 @@ namespace LendingLibrary.Controllers
             }
 
             var currentUser = await GetCurrentUserAsync();
-            var requestor = await manager.FindByIdAsync(userId);
+            var requestor = await repo.GetUserByIdAsync(userId);
 
             // Confirm the original friendship request
             var friendRequest = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == requestor.Id && f.FriendId == currentUser.Id);
@@ -125,7 +125,7 @@ namespace LendingLibrary.Controllers
             }
 
             var currentUser = await GetCurrentUserAsync();
-            var friend = await manager.FindByIdAsync(id);
+            var friend = await repo.GetUserByIdAsync(id);
 
             if (currentUser == null || friend == null)
             {

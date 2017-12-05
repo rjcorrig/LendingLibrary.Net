@@ -17,11 +17,18 @@
 */
 
 using System;
+using System.Threading.Tasks;
+
 namespace LendingLibrary.Models
 {
     public interface IRepository
     {
         IApplicationDbContext Db { get; }
         IApplicationUserManager Manager { get; }
+
+        #region User
+        Task<ApplicationUser> GetUserByIdAsync(string userId);
+        ApplicationUser GetUserById(string userId);
+        #endregion
     }
 }
