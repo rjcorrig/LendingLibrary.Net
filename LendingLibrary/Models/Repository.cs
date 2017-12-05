@@ -61,7 +61,7 @@ namespace LendingLibrary.Models
             return await Db.Books.FirstOrDefaultAsync(b => b.ID == id);
         }
 
-        public async Task<IEnumerable<Book>> GetBooksByOwnerId(string userId)
+        public async Task<IEnumerable<Book>> GetBooksByOwnerIdAsync(string userId)
         {
             return await Db.Books.Where(b => b.Owner.Id == userId).ToListAsync();
         }
@@ -74,6 +74,20 @@ namespace LendingLibrary.Models
         public Book Remove(Book book)
         {
             return Db.Books.Remove(book);
+        }
+        #endregion
+
+        #region Friendship
+        public async Task<IEnumerable<Friendship>> GetFriendshipsByUserIdAsync(string userId)
+        {
+            // First Where filter gets Friendships involving this user
+            // Second removes duplicate confirmed friendships by limiting those to
+            // rows where the current user is the owning user
+
+            return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
+                     .Where(f => f.FriendId == userId || f.UserId == userId)
+                     .Where(f => !f.RequestApproved.HasValue || f.UserId == userId)
+                     .ToListAsync();
         }
         #endregion
 

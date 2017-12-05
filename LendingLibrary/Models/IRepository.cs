@@ -34,10 +34,14 @@ namespace LendingLibrary.Models
 
         #region Book
         Task<Book> GetBookByIdAsync(int? id);
-        Task<IEnumerable<Book>> GetBooksByOwnerId(string userId);
+        Task<IEnumerable<Book>> GetBooksByOwnerIdAsync(string userId);
 
         Book Add(Book book);
         Book Remove(Book book);
+        #endregion
+
+        #region Friendship
+        Task<IEnumerable<Friendship>> GetFriendshipsByUserIdAsync(string userId);
         #endregion
 
         #region DbContext

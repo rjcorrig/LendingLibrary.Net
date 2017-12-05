@@ -59,7 +59,7 @@ namespace LendingLibrary.Controllers
             }
 
             var model = new BookIndexViewModel();
-            model.Books = await repo.GetBooksByOwnerId(userId);
+            model.Books = await repo.GetBooksByOwnerIdAsync(userId);
             model.User = await repo.GetUserByIdAsync(userId);
 
             if (model.User == null)

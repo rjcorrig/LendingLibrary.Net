@@ -46,14 +46,7 @@ namespace LendingLibrary.Controllers
 
             var currentUser = await GetCurrentUserAsync();
 
-            // First Where filter gets Friendships involving this user
-            // Second removes duplicate confirmed friendships by limiting those to
-            // rows where the current user is the owning user
-            var friendships = db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                .Where(f => f.FriendId == currentUser.Id || f.UserId == currentUser.Id)
-                .Where(f => !f.RequestApproved.HasValue || f.UserId == currentUser.Id);
-
-            return View(await friendships.ToListAsync());
+            return View(await repo.GetFriendshipsByUserIdAsync(currentUser.Id));
         }
 
         // GET: Friendships/Waiting
