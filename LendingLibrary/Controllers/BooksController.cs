@@ -22,6 +22,7 @@ using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Linq;
+using LendingLibrary.Utils;
 
 namespace LendingLibrary.Controllers
 {
@@ -58,8 +59,8 @@ namespace LendingLibrary.Controllers
             }
 
             var model = new BookIndexViewModel();
-            model.Books = await db.Books.Where(b => b.Owner.Id == userId).ToListAsync();
-            model.User = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            model.Books = await repo.GetBooksByOwnerId(userId);
+            model.User = await repo.GetUserByIdAsync(userId);
 
             if (model.User == null)
             {
@@ -77,7 +78,7 @@ namespace LendingLibrary.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
  
             if (book == null)
             {
@@ -105,8 +106,8 @@ namespace LendingLibrary.Controllers
             if (ModelState.IsValid)
             {
                 book.Owner = currentUser;
-                db.Books.Add(book);
-                await db.SaveChangesAsync();
+                repo.Add(book);
+                await repo.SaveAsync();
                 return RedirectToAction("Index");
             }
 
@@ -121,7 +122,7 @@ namespace LendingLibrary.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
                 return HttpNotFound();
@@ -147,8 +148,8 @@ namespace LendingLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(book).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                repo.SetModified(book);
+                await repo.SaveAsync();
                 return RedirectToAction("Index");
             }
             return View(book);
@@ -161,7 +162,7 @@ namespace LendingLibrary.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
 
             if (book == null)
             {
@@ -185,9 +186,9 @@ namespace LendingLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
-            db.Books.Remove(book);
-            await db.SaveChangesAsync();
+            Book book = await repo.GetBookByIdAsync(id);
+            repo.Remove(book);
+            await repo.SaveAsync();
             return RedirectToAction("Index");
         }
     }

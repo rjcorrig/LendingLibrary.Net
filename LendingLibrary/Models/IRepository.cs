@@ -17,6 +17,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LendingLibrary.Models
@@ -29,6 +30,19 @@ namespace LendingLibrary.Models
         #region User
         Task<ApplicationUser> GetUserByIdAsync(string userId);
         ApplicationUser GetUserById(string userId);
+        #endregion
+
+        #region Book
+        Task<Book> GetBookByIdAsync(int? id);
+        Task<IEnumerable<Book>> GetBooksByOwnerId(string userId);
+
+        Book Add(Book book);
+        Book Remove(Book book);
+        #endregion
+
+        #region DbContext
+        Task<int> SaveAsync();
+        void SetModified(object entity);
         #endregion
     }
 }

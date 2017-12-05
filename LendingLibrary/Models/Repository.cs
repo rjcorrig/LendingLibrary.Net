@@ -17,6 +17,9 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -49,6 +52,40 @@ namespace LendingLibrary.Models
         public ApplicationUser GetUserById(string userId)
         {
             return Manager.FindById(userId);
+        }
+        #endregion
+
+        #region Book
+        public async Task<Book> GetBookByIdAsync(int? id)
+        {
+            return await Db.Books.FirstOrDefaultAsync(b => b.ID == id);
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksByOwnerId(string userId)
+        {
+            return await Db.Books.Where(b => b.Owner.Id == userId).ToListAsync();
+        }
+
+        public Book Add(Book book)
+        {
+            return Db.Books.Add(book);
+        }
+
+        public Book Remove(Book book)
+        {
+            return Db.Books.Remove(book);
+        }
+        #endregion
+
+        #region DbContext
+        public async Task<int> SaveAsync()
+        {
+            return await Db.SaveChangesAsync();
+        }
+
+        public void SetModified(object entity)
+        {
+            Db.Entry(entity).State = EntityState.Modified;
         }
         #endregion
     }
