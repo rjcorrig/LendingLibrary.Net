@@ -57,11 +57,7 @@ namespace LendingLibrary.Controllers
 
             var currentUser = await GetCurrentUserAsync();
 
-            var friendships = db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                .Where(f => f.FriendId == currentUser.Id)
-                .Where(f => !f.RequestApproved.HasValue);
-
-            return View(await friendships.ToListAsync());
+            return View(await repo.GetFriendshipsAwaitingApprovalByUser(currentUser.Id));
         }
 
         // POST: Friendships/Confirm

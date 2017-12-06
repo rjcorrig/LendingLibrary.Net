@@ -83,11 +83,19 @@ namespace LendingLibrary.Models
             // First Where filter gets Friendships involving this user
             // Second removes duplicate confirmed friendships by limiting those to
             // rows where the current user is the owning user
-
             return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                     .Where(f => f.FriendId == userId || f.UserId == userId)
-                     .Where(f => !f.RequestApproved.HasValue || f.UserId == userId)
-                     .ToListAsync();
+                .Where(f => f.FriendId == userId || f.UserId == userId)
+                .Where(f => !f.RequestApproved.HasValue || f.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Friendship>> GetFriendshipsAwaitingApprovalByUser(string userId)
+        {
+            // Return friendship requests waiting for this user's approval (no approval date yet)
+            return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
+                .Where(f => f.FriendId == userId)
+                .Where(f => !f.RequestApproved.HasValue)
+                .ToListAsync();
         }
         #endregion
 
