@@ -60,7 +60,7 @@
         <dd class="utc-datetime">
             @if (Model.RequestApproved.HasValue)
             {
-                @Html.DisplayFor(Model.RequestApproved.Value)
+                @Html.DisplayFor(model => Model.RequestApproved.Value)
             }
         </dd>
 
