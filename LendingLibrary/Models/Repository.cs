@@ -53,6 +53,18 @@ namespace LendingLibrary.Models
         {
             return Manager.FindById(userId);
         }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId)
+        {
+            // All users not me, 
+            // with no friendship requests to me (otherUser.Friendships)
+            // and no friendship requests from me (otherUser.Users)
+            return await Db.Users.Include("Friendships").Include("Users")
+                .Where(u => u.Id != userId)
+                .Where(u => !u.Friendships.Any(f => f.FriendId == userId))
+                .Where(u => !u.Users.Any(f => f.UserId == userId))
+                .ToListAsync();
+        }
         #endregion
 
         #region Book
@@ -89,7 +101,7 @@ namespace LendingLibrary.Models
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Friendship>> GetFriendshipsAwaitingApprovalByUser(string userId)
+        public async Task<IEnumerable<Friendship>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId)
         {
             // Return friendship requests waiting for this user's approval (no approval date yet)
             return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
@@ -97,6 +109,22 @@ namespace LendingLibrary.Models
                 .Where(f => !f.RequestApproved.HasValue)
                 .ToListAsync();
         }
+
+        public async Task<Friendship> GetFriendshipBetweenUserIdsAsync(string userId, string friendId)
+        {
+            return await Db.Friendships.FirstOrDefaultAsync(f => f.UserId == userId && f.FriendId == friendId);
+        }
+
+        public Friendship Add(Friendship friendship)
+        {
+            return Db.Friendships.Add(friendship);            
+        }
+
+        public Friendship Remove(Friendship friendship)
+        {
+            return Db.Friendships.Remove(friendship);
+        }
+
         #endregion
 
         #region DbContext
