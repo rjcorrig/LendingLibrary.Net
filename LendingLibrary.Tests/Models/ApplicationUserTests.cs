@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LendingLibrary.Models.Tests
+namespace LendingLibrary.Tests.Models
 {
     [TestFixture]
     public class ApplicationUserTests

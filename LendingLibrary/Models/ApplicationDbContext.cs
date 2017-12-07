@@ -65,8 +65,8 @@ namespace LendingLibrary.Models
             modelBuilder.Entity<ApplicationUser>().HasMany(u => u.Users).WithRequired(f => f.Friend).HasForeignKey(f => f.FriendId).WillCascadeOnDelete(false);
         }
 
-        public IDbSet<Book> Books { get; set; }
-        public IDbSet<Friendship> Friendships { get; set; }
+        public virtual IDbSet<Book> Books { get; set; }
+        public virtual IDbSet<Friendship> Friendships { get; set; }
         #endregion
     }
 }
