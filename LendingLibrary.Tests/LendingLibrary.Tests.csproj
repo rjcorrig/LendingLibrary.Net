@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="Models\ApplicationUserTests.cs" />
     <Compile Include="Models\Repository.cs" />
+    <Compile Include="Models\TestDbAsyncQueryProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
