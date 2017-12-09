@@ -30,23 +30,10 @@ namespace LendingLibrary.Tests.Models
     [TestFixture()]
     public class Repository
     {
-        [Test()]
-        public void Add_Book_adds_Book_to_Books()
-        {
-            var mockSet = new Mock<DbSet<Book>>();
+        protected Mock<DbSet<Book>> mockBooks;
 
-			var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockSet.Object);
-
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
-
-            repo.Add(new Book());
-
-            mockSet.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
-        }
-
-        [Test()]
-        public async Task GetBookByIdAsync_returns_correct_Book()
+        [SetUp()]
+        public void SetUp()
         {
             var data = new List<Book>
             {
@@ -55,27 +42,56 @@ namespace LendingLibrary.Tests.Models
                 new Book { ID = 62, Author = "Emily Bronte", Title = "Wuthering Heights", ISBN = "78192775621", Rating = 5 }
             }.AsQueryable();
 
-            var mockSet = new Mock<DbSet<Book>>();
+            mockBooks = new Mock<DbSet<Book>>();
 
-            mockSet.As<IDbAsyncEnumerable<Book>>() 
+            mockBooks.As<IDbAsyncEnumerable<Book>>() 
                 .Setup(m => m.GetAsyncEnumerator()) 
                 .Returns(new TestDbAsyncEnumerator<Book>(data.GetEnumerator())); 
  
-            mockSet.As<IQueryable<Book>>() 
+            mockBooks.As<IQueryable<Book>>() 
                 .Setup(m => m.Provider) 
                 .Returns(new TestDbAsyncQueryProvider<Book>(data.Provider)); 
  
-            mockSet.As<IQueryable<Book>>().Setup(m => m.Expression).Returns(data.Expression); 
-            mockSet.As<IQueryable<Book>>().Setup(m => m.ElementType).Returns(data.ElementType); 
-            mockSet.As<IQueryable<Book>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator()); 
+            mockBooks.As<IQueryable<Book>>().Setup(m => m.Expression).Returns(data.Expression); 
+            mockBooks.As<IQueryable<Book>>().Setup(m => m.ElementType).Returns(data.ElementType); 
+            mockBooks.As<IQueryable<Book>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+        }
 
+        [Test()]
+        public void Add_Book_adds_Book_to_Books()
+        {
+			var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+
+            repo.Add(new Book());
+
+            mockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
+        }
+
+        [Test()]
+        public async Task GetBookByIdAsync_returns_correct_Book()
+        {
             var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockSet.Object);
+            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
             var repo = new LendingLibrary.Models.Repository(mockContext.Object);
             var book = await repo.GetBookByIdAsync(43);
 
             Assert.AreEqual(book.ID, 43);
+        }
+
+        [Test()]
+        public async Task GetBookByIdAsync_returns_null_on_no_match()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var book = await repo.GetBookByIdAsync(103);
+
+            Assert.IsNull(book);
         }
     }
 }
