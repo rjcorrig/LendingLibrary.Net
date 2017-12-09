@@ -33,13 +33,16 @@ namespace LendingLibrary.Models
         public Repository()
         {
             var context = new ApplicationDbContext();
+            context.Database.Log = Console.Write;
 
-            Db = new ApplicationDbContext();
+            Db = context;
             Manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
         }
 
         public Repository(ApplicationDbContext context)
         {
+            context.Database.Log = Console.Write;
+
             Db = context;
             Manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
         }

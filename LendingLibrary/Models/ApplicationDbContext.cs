@@ -44,7 +44,9 @@ namespace LendingLibrary.Models
 
         public static ApplicationDbContext Create()
         {
-            return new ApplicationDbContext();
+            var context = new ApplicationDbContext();
+            context.Database.Log = Console.Write;
+            return context;
         }
         #endregion
 
