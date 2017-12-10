@@ -56,12 +56,12 @@ namespace LendingLibrary.Models
         #region User
         public async Task<ApplicationUser> GetUserByIdAsync(string userId)
         {
-            return await Manager.FindByIdAsync(userId);
+            return await Db.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
         }
 
         public ApplicationUser GetUserById(string userId)
         {
-            return Manager.FindById(userId);
+            return Db.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId)
