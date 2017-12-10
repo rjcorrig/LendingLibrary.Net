@@ -120,27 +120,93 @@ namespace LendingLibrary.Tests.Models
             return books.AsQueryable();
         }
 
+        protected Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+        {
+            var mockDbSet = new Mock<DbSet<T>>();
+
+            mockDbSet.As<IDbAsyncEnumerable<T>>()
+                .Setup(m => m.GetAsyncEnumerator())
+                .Returns(new TestDbAsyncEnumerator<T>(data.GetEnumerator()));
+
+            mockDbSet.As<IQueryable<T>>()
+                .Setup(m => m.Provider)
+                .Returns(new TestDbAsyncQueryProvider<T>(data.Provider));
+
+            mockDbSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
+            mockDbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
+            mockDbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+
+            return mockDbSet;
+        }
+
         [SetUp()]
         public void SetUp()
         {
             var userData = SetUpApplicationUsers();
-
             var bookData = SetUpBooks(userData);
 
-            mockBooks = new Mock<DbSet<Book>>();
-
-            mockBooks.As<IDbAsyncEnumerable<Book>>()
-                .Setup(m => m.GetAsyncEnumerator())
-                .Returns(new TestDbAsyncEnumerator<Book>(bookData.GetEnumerator()));
-
-            mockBooks.As<IQueryable<Book>>()
-                .Setup(m => m.Provider)
-                .Returns(new TestDbAsyncQueryProvider<Book>(bookData.Provider));
-
-            mockBooks.As<IQueryable<Book>>().Setup(m => m.Expression).Returns(bookData.Expression);
-            mockBooks.As<IQueryable<Book>>().Setup(m => m.ElementType).Returns(bookData.ElementType);
-            mockBooks.As<IQueryable<Book>>().Setup(m => m.GetEnumerator()).Returns(bookData.GetEnumerator());
+            mockBooks = CreateMockDbSet(bookData);
+            mockUsers = CreateMockDbSet(userData);
         }
+
+        #region User
+        //        Task<ApplicationUser> GetUserByIdAsync(string userId);
+        //        ApplicationUser GetUserById(string userId);
+        //        TODO: Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId);
+        [Test()]
+        public async Task GetUserByIdAsync_returns_correct_User()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var user = await repo.GetUserByIdAsync("coryhome-guid");
+
+            Assert.AreEqual(user.Id, "coryhome-guid");
+        }
+
+        [Test()]
+        public async Task GetUserByIdAsync_returns_null_on_no_match()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var user = await repo.GetUserByIdAsync("nosuchuser-guid");
+
+            Assert.IsNull(user);
+        }
+
+        [Test()]
+        public void GetUserById_returns_correct_User()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var user = repo.GetUserById("coryhome-guid");
+
+            Assert.AreEqual(user.Id, "coryhome-guid");
+        }
+
+        [Test()]
+        public void GetUserById_returns_null_on_no_match()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var user = repo.GetUserById("nosuchuser-guid");
+
+            Assert.IsNull(user);
+        }
+        #endregion
+
+        #region Book
+		//        Book Add(Book book);
+        //        TODO: Book Remove(Book book);
+		//        Task<Book> GetBookByIdAsync(int? id);
+        //        Task<IEnumerable<Book>> GetBooksByOwnerIdAsync(string userId);
 
         [Test()]
         public void Add_Book_adds_Book_to_Books()
@@ -189,6 +255,10 @@ namespace LendingLibrary.Tests.Models
             var books = await repo.GetBooksByOwnerIdAsync("foxyboots9-guid");
 
             Assert.AreEqual(3, books.Count());
+            foreach (var book in books)
+            {
+                Assert.AreEqual("foxyboots9-guid", book.Owner.Id);
+            }
         }
 
         [Test()]
@@ -202,6 +272,6 @@ namespace LendingLibrary.Tests.Models
 
             Assert.AreEqual(0, books.Count());
         }
-
+		#endregion
     }
 }
