@@ -29,7 +29,7 @@ using System;
 namespace LendingLibrary.Tests.Models
 {
     [TestFixture()]
-    public class Repository
+    public class RepositoryTests
     {
         protected Mock<DbSet<Book>> mockBooks;
         protected Mock<DbSet<ApplicationUser>> mockUsers;
@@ -159,7 +159,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var user = await repo.GetUserByIdAsync("coryhome-guid");
 
             Assert.AreEqual(user.Id, "coryhome-guid");
@@ -171,7 +171,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var user = await repo.GetUserByIdAsync("nosuchuser-guid");
 
             Assert.IsNull(user);
@@ -183,7 +183,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var user = repo.GetUserById("coryhome-guid");
 
             Assert.AreEqual(user.Id, "coryhome-guid");
@@ -195,7 +195,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var user = repo.GetUserById("nosuchuser-guid");
 
             Assert.IsNull(user);
@@ -203,10 +203,6 @@ namespace LendingLibrary.Tests.Models
         #endregion
 
         #region Book
-		//        Book Add(Book book);
-        //        TODO: Book Remove(Book book);
-		//        Task<Book> GetBookByIdAsync(int? id);
-        //        Task<IEnumerable<Book>> GetBooksByOwnerIdAsync(string userId);
 
         [Test()]
         public void Add_Book_adds_Book_to_Books()
@@ -214,7 +210,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
 
             repo.Add(new Book());
 
@@ -227,7 +223,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
 
             repo.Remove(mockBooks.Object.First());
 
@@ -240,7 +236,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var book = await repo.GetBookByIdAsync(43);
 
             Assert.AreEqual(book.ID, 43);
@@ -252,7 +248,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var book = await repo.GetBookByIdAsync(103);
 
             Assert.IsNull(book);
@@ -264,7 +260,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var books = await repo.GetBooksByOwnerIdAsync("foxyboots9-guid");
 
             Assert.AreEqual(3, books.Count());
@@ -280,7 +276,7 @@ namespace LendingLibrary.Tests.Models
             var mockContext = new Mock<ApplicationDbContext>();
             mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
-            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+            var repo = new Repository(mockContext.Object);
             var books = await repo.GetBooksByOwnerIdAsync("nosuchuser-guid");
 
             Assert.AreEqual(0, books.Count());

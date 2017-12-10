@@ -99,9 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ApplicationUserTests.cs" />
-    <Compile Include="Models\Repository.cs" />
+    <Compile Include="Models\RepositoryTests.cs" />
     <Compile Include="Models\TestDbAsyncQueryProvider.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Controllers\BooksControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
