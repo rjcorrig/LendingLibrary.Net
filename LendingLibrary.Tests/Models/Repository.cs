@@ -222,6 +222,19 @@ namespace LendingLibrary.Tests.Models
         }
 
         [Test()]
+        public void Remove_Book_removes_Book_from_Books()
+        {
+            var mockContext = new Mock<ApplicationDbContext>();
+            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+
+            var repo = new LendingLibrary.Models.Repository(mockContext.Object);
+
+            repo.Remove(mockBooks.Object.First());
+
+            mockBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Once);
+        }
+
+        [Test()]
         public async Task GetBookByIdAsync_returns_correct_Book()
         {
             var mockContext = new Mock<ApplicationDbContext>();
