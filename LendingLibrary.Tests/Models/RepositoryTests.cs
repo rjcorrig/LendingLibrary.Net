@@ -31,8 +31,8 @@ namespace LendingLibrary.Tests.Models
     [TestFixture()]
     public class RepositoryTests
     {
-        protected Mock<DbSet<Book>> mockBooks;
-        protected Mock<DbSet<ApplicationUser>> mockUsers;
+//        protected Mock<DbSet<Book>> mockBooks;
+//        protected Mock<DbSet<ApplicationUser>> mockUsers;
 
         protected virtual IQueryable<ApplicationUser> SetUpApplicationUsers()
         {
@@ -145,8 +145,8 @@ namespace LendingLibrary.Tests.Models
             var userData = SetUpApplicationUsers();
             var bookData = SetUpBooks(userData);
 
-            mockBooks = CreateMockDbSet(bookData);
-            mockUsers = CreateMockDbSet(userData);
+//            mockBooks = CreateMockDbSet(bookData);
+//            mockUsers = CreateMockDbSet(userData);
         }
 
         #region User
@@ -156,9 +156,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public async Task GetUserByIdAsync_returns_correct_User()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+            //            var mockContext = new Mock<ApplicationDbContext>();
+            //            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var user = await repo.GetUserByIdAsync("coryhome-guid");
 
@@ -168,9 +169,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public async Task GetUserByIdAsync_returns_null_on_no_match()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+            //var mockContext = new Mock<ApplicationDbContext>();
+            //mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var user = await repo.GetUserByIdAsync("nosuchuser-guid");
 
@@ -180,9 +182,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public void GetUserById_returns_correct_User()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var user = repo.GetUserById("coryhome-guid");
 
@@ -192,9 +195,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public void GetUserById_returns_null_on_no_match()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Users).Returns(mockUsers.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var user = repo.GetUserById("nosuchuser-guid");
 
@@ -207,35 +211,37 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public void Add_Book_adds_Book_to_Books()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
 
             repo.Add(new Book());
 
-            mockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
+            mockContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
         }
 
         [Test()]
         public void Remove_Book_removes_Book_from_Books()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+            var mockContext = new MockContext();
 
             var repo = new Repository(mockContext.Object);
 
-            repo.Remove(mockBooks.Object.First());
+            repo.Remove(mockContext.MockBooks.Object.First());
 
-            mockBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Once);
+            mockContext.MockBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Once);
         }
 
         [Test()]
         public async Task GetBookByIdAsync_returns_correct_Book()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
-
+            //var mockContext = new Mock<ApplicationDbContext>();
+            //mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var book = await repo.GetBookByIdAsync(43);
 
@@ -245,9 +251,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public async Task GetBookByIdAsync_returns_null_on_no_match()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var book = await repo.GetBookByIdAsync(103);
 
@@ -257,9 +264,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public async Task GetBooksByOwnerIdAsync_returns_owned_Books()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
 
+            var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var books = await repo.GetBooksByOwnerIdAsync("foxyboots9-guid");
 
@@ -273,8 +281,10 @@ namespace LendingLibrary.Tests.Models
         [Test()]
         public async Task GetBooksByOwnerIdAsync_returns_empty_Books_on_no_match()
         {
-            var mockContext = new Mock<ApplicationDbContext>();
-            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+//            var mockContext = new Mock<ApplicationDbContext>();
+//            mockContext.Setup(m => m.Books).Returns(mockBooks.Object);
+
+            var mockContext = new MockContext();
 
             var repo = new Repository(mockContext.Object);
             var books = await repo.GetBooksByOwnerIdAsync("nosuchuser-guid");

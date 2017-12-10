@@ -103,6 +103,7 @@
     <Compile Include="Models\TestDbAsyncQueryProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Controllers\BooksControllerTests.cs" />
+    <Compile Include="Models\MockContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
