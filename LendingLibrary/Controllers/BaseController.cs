@@ -21,6 +21,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System;
 
 namespace LendingLibrary.Controllers
 {
@@ -28,27 +29,40 @@ namespace LendingLibrary.Controllers
     {
         protected IApplicationDbContext db;
         protected IRepository repo;
+        protected Func<string> GetUserId;
 
         public BaseController()
         {
             repo = new Repository();
             db = repo.Db;
+
+            GetUserId = User.Identity.GetUserId;
         }
 
         public BaseController(IApplicationDbContext db)
         {
             repo = new Repository(db);
             this.db = repo.Db;
+
+            GetUserId = User.Identity.GetUserId;
+        }
+
+        public BaseController(IApplicationDbContext db, Func<string> getUserId)
+        {
+            repo = new Repository(db);
+            this.db = repo.Db;
+
+            GetUserId = getUserId;        
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await repo.GetUserByIdAsync(User.Identity.GetUserId());
+            return await repo.GetUserByIdAsync(GetUserId());
         }
 
         protected ApplicationUser GetCurrentUser()
         {
-            return repo.GetUserById(User.Identity.GetUserId());
+            return repo.GetUserById(GetUserId());
         }
 
         protected override void Dispose(bool disposing)

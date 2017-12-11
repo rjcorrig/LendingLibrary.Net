@@ -23,6 +23,7 @@ using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Linq;
 using LendingLibrary.Utils;
+using System;
 
 namespace LendingLibrary.Controllers
 {
@@ -35,6 +36,11 @@ namespace LendingLibrary.Controllers
 
         public BooksController(IApplicationDbContext db) : 
             base(db)
+        {
+        }
+
+        public BooksController(IApplicationDbContext db, Func<string> getUserId) :
+            base(db, getUserId)
         {
         }
 

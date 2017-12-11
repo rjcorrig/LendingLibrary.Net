@@ -17,12 +17,14 @@
 */
 
 using NUnit.Framework;
-using System;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using LendingLibrary.Controllers;
 using LendingLibrary.Tests.Models;
 using LendingLibrary.Models;
+using System.Web;
+using Moq;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -30,7 +32,7 @@ namespace LendingLibrary.Tests.Controllers
     public class BooksControllerTests
     {
         [Test()]
-        public async Task BooksController_Details_returns_ViewResult_if_found()
+        public async Task Details_returns_ViewResult_if_found()
         {
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
@@ -44,7 +46,7 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        public async Task BooksController_Details_returns_HttpNotFoundResult_if_not_found()
+        public async Task Details_returns_HttpNotFoundResult_if_not_found()
         {
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
@@ -52,5 +54,26 @@ namespace LendingLibrary.Tests.Controllers
 
             Assert.IsNotNull(result);
         }    
+
+        [Test()]
+        public async Task Index_returns_logged_in_Users_books()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Index(null) as ViewResult;
+            Assert.IsNotNull(result);
+
+            var model = result.Model as BookIndexViewModel;
+            Assert.IsNotNull(model);
+
+            Assert.AreEqual(model.User.Id, userId);
+            foreach (var book in model.Books)
+            {
+                Assert.AreEqual(book.Owner.Id, userId);
+            }
+        }    
+
     }
 }
