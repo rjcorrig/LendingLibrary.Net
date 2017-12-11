@@ -25,7 +25,6 @@ namespace LendingLibrary.Models
     public interface IRepository
     {
         IApplicationDbContext Db { get; }
-        IApplicationUserManager Manager { get; }
 
         #region User
         Task<ApplicationUser> GetUserByIdAsync(string userId);

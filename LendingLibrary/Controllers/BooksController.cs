@@ -33,8 +33,8 @@ namespace LendingLibrary.Controllers
         {
         }
 
-        public BooksController(IApplicationDbContext db, IApplicationUserManager manager) : 
-            base(db, manager)
+        public BooksController(IApplicationDbContext db) : 
+            base(db)
         {
         }
 

@@ -34,8 +34,8 @@ namespace LendingLibrary.Controllers
         {
         }
 
-        public FriendshipsController(IApplicationDbContext db, IApplicationUserManager manager) :
-            base(db, manager)
+        public FriendshipsController(IApplicationDbContext db) :
+            base(db)
         {
         }
 

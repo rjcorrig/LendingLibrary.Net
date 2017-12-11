@@ -35,9 +35,9 @@ namespace LendingLibrary.Controllers
             db = repo.Db;
         }
 
-        public BaseController(IApplicationDbContext db, IApplicationUserManager manager)
+        public BaseController(IApplicationDbContext db)
         {
-            repo = new Repository(db, manager);
+            repo = new Repository(db);
             this.db = repo.Db;
         }
 

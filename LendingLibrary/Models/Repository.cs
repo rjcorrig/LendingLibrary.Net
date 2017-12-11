@@ -28,7 +28,6 @@ namespace LendingLibrary.Models
     public class Repository : IRepository
     {
         public IApplicationDbContext Db { get; protected set; }
-        public IApplicationUserManager Manager { get; protected set; }
 
         public Repository()
         {
@@ -36,21 +35,13 @@ namespace LendingLibrary.Models
             context.Database.Log = Console.Write;
 
             Db = context;
-            Manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
         }
 
-        public Repository(ApplicationDbContext context)
+        public Repository(IApplicationDbContext context)
         {
             context.Database.Log = Console.Write;
 
             Db = context;
-            Manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
-        }
-
-        public Repository(IApplicationDbContext context, IApplicationUserManager manager)
-        {
-            this.Db = context;
-            this.Manager = manager;
         }
 
         #region User

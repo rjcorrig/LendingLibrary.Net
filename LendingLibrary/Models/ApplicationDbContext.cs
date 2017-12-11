@@ -33,6 +33,8 @@ namespace LendingLibrary.Models
 
         Task<int> SaveChangesAsync();
         DbEntityEntry Entry(object entity);
+
+        Database Database { get; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
