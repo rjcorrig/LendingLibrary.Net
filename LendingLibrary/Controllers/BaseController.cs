@@ -35,16 +35,12 @@ namespace LendingLibrary.Controllers
         {
             repo = new Repository();
             db = repo.Db;
-
-            GetUserId = User.Identity.GetUserId;
         }
 
         public BaseController(IApplicationDbContext db)
         {
             repo = new Repository(db);
             this.db = repo.Db;
-
-            GetUserId = User.Identity.GetUserId;
         }
 
         public BaseController(IApplicationDbContext db, Func<string> getUserId)
@@ -57,12 +53,26 @@ namespace LendingLibrary.Controllers
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await repo.GetUserByIdAsync(GetUserId());
+            if (GetUserId != null)
+            {
+                return await repo.GetUserByIdAsync(GetUserId());
+            }
+            else 
+            {
+                return await repo.GetUserByIdAsync(User.Identity.GetUserId());
+            }
         }
 
         protected ApplicationUser GetCurrentUser()
         {
-            return repo.GetUserById(GetUserId());
+            if (GetUserId != null)
+            {
+                return repo.GetUserById(GetUserId());
+            }
+            else
+            {
+                return repo.GetUserById(User.Identity.GetUserId());
+            }
         }
 
         protected override void Dispose(bool disposing)
