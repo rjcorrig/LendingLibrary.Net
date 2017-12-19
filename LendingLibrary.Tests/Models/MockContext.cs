@@ -30,18 +30,21 @@ namespace LendingLibrary.Tests.Models
     {
         public Mock<DbSet<Book>> MockBooks { get; private set; }
         public Mock<DbSet<ApplicationUser>> MockUsers { get; private set; }
+        public Mock<DbSet<Friendship>> MockFriendships { get; private set; }
   
         public MockContext()
         {
             var userData = SetUpApplicationUsers();
             var bookData = SetUpBooks(userData);
+            var friendshipData = SetUpFriendships(userData);
 
+			MockUsers = CreateMockDbSet(userData);
             MockBooks = CreateMockDbSet(bookData);
-            MockUsers = CreateMockDbSet(userData);
+            MockFriendships = CreateMockDbSet(friendshipData);
 
             Setup(m => m.Users).Returns(MockUsers.Object);
             Setup(m => m.Books).Returns(MockBooks.Object);
-
+            Setup(m => m.Friendships).Returns(MockFriendships.Object);
         }
 
         protected IQueryable<ApplicationUser> SetUpApplicationUsers()
@@ -60,7 +63,8 @@ namespace LendingLibrary.Tests.Models
                 Postal = "45123",
                 Country = "USA",
                 BirthDate = new DateTime(1975, 12, 6),
-                Books = new List<Book>()
+                Books = new List<Book>(),
+                Friendships = new List<Friendship>()
             };
 
             var foxyboots9 = new ApplicationUser
@@ -77,7 +81,8 @@ namespace LendingLibrary.Tests.Models
                 Postal = "25123",
                 Country = "USA",
                 BirthDate = new DateTime(1975, 09, 19),
-                Books = new List<Book>()
+                Books = new List<Book>(),
+                Friendships = new List<Friendship>()
             };
 
             var coryhome = new ApplicationUser
@@ -94,7 +99,8 @@ namespace LendingLibrary.Tests.Models
                 Postal = "35123",
                 Country = "USA",
                 BirthDate = new DateTime(1975, 12, 6),
-                Books = new List<Book>()
+                Books = new List<Book>(),
+                Friendships = new List<Friendship>()
             };
 
             return new List<ApplicationUser>
@@ -128,6 +134,28 @@ namespace LendingLibrary.Tests.Models
             books.FindAll(b => b.Owner == coryhome).ForEach(b => coryhome.Books.Add(b));
 
             return books.AsQueryable();
+        }
+
+        protected IQueryable<Friendship> SetUpFriendships(IQueryable<ApplicationUser> users)
+        {
+            var robcory = users.Where(u => u.Id == "robcory-guid").FirstOrDefault();
+            var foxyboots9 = users.Where(u => u.Id == "foxyboots9-guid").FirstOrDefault();
+            var coryhome = users.Where(u => u.Id == "coryhome-guid").FirstOrDefault();
+
+            var friendships = new List<Friendship>();
+
+            // An unconfirmed friendship request from robcory to foxyboots
+            friendships.Add(new Friendship { User = robcory, Friend = foxyboots9, RequestSent = DateTime.UtcNow });
+
+            // A confirmed friendship between foxyboots and coryhome
+            friendships.Add(new Friendship { User = foxyboots9, Friend = coryhome, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
+            friendships.Add(new Friendship { User = coryhome, Friend = foxyboots9, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
+
+            friendships.FindAll(f => f.User == robcory).ForEach(f => robcory.Friendships.Add(f));
+            friendships.FindAll(f => f.User == foxyboots9).ForEach(f => foxyboots9.Friendships.Add(f));
+            friendships.FindAll(f => f.User == coryhome).ForEach(f => coryhome.Friendships.Add(f));
+
+            return friendships.AsQueryable();
         }
 
         protected Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
