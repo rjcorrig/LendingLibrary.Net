@@ -145,11 +145,31 @@ namespace LendingLibrary.Tests.Models
             var friendships = new List<Friendship>();
 
             // An unconfirmed friendship request from robcory to foxyboots
-            friendships.Add(new Friendship { User = robcory, Friend = foxyboots9, RequestSent = DateTime.UtcNow });
+            friendships.Add(new Friendship { 
+                User = robcory, 
+                UserId = robcory.Id,
+                Friend = foxyboots9,
+                FriendId = foxyboots9.Id,
+                RequestSent = DateTime.UtcNow 
+            });
 
             // A confirmed friendship between foxyboots and coryhome
-            friendships.Add(new Friendship { User = foxyboots9, Friend = coryhome, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
-            friendships.Add(new Friendship { User = coryhome, Friend = foxyboots9, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
+            friendships.Add(new Friendship { 
+                User = foxyboots9, 
+                UserId = foxyboots9.Id,
+                Friend = coryhome, 
+                FriendId = coryhome.Id,
+                RequestSent = DateTime.UtcNow.AddDays(-5), 
+                RequestApproved = DateTime.UtcNow 
+            });
+            friendships.Add(new Friendship { 
+                User = coryhome, 
+                UserId = coryhome.Id,
+                Friend = foxyboots9, 
+                FriendId = foxyboots9.Id,
+                RequestSent = DateTime.UtcNow.AddDays(-5), 
+                RequestApproved = DateTime.UtcNow 
+            });
 
             friendships.FindAll(f => f.User == robcory).ForEach(f => robcory.Friendships.Add(f));
             friendships.FindAll(f => f.User == foxyboots9).ForEach(f => foxyboots9.Friendships.Add(f));
