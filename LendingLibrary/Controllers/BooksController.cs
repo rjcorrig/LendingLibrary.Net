@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Linq;
-using LendingLibrary.Utils;
 using System;
 
 namespace LendingLibrary.Controllers
@@ -67,11 +65,6 @@ namespace LendingLibrary.Controllers
             var model = new BookIndexViewModel();
             model.Books = await repo.GetBooksByOwnerIdAsync(userId);
             model.User = await repo.GetUserByIdAsync(userId);
-
-            if (model.User == null)
-            {
-                return HttpNotFound();
-            }
 
             return View(model);
         }
