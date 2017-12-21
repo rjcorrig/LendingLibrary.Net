@@ -165,6 +165,7 @@
     <Compile Include="Utils\CrossPlatform.cs" />
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Models\Repository.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
@@ -240,6 +241,7 @@
     <Content Include="Content\bootstrap-rating.css" />
     <Content Include="NodeScripts\index.js" />
     <Content Include="webpack.config.js" />
+    <Content Include="Views\Shared\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.9.1.min.map" />
