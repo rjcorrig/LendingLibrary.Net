@@ -23,6 +23,7 @@ using LendingLibrary.Controllers;
 using LendingLibrary.Tests.Models;
 using LendingLibrary.Models;
 using System.Net;
+using System.Web;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -44,13 +45,13 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        public async Task Details_returns_HttpNotFoundResult_if_not_found()
+        public void Details_returns_HttpNotFoundResult_if_not_found()
         {
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
-            var result = await controller.Details(41) as HttpNotFoundResult;
 
-            Assert.IsNotNull(result);
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Details(41));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }    
 
         [Test()]
