@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -10,11 +11,13 @@ namespace LendingLibrary.Controllers
     {
         public ActionResult Index()
         {
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return View("Error");
         }
 
         public ActionResult NotFound()
         {
+            Response.StatusCode = (int)HttpStatusCode.NotFound;
             return View("NotFound");
         }
     }
