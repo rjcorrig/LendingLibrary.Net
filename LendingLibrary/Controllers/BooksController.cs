@@ -22,6 +22,7 @@ using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Linq;
 using System;
+using System.Web;
 
 namespace LendingLibrary.Controllers
 {
@@ -74,15 +75,16 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
 
             Book book = await repo.GetBookByIdAsync(id);
  
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
+
             return View(book);
         }
 

@@ -22,6 +22,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System;
+using System.Web;
+using System.Net;
 
 namespace LendingLibrary.Controllers
 {
@@ -82,6 +84,29 @@ namespace LendingLibrary.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            var httpException = filterContext.Exception as HttpException;
+
+            if (httpException != null) {
+                filterContext.ExceptionHandled = true;
+                switch (httpException.GetHttpCode())
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        {
+                            filterContext.Result = RedirectToAction("NotFound", "Error");
+                            return;
+                        }
+                    default:
+                        {
+                            filterContext.Result = RedirectToAction("Index", "Error");
+                            return;
+                        }
+                }
+            }
+            base.OnException(filterContext);
         }
     }
 }
