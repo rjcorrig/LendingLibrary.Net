@@ -136,6 +136,7 @@
     <Folder Include="Utils\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
     <Folder Include="NodeScripts\" />
+    <Folder Include="Views\Error\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -241,7 +242,7 @@
     <Content Include="Content\bootstrap-rating.css" />
     <Content Include="NodeScripts\index.js" />
     <Content Include="webpack.config.js" />
-    <Content Include="Views\Shared\NotFound.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.9.1.min.map" />
