@@ -4,6 +4,5 @@
     ViewBag.Title = "Forbidden";
 }
 
-<h1 class="text-danger">Forbidden.</h1>
-<h2 class="text-danger">You are not allowed to view that resource</h2>
-
+<h1 class="text-danger">Forbidden!</h1>
+<h2 class="text-danger">@Model.Exception.Message</h2>

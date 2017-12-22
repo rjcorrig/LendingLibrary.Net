@@ -91,7 +91,14 @@ namespace LendingLibrary.Controllers
             var httpException = filterContext.Exception as HttpException;
 
             if (httpException != null) {
-                filterContext.ExceptionHandled = true;
+				filterContext.ExceptionHandled = true;
+
+                // Pass context data to the Error Controller for rendering in the view
+                TempData["Controller"] = ControllerContext.RouteData.Values["controller"].ToString();
+                TempData["Action"] = ControllerContext.RouteData.Values["action"].ToString();
+                TempData["Message"] = httpException.Message;
+                TempData["StatusCode"] = httpException.GetHttpCode();
+
                 switch (httpException.GetHttpCode())
                 {
                     case (int)HttpStatusCode.Forbidden:
