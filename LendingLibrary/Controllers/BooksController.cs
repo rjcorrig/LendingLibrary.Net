@@ -85,6 +85,17 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
 
+            // If not my book, check to see I'm permitted to view it--am I friends with the target user?
+            var currentUser = await GetCurrentUserAsync();
+            if (book.Owner.Id != currentUser.Id)
+            {
+                var friendship = currentUser.Friendships.FirstOrDefault(f => f.FriendId == book.Owner.Id && f.RequestApproved.HasValue);
+                if (friendship == null)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends with the owner to view this book");
+                }
+            }
+
             return View(book);
         }
 

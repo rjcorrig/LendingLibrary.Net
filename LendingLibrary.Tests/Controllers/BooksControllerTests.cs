@@ -31,10 +31,12 @@ namespace LendingLibrary.Tests.Controllers
     public class BooksControllerTests
     {
         [Test()]
-        public async Task Details_returns_ViewResult_if_found()
+        public async Task Details_returns_ViewResult_if_mine()
         {
-            var mockContext = new MockContext();
-            var controller = new BooksController(mockContext.Object);
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
             var result = await controller.Details(43) as ViewResult;
 
             Assert.IsNotNull(result);
@@ -42,6 +44,34 @@ namespace LendingLibrary.Tests.Controllers
 
             var model = result.Model as Book;
             Assert.AreEqual(model.ID, 43);
+        }
+
+        [Test()]
+        public async Task Details_returns_ViewResult_if_friends()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Details(122) as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+
+            var model = result.Model as Book;
+            Assert.AreEqual(model.ID, 122);
+            Assert.AreNotEqual(model.Owner.Id, userId);
+        }
+
+        [Test()]
+        public void Details_throws_Forbidden_if_not_friends()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Details(4));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
         }
 
         [Test()]
