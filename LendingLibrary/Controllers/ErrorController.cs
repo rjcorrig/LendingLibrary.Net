@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
 namespace LendingLibrary.Controllers
 {
-    public class ErrorController : Controller
+    public class ErrorController : BaseController
     {
         public ActionResult Index()
         {
@@ -23,13 +21,12 @@ namespace LendingLibrary.Controllers
 
         public ActionResult Forbidden()
         {
-            var status = TempData["StatusCode"] as int? ?? (int)HttpStatusCode.Forbidden;
-            Response.StatusCode = status;
-
+            var controller = TempData["Controller"] as String ?? Name;
+            var action = TempData["Action"] as String ?? Action;
             var message = TempData["Message"] as String ?? "Forbidden";
-            var controller = TempData["Controller"] as String ?? ControllerContext.RouteData.Values["controller"].ToString();
-            var action = TempData["Action"] as String ?? ControllerContext.RouteData.Values["action"].ToString();
+			var status = TempData["StatusCode"] as int? ?? (int)HttpStatusCode.Forbidden;
 
+			Response.StatusCode = status;
             var model = new HandleErrorInfo(new HttpException(status, message), controller, action);
             return View("Forbidden", model);
         }
