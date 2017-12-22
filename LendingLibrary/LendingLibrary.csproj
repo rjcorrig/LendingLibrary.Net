@@ -243,6 +243,7 @@
     <Content Include="NodeScripts\index.js" />
     <Content Include="webpack.config.js" />
     <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\Forbidden.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-1.9.1.min.map" />

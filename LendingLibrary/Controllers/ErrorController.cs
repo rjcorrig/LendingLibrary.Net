@@ -20,5 +20,11 @@ namespace LendingLibrary.Controllers
             Response.StatusCode = (int)HttpStatusCode.NotFound;
             return View("NotFound");
         }
+
+        public ActionResult Forbidden()
+        {
+            Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            return View("Forbidden");
+        }
     }
 }

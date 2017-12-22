@@ -94,6 +94,11 @@ namespace LendingLibrary.Controllers
                 filterContext.ExceptionHandled = true;
                 switch (httpException.GetHttpCode())
                 {
+                    case (int)HttpStatusCode.Forbidden:
+                        {
+                            filterContext.Result = RedirectToAction("Forbidden", "Error");
+                            return;
+                        }
                     case (int)HttpStatusCode.NotFound:
                         {
                             filterContext.Result = RedirectToAction("NotFound", "Error");
