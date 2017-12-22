@@ -45,7 +45,7 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        public void Details_returns_HttpNotFoundResult_if_not_found()
+        public void Details_throws_NotFound_if_not_found()
         {
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
@@ -96,16 +96,15 @@ namespace LendingLibrary.Tests.Controllers
         }    
 
         [Test()]
-        public async Task Index_returns_Forbidden_on_strangers_books()
+        public void Index_throws_Forbidden_on_strangers_books()
         {
             var userId = "foxyboots9-guid";
             var strangerId = "robcory-guid";
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Index(strangerId) as HttpStatusCodeResult;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.Forbidden);
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Index(strangerId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
         }    
     }
 }

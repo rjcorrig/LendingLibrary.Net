@@ -59,7 +59,7 @@ namespace LendingLibrary.Controllers
                 var friendship = currentUser.Friendships.FirstOrDefault(f => f.FriendId == userId && f.RequestApproved.HasValue);
                 if (friendship == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends to view that user's books");
                 }
             }
 
