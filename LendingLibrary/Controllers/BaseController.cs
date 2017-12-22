@@ -122,6 +122,11 @@ namespace LendingLibrary.Controllers
                             filterContext.Result = RedirectToAction("NotFound", "Error");
                             return;
                         }
+                    case (int)HttpStatusCode.BadRequest:
+                        {
+                            filterContext.Result = RedirectToAction("BadRequest", "Error");
+                            return;
+                        }
                     default:
                         {
                             filterContext.Result = RedirectToAction("Index", "Error");
