@@ -85,6 +85,16 @@ namespace LendingLibrary.Tests.Controllers
         }    
 
         [Test()]
+        public void Details_throws_BadRequest_if_no_Id_passed()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Details(null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }    
+
+        [Test()]
         public async Task Index_returns_logged_in_Users_books()
         {
             var userId = "foxyboots9-guid";
