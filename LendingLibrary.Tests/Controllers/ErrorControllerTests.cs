@@ -39,6 +39,7 @@ namespace LendingLibrary.Tests.Controllers
         [Test()]
         public void Index_returns_Error_View_with_500()
         {
+            controller.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             var result = controller.Index();
 
             Assert.IsInstanceOf(typeof(ViewResult), result);
@@ -97,6 +98,118 @@ namespace LendingLibrary.Tests.Controllers
 
             var viewResult = result as ViewResult;
             Assert.AreEqual("Forbidden", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+        }
+
+        [Test()]
+        public void NotFound_returns_NotFound_View_with_404()
+        {
+            var status = (int)HttpStatusCode.NotFound;
+            controller.HttpContext.Response.StatusCode = status;
+
+            var result = controller.NotFound();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("NotFound", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+
+            Assert.IsInstanceOf(typeof(HandleErrorInfo), viewResult.Model);
+            Assert.AreEqual("Not Found", (viewResult.Model as HandleErrorInfo)?.Exception?.Message);
+        }
+
+        [Test()]
+        public void NotFound_returns_NotFound_View_with_404_and_message()
+        {
+            var message = "A message";
+            controller.TempData["Message"] = message;
+
+            var status = (int)HttpStatusCode.NotFound;
+            controller.HttpContext.Response.StatusCode = status;
+
+            var result = controller.NotFound();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("NotFound", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+
+            Assert.IsInstanceOf(typeof(HandleErrorInfo), viewResult.Model);
+            Assert.AreEqual(message, (viewResult.Model as HandleErrorInfo)?.Exception?.Message);
+        }
+
+        [Test()]
+        public void NotFound_returns_NotFound_View_with_custom_httpStatus()
+        {
+            var status = (int)HttpStatusCode.NotImplemented;
+            controller.TempData["StatusCode"] = status;
+            var result = controller.NotFound();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("NotFound", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+        }
+
+        [Test()]
+        public void BadRequest_returns_BadRequest_View_with_400()
+        {
+            var status = (int)HttpStatusCode.BadRequest;
+            controller.HttpContext.Response.StatusCode = status;
+
+            var result = controller.BadRequest();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("BadRequest", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+
+            Assert.IsInstanceOf(typeof(HandleErrorInfo), viewResult.Model);
+            Assert.AreEqual("Bad Request", (viewResult.Model as HandleErrorInfo)?.Exception?.Message);
+        }
+
+        [Test()]
+        public void BadRequest_returns_BadRequest_View_with_400_and_message()
+        {
+            var message = "A message";
+            controller.TempData["Message"] = message;
+
+            var status = (int)HttpStatusCode.BadRequest;
+            controller.HttpContext.Response.StatusCode = status;
+
+            var result = controller.BadRequest();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("BadRequest", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+
+            Assert.IsInstanceOf(typeof(HandleErrorInfo), viewResult.Model);
+            Assert.AreEqual(message, (viewResult.Model as HandleErrorInfo)?.Exception?.Message);
+        }
+
+        [Test()]
+        public void BadRequest_returns_BadRequest_View_with_custom_httpStatus()
+        {
+            var status = (int)HttpStatusCode.NotImplemented;
+            controller.TempData["StatusCode"] = status;
+            var result = controller.BadRequest();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("BadRequest", viewResult.ViewName);
 
             Assert.AreEqual(status, response.Object.StatusCode);
         }

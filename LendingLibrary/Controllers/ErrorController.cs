@@ -9,41 +9,44 @@ namespace LendingLibrary.Controllers
     [Log()]
     public class ErrorController : BaseController
     {
+        [HttpStatus(HttpStatusCode.InternalServerError)]
         public ActionResult Index()
         {
-            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            return View("Error");
+            HandleErrorInfo model = CreateViewModel();
+            return View("Error", model);
         }
 
+        [HttpStatus(HttpStatusCode.NotFound)]
         public ActionResult NotFound()
         {
-            Response.StatusCode = (int)HttpStatusCode.NotFound;
-            return View("NotFound");
+            HandleErrorInfo model = CreateViewModel();
+            return View("NotFound", model);
         }
 
+        [HttpStatus(HttpStatusCode.BadRequest)]
         public ActionResult BadRequest()
         {
-            var controller = TempData["Controller"] as String ?? Name;
-            var action = TempData["Action"] as String ?? Action;
-            var message = TempData["Message"] as String ?? "Bad Request";
-            var status = TempData["StatusCode"] as int? ?? (int)HttpStatusCode.BadRequest;
-
-            Response.StatusCode = status;
-            var model = new HandleErrorInfo(new HttpException(status, message), controller, action);
+            HandleErrorInfo model = CreateViewModel();
             return View("BadRequest", model);
         }
 
         [HttpStatus(HttpStatusCode.Forbidden)]
         public ActionResult Forbidden()
         {
+            HandleErrorInfo model = CreateViewModel();
+            return View("Forbidden", model);
+        }
+
+        protected HandleErrorInfo CreateViewModel()
+        {
             var controller = TempData["Controller"] as String ?? Name;
             var action = TempData["Action"] as String ?? Action;
 
             Response.StatusCode = TempData["StatusCode"] as int? ?? Response.StatusCode;
-			var message = TempData["Message"] as String ?? HttpWorkerRequest.GetStatusDescription(Response.StatusCode);
+            var message = TempData["Message"] as String ?? HttpWorkerRequest.GetStatusDescription(Response.StatusCode);
 
             var model = new HandleErrorInfo(new HttpException(Response.StatusCode, message), controller, action);
-            return View("Forbidden", model);
+            return model;
         }
     }
 }
