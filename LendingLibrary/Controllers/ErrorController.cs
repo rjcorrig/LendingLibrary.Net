@@ -33,15 +33,15 @@ namespace LendingLibrary.Controllers
             return View("BadRequest", model);
         }
 
-        [HttpStatus(HttpStatusCode.NotImplemented)]
+        [HttpStatus(HttpStatusCode.Forbidden)]
         public ActionResult Forbidden()
         {
             var controller = TempData["Controller"] as String ?? Name;
             var action = TempData["Action"] as String ?? Action;
-            var message = TempData["Message"] as String ?? "Forbidden";
-			var status = TempData["StatusCode"] as int? ?? (int)HttpStatusCode.Forbidden;
 
-			Response.StatusCode = status;
+            var status = TempData["StatusCode"] as int? ?? Response.StatusCode;
+			var message = TempData["Message"] as String ?? HttpWorkerRequest.GetStatusDescription(status);
+
             var model = new HandleErrorInfo(new HttpException(status, message), controller, action);
             return View("Forbidden", model);
         }
