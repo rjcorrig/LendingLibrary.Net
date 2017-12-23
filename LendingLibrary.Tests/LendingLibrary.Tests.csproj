@@ -105,6 +105,7 @@
     <Compile Include="Controllers\BooksControllerTests.cs" />
     <Compile Include="Models\MockContext.cs" />
     <Compile Include="Controllers\ErrorControllerTests.cs" />
+    <Compile Include="ActionFilters\HttpStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -112,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="ActionFilters\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LendingLibrary\LendingLibrary.csproj">
