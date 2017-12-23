@@ -52,6 +52,7 @@ namespace LendingLibrary.Tests.Controllers
         [Test()]
         public void Forbidden_returns_Forbidden_View_with_403()
         {
+            controller.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             var result = controller.Forbidden();
 
             Assert.IsInstanceOf(typeof(ViewResult), result);
@@ -70,6 +71,8 @@ namespace LendingLibrary.Tests.Controllers
         {
             var message = "A message";
             controller.TempData["Message"] = message;
+
+            controller.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             var result = controller.Forbidden();
 
             Assert.IsInstanceOf(typeof(ViewResult), result);

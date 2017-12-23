@@ -39,10 +39,10 @@ namespace LendingLibrary.Controllers
             var controller = TempData["Controller"] as String ?? Name;
             var action = TempData["Action"] as String ?? Action;
 
-            var status = TempData["StatusCode"] as int? ?? Response.StatusCode;
-			var message = TempData["Message"] as String ?? HttpWorkerRequest.GetStatusDescription(status);
+            Response.StatusCode = TempData["StatusCode"] as int? ?? Response.StatusCode;
+			var message = TempData["Message"] as String ?? HttpWorkerRequest.GetStatusDescription(Response.StatusCode);
 
-            var model = new HandleErrorInfo(new HttpException(status, message), controller, action);
+            var model = new HandleErrorInfo(new HttpException(Response.StatusCode, message), controller, action);
             return View("Forbidden", model);
         }
     }
