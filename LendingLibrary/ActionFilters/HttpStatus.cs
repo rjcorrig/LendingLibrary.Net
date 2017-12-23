@@ -13,7 +13,7 @@ namespace LendingLibrary.ActionFilters
             Status = statusCode;
         }
 
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             filterContext.HttpContext.Response.StatusCode = (int)Status;
         }
