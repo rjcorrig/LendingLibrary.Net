@@ -2,9 +2,11 @@
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using LendingLibrary.ActionFilters;
 
 namespace LendingLibrary.Controllers
 {
+    [Log()]
     public class ErrorController : BaseController
     {
         public ActionResult Index()
@@ -31,6 +33,7 @@ namespace LendingLibrary.Controllers
             return View("BadRequest", model);
         }
 
+        [HttpStatus(HttpStatusCode.NotImplemented)]
         public ActionResult Forbidden()
         {
             var controller = TempData["Controller"] as String ?? Name;

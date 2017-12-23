@@ -137,6 +137,7 @@
     <Folder Include="Views\Shared\DisplayTemplates\" />
     <Folder Include="NodeScripts\" />
     <Folder Include="Views\Error\" />
+    <Folder Include="ActionFilters\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -167,6 +168,8 @@
     <Compile Include="Models\IRepository.cs" />
     <Compile Include="Models\Repository.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="ActionFilters\Log.cs" />
+    <Compile Include="ActionFilters\HttpStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
