@@ -6,16 +6,21 @@ namespace LendingLibrary.ActionFilters
 {
     public class HttpStatus : ActionFilterAttribute
     {
-        public HttpStatusCode Status { get; set; }
+        protected int status;
 
         public HttpStatus(HttpStatusCode statusCode)
         {
-            Status = statusCode;
+            status = (int)statusCode;
+        }
+
+        public HttpStatus(int statusCode)
+        {
+            status = statusCode;
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            filterContext.HttpContext.Response.StatusCode = (int)Status;
+            filterContext.HttpContext.Response.StatusCode = status;
         }
     }
 }
