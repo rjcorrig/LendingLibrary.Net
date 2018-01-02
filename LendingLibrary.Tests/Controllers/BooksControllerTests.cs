@@ -25,6 +25,7 @@ using LendingLibrary.Models;
 using System.Net;
 using System.Web;
 using Moq;
+using System.Linq;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -209,7 +210,87 @@ namespace LendingLibrary.Tests.Controllers
             Assert.AreEqual(book, result.Model);
 
             mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Never);
+        }
 
+        [Test()]
+        public async Task Edit_returns_ViewResult_if_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Edit(43) as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+
+            var model = result.Model as Book;
+            Assert.AreEqual(model.ID, 43);
+        }
+
+        [Test()]
+        public void Edit_throws_Forbidden_if_not_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(4));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+        }
+
+        [Test()]
+        public void Edit_throws_NotFound_if_not_found()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(41));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+        }    
+
+        [Test()]
+        public void Edit_throws_BadRequest_if_no_Id_passed()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit((int?)null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }
+
+        [Test()]
+        public async Task Edit_modifies_Book_and_redirects_to_Index_if_valid()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 43);
+
+            controller.ModelState.Clear();
+            var result = await controller.Edit(book) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.RouteValues["action"], "Index");
+        }
+
+        [Test()]
+        public async Task Edit_returns_Edit_view_if_model_invalid()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 43);
+            book.Title = null;
+
+            controller.ModelState.AddModelError("Title", "Title is required");
+            var result = await controller.Edit(book) as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+            Assert.AreEqual(book, result.Model);
         }
     }
 }

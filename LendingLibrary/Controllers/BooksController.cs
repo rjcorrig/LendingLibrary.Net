@@ -131,13 +131,13 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
 
             Book book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
             else 
             {
@@ -145,7 +145,7 @@ namespace LendingLibrary.Controllers
                 var currentUser = await GetCurrentUserAsync();
                 if (book.Owner.Id != currentUser.Id)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
             }
             return View(book);
