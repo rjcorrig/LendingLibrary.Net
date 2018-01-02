@@ -24,6 +24,7 @@ using LendingLibrary.Tests.Models;
 using LendingLibrary.Models;
 using System.Net;
 using System.Web;
+using Moq;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -146,5 +147,69 @@ namespace LendingLibrary.Tests.Controllers
             var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Index(strangerId));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
         }    
+
+        [Test()]
+        public void Create_returns_ViewResult_with_new_Book()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = controller.Create() as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+        }
+
+        [Test()]
+        public async Task Create_adds_Book_and_redirects_to_Index_if_valid()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var book = new Book()
+            {
+                ID = 59,
+                ISBN = "1234567890",
+                Title = "Harry Potter and the Half-Blood Prince",
+                Author = "J. K. Rowling",
+                Rating = 4
+            };
+
+            controller.ModelState.Clear();
+            var result = await controller.Create(book) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.RouteValues["action"], "Index");
+
+            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
+        }
+
+        [Test()]
+        public async Task Create_returns_Create_view_if_model_invalid()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var book = new Book()
+            {
+                ID = 159,
+                ISBN = "1234567890",
+                Author = "J. K. Rowling",
+                Rating = 4
+            };
+
+            controller.ModelState.AddModelError("Title", "Title is required");
+            var result = await controller.Create(book) as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+            Assert.AreEqual(book, result.Model);
+
+            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Never);
+
+        }
     }
 }
