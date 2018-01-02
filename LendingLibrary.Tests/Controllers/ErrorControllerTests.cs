@@ -51,6 +51,41 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
+        public void Index_returns_Error_View_with_500_and_message()
+        {
+            var message = "A message";
+            controller.TempData["Message"] = message;
+
+            controller.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            var result = controller.Index();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("Error", viewResult.ViewName);
+
+            Assert.AreEqual((int)HttpStatusCode.InternalServerError, response.Object.StatusCode);
+
+            Assert.IsInstanceOf(typeof(HandleErrorInfo), viewResult.Model);
+            Assert.AreEqual(message, (viewResult.Model as HandleErrorInfo)?.Exception?.Message);
+        }
+
+        [Test()]
+        public void Index_returns_Error_View_with_custom_httpStatus()
+        {
+            var status = (int)HttpStatusCode.NotImplemented;
+            controller.TempData["StatusCode"] = status;
+            var result = controller.Index();
+
+            Assert.IsInstanceOf(typeof(ViewResult), result);
+
+            var viewResult = result as ViewResult;
+            Assert.AreEqual("Error", viewResult.ViewName);
+
+            Assert.AreEqual(status, response.Object.StatusCode);
+        }
+
+        [Test()]
         public void Forbidden_returns_Forbidden_View_with_403()
         {
             controller.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
