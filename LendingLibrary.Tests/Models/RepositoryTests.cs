@@ -137,6 +137,28 @@ namespace LendingLibrary.Tests.Models
 
             Assert.AreEqual(0, books.Count());
         }
-		#endregion
+        #endregion
+
+        #region DbContext
+        [Test()]
+        public async Task SaveAsync_calls_Context_SaveChangesAsync()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            await repo.SaveAsync();
+            mockContext.Verify(m => m.SaveChangesAsync(), Times.Once());
+        }
+
+        public void SetModified_calls_Context_SetModified()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            repo.SetModified(new Book());
+            mockContext.Verify(m => m.SetModified(It.IsAny<object>()), Times.Once());
+        }
+
+        #endregion
     }
 }
