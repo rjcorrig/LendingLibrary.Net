@@ -136,7 +136,7 @@ namespace LendingLibrary.Models
 
         public void SetModified(object entity)
         {
-            Db.Entry(entity).State = EntityState.Modified;
+            Db.SetModified(entity);
         }
         #endregion
     }

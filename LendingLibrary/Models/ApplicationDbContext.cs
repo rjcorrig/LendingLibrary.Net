@@ -32,7 +32,7 @@ namespace LendingLibrary.Models
         IDbSet<ApplicationUser> Users { get; set; }
 
         Task<int> SaveChangesAsync();
-        DbEntityEntry Entry(object entity);
+        void SetModified(object entity);
 
         Database Database { get; }
     }
@@ -71,6 +71,12 @@ namespace LendingLibrary.Models
 
         public virtual IDbSet<Book> Books { get; set; }
         public virtual IDbSet<Friendship> Friendships { get; set; }
+
+        public virtual void SetModified(object entity)
+        {
+            Entry(entity).State = EntityState.Modified;
+        }
+
         #endregion
     }
 }
