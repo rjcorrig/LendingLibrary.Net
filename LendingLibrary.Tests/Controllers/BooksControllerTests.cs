@@ -300,5 +300,99 @@ namespace LendingLibrary.Tests.Controllers
             mockDbContext.Verify(m => m.SetModified(It.IsAny<Book>()), Times.Never());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
         }
+
+        [Test()]
+        public async Task Delete_returns_ViewResult_if_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Delete(43) as ViewResult;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf(typeof(Book), result.Model);
+
+            var model = result.Model as Book;
+            Assert.AreEqual(model.ID, 43);
+        }
+
+        [Test()]
+        public void Delete_throws_Forbidden_if_not_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(4));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+        }
+
+        [Test()]
+        public void Delete_throws_NotFound_if_not_found()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(41));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+        }
+
+        [Test()]
+        public void Delete_throws_BadRequest_if_no_Id_passed()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete((int?)null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }
+        [Test()]
+        public async Task DeleteConfirmed_removes_Book_and_redirects_to_Index_if_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var result = await controller.DeleteConfirmed(43) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.RouteValues["action"], "Index");
+
+            mockDbContext.MockBooks.Verify(m => m.Remove(It.IsAny<Book>()), Times.Once());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
+        }
+
+        [Test()]
+        public void DeleteConfirmed_throws_NotFound_if_not_found()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(41));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+        }
+
+        [Test()]
+        public void DeleteConfirmed_throws_BadRequest_if_no_Id_passed()
+        {
+            var mockContext = new MockContext();
+            var controller = new BooksController(mockContext.Object);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed((int?)null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }
+
+        [Test()]
+        public void DeleteConfirmed_throws_Forbidden_if_not_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(4));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+        }
+
     }
 }

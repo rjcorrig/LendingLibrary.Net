@@ -172,13 +172,13 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
             Book book = await repo.GetBookByIdAsync(id);
 
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
             else
             {
@@ -186,7 +186,7 @@ namespace LendingLibrary.Controllers
                 var currentUser = await GetCurrentUserAsync();
                 if (book.Owner.Id != currentUser.Id)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
             }
 
@@ -196,9 +196,28 @@ namespace LendingLibrary.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int? id)
         {
+            if (id == null)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
+            }
+
             Book book = await repo.GetBookByIdAsync(id);
+            if (book == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
+            }
+            else
+            {
+                // Check if it's my book to modify
+                var currentUser = await GetCurrentUserAsync();
+                if (book.Owner.Id != currentUser.Id)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
+                }
+            }
+
             repo.Remove(book);
             await repo.SaveAsync();
             return RedirectToAction("Index");
