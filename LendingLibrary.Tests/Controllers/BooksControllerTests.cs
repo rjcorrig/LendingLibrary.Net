@@ -184,7 +184,8 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.AreEqual(result.RouteValues["action"], "Index");
 
-            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once);
+            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Once());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
 
         [Test()]
@@ -209,7 +210,8 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsInstanceOf(typeof(Book), result.Model);
             Assert.AreEqual(book, result.Model);
 
-            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Never);
+            mockDbContext.MockBooks.Verify(m => m.Add(It.IsAny<Book>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
         }
 
         [Test()]
@@ -273,6 +275,9 @@ namespace LendingLibrary.Tests.Controllers
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.RouteValues["action"], "Index");
+
+            mockDbContext.Verify(m => m.SetModified(It.IsAny<Book>()), Times.Once());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
 
         [Test()]
@@ -291,6 +296,9 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
             Assert.AreEqual(book, result.Model);
+
+            mockDbContext.Verify(m => m.SetModified(It.IsAny<Book>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
         }
     }
 }
