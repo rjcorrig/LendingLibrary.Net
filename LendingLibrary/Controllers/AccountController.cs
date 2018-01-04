@@ -444,14 +444,14 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("BadRequest", "Error");
             }
 
             ApplicationUser account = await UserManager.FindByIdAsync(id);
 
             if (account == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotFound", "Error");
             }
 
             // Am I allowed to see all account details?
@@ -468,13 +468,13 @@ namespace LendingLibrary.Controllers
         public async Task<ActionResult> Edit(string id) {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("BadRequest", "Error");
             }
 
             // Can only edit myself
             var currentId = User.Identity.GetUserId();
             if (id != currentId) {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                return RedirectToAction("Forbidden", "Error");
             }
 
             var account = await UserManager.FindByIdAsync(id);
@@ -494,7 +494,7 @@ namespace LendingLibrary.Controllers
                 var currentId = User.Identity.GetUserId();
                 if (model.Id != currentId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    return RedirectToAction("Forbidden", "Error");
                 }
 
                 account.GivenName = model.GivenName;
