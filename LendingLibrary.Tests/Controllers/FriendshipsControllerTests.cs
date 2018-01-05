@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Collections.Generic;
 using LendingLibrary.Models;
+using System.Web;
+using System.Net;
+using Moq;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -80,5 +83,52 @@ namespace LendingLibrary.Tests.Controllers
             Assert.AreEqual(RequestConfirmed, result.ViewBag.RequestConfirmed);
         }    
 
+        [Test()]
+        public void Confirm_throws_BadRequest_if_no_userId_passed()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Confirm(null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        [TestCase("coryhome-guid")]
+        [TestCase("nosuchuser-guid")]
+        public void Confirm_throws_NotFound_if_no_request_from_userId(string requestorId)
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Confirm(requestorId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public async Task Confirm_redirects_to_Waiting_if_valid()
+        {
+            var userId = "foxyboots9-guid";
+            var requestorId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Confirm(requestorId) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Waiting", result.RouteValues["action"]);
+            Assert.AreEqual(true, result.RouteValues["RequestConfirmed"]);
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.AtMostOnce());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
+        }
     }
 }
