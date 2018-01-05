@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
+using System.Web;
 
 namespace LendingLibrary.Controllers
 {
@@ -71,17 +72,22 @@ namespace LendingLibrary.Controllers
         {
             if (userId == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
             var currentUser = await GetCurrentUserAsync();
             var requestor = await repo.GetUserByIdAsync(userId);
 
+            if (requestor == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
+            }
+
             // Confirm the original friendship request
             var friendRequest = await repo.GetFriendshipBetweenUserIdsAsync(requestor.Id, currentUser.Id);
-            if (friendRequest == null)
+            if (friendRequest == null || friendRequest.RequestApproved.HasValue)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
             }
             friendRequest.RequestApproved = DateTime.UtcNow;
 
