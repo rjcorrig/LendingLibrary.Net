@@ -17,9 +17,6 @@
 */
 
 using System;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
@@ -36,6 +33,11 @@ namespace LendingLibrary.Controllers
 
         public FriendshipsController(IApplicationDbContext db) :
             base(db)
+        {
+        }
+
+        public FriendshipsController(IApplicationDbContext db, Func<string> getUserId) :
+            base(db, getUserId)
         {
         }
 

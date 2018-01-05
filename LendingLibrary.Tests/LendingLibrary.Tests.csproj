@@ -107,6 +107,7 @@
     <Compile Include="Controllers\ErrorControllerTests.cs" />
     <Compile Include="ActionFilters\HttpStatus.cs" />
     <Compile Include="Models\BookTests.cs" />
+    <Compile Include="Controllers\FriendshipsControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
