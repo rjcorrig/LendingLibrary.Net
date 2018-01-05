@@ -194,6 +194,9 @@ namespace LendingLibrary.Tests.Models
             mockDbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
             mockDbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
+            // Must not cast as IDbSet<T> or Moq will fail to setup the extension method
+            mockDbSet.Setup(m => m.Include(It.IsAny<string>())).Returns(mockDbSet.Object);
+
             return mockDbSet;
         }
 
