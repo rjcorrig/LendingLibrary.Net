@@ -155,13 +155,13 @@ namespace LendingLibrary.Controllers
         {
             if (userId == null || friendId == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
             Friendship friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
             if (friendship == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
             }
             return View(friendship);
         }
@@ -171,12 +171,27 @@ namespace LendingLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string userId, string friendId)
         {
-            // Remove the targeted Friendship row
-            var friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
-            repo.Remove(friendship);
+            if (userId == null || friendId == null)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
+            }
 
-            // Remove the reciprocal row, if any
+            // Locate the targeted Friendship row
+            var friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
+
+            // Locate the reciprocal row, if any
             var reciprocal = await repo.GetFriendshipBetweenUserIdsAsync(friendId, userId);
+
+            if (friendship == null && reciprocal == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "No connection exists between those users");
+            }
+
+            if (friendship != null)
+            {
+                repo.Remove(friendship);
+            }
+
             if (reciprocal != null)
             {
                 repo.Remove(reciprocal);

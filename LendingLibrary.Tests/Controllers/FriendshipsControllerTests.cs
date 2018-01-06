@@ -207,6 +207,95 @@ namespace LendingLibrary.Tests.Controllers
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
 
+        [Test()]
+        [TestCase(null, null)]
+        [TestCase(null, "foxyboots9-guid")]
+        [TestCase("foxyboots9-guid", null)]
+        public void Delete_throws_BadRequest_if_either_User_not_passed(string userId, string friendId)
+        {
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(userId, friendId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }
+
+        [Test()]
+        public void Delete_throws_NotFound_if_Users_not_connected()
+        {
+            var userId = "coryhome-guid";
+            var friendId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(userId, friendId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+        }
+
+        [Test()]
+        [TestCase("coryhome-guid", "foxyboots9-guid")]
+        [TestCase("foxyboots9-guid", "coryhome-guid")]
+        [TestCase("robcory-guid", "foxyboots9-guid")]
+        public async Task Delete_returns_Delete_View_if_Users_connected(string userId, string friendId)
+        {
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Delete(userId, friendId) as ViewResult;
+            Assert.IsNotNull(result);
+
+            var model = result.Model as Friendship;
+            Assert.IsNotNull(model);
+        }
+
+        [Test()]
+        [TestCase(null, null)]
+        [TestCase(null, "foxyboots9-guid")]
+        [TestCase("foxyboots9-guid", null)]
+        public void DeleteConfirmed_throws_BadRequest_if_either_User_not_passed(string userId, string friendId)
+        {
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(userId, friendId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+            mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public void DeleteConfirmed_throws_NotFound_if_Users_not_connected()
+        {
+            var userId = "coryhome-guid";
+            var friendId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(userId, friendId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+ 
+            mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        [TestCase("coryhome-guid", "foxyboots9-guid")]
+        [TestCase("foxyboots9-guid", "coryhome-guid")]
+        [TestCase("robcory-guid", "foxyboots9-guid")]
+        public async Task DeleteConfirmed_redirects_to_Index_if_valid(string userId, string friendId)
+        {
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.DeleteConfirmed(userId, friendId) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Index", result.RouteValues["action"]);
+
+            mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.AtLeastOnce());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
+        }
 
     }
 }
