@@ -157,6 +157,76 @@ namespace LendingLibrary.Tests.Models
         }
         #endregion
 
+        #region Friendship
+
+        [Test()]
+        public async Task GetFriendshipsByUserIdAsync_returns_Friendships_with_User()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+            var userId = "foxyboots9-guid";
+            var friendships = await repo.GetFriendshipsByUserIdAsync(userId);
+
+            Assert.IsInstanceOf(typeof(IEnumerable<Friendship>), friendships);
+            Assert.Greater(friendships.Count(), 0);
+            Assert.That(friendships.All(f => f.UserId == userId ^ f.FriendId == userId));
+        }
+
+        [Test()]
+        public async Task GetFriendshipsAwaitingApprovalByUserIdAsync_returns_Friendships_waiting_for_User()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+            var userId = "foxyboots9-guid";
+            var friendships = await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(userId);
+
+            Assert.IsInstanceOf(typeof(IEnumerable<Friendship>), friendships);
+            Assert.Greater(friendships.Count(), 0);
+            Assert.AreEqual("robcory-guid", friendships.First().UserId);
+            Assert.That(friendships.All(f => f.FriendId == userId && !f.RequestApproved.HasValue));
+        }
+
+        [Test()]
+        // robcory and coryhome don't know each other
+        [TestCase("robcory-guid", "coryhome-guid", false)]
+        [TestCase("coryhome-guid", "robcory-guid", false)]
+        // coryhome and foxyboots are friends
+        [TestCase("coryhome-guid", "foxyboots9-guid", true)]
+        [TestCase("foxyboots9-guid", "coryhome-guid", true)]
+        // Requested by robcory but not approved by foxyboots9
+		[TestCase("robcory-guid", "foxyboots9-guid", true)]
+        [TestCase("foxyboots9-guid", "robcory-guid", false)] 
+        public async Task GetFriendshipBetweenUserIdsAsync_returns_Friendship_or_null(string userId, string friendId, bool expected)
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            var friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
+            Assert.AreEqual(expected, friendship != null);
+        }
+
+        [Test()]
+        public void Add_Friendship_adds_Friendship_to_Friendships()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+            repo.Add(new Friendship());
+
+            mockContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Once);
+        }
+
+        [Test()]
+        public void Remove_Friendship_removes_Friendship_from_Friendships()
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+            repo.Remove(mockContext.Object.Friendships.First());
+
+            mockContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Once);
+        }
+
+        #endregion
+
         #region DbContext
         [Test()]
         public async Task SaveAsync_calls_Context_SaveChangesAsync()
