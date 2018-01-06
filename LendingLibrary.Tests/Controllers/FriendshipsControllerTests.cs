@@ -221,6 +221,17 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
+        public void Delete_throws_Forbidden_if_User_not_in_Friendship()
+        {
+            var userId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete("foxyboots9-guid", "coryhome-guid"));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+        }
+
+        [Test()]
         public void Delete_throws_NotFound_if_Users_not_connected()
         {
             var userId = "coryhome-guid";
@@ -263,6 +274,21 @@ namespace LendingLibrary.Tests.Controllers
             mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Never());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
         }
+
+        [Test()]
+        public void DeleteConfirmed_throws_Forbidden_if_User_not_in_Friendship()
+        {
+            var userId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed("foxyboots9-guid", "coryhome-guid"));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+
+            mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
 
         [Test()]
         public void DeleteConfirmed_throws_NotFound_if_Users_not_connected()

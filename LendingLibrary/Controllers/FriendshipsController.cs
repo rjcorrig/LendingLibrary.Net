@@ -158,6 +158,12 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser.Id != userId && currentUser.Id != friendId)
+            {
+                throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
+            }
+
             Friendship friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
             if (friendship == null)
             {
@@ -174,6 +180,12 @@ namespace LendingLibrary.Controllers
             if (userId == null || friendId == null)
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
+            }
+
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser.Id != userId && currentUser.Id != friendId)
+            {
+                throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
             }
 
             // Locate the targeted Friendship row
