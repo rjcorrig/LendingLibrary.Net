@@ -64,6 +64,7 @@ namespace LendingLibrary.Tests.Models
                 Country = "USA",
                 BirthDate = new DateTime(1975, 12, 6),
                 Books = new List<Book>(),
+                Users = new List<Friendship>(),
                 Friendships = new List<Friendship>()
             };
 
@@ -82,6 +83,7 @@ namespace LendingLibrary.Tests.Models
                 Country = "USA",
                 BirthDate = new DateTime(1975, 09, 19),
                 Books = new List<Book>(),
+                Users = new List<Friendship>(),
                 Friendships = new List<Friendship>()
             };
 
@@ -100,6 +102,7 @@ namespace LendingLibrary.Tests.Models
                 Country = "USA",
                 BirthDate = new DateTime(1975, 12, 6),
                 Books = new List<Book>(),
+                Users = new List<Friendship>(),
                 Friendships = new List<Friendship>()
             };
 
@@ -174,6 +177,10 @@ namespace LendingLibrary.Tests.Models
             friendships.FindAll(f => f.User == robcory).ForEach(f => robcory.Friendships.Add(f));
             friendships.FindAll(f => f.User == foxyboots9).ForEach(f => foxyboots9.Friendships.Add(f));
             friendships.FindAll(f => f.User == coryhome).ForEach(f => coryhome.Friendships.Add(f));
+
+            friendships.FindAll(f => f.Friend == robcory).ForEach(f => robcory.Users.Add(f));
+            friendships.FindAll(f => f.Friend == foxyboots9).ForEach(f => foxyboots9.Users.Add(f));
+            friendships.FindAll(f => f.Friend == coryhome).ForEach(f => coryhome.Users.Add(f));
 
             return friendships.AsQueryable();
         }

@@ -130,5 +130,83 @@ namespace LendingLibrary.Tests.Controllers
             mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.AtMostOnce());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
+
+        [Test()]
+        public void Create_throws_BadRequest_if_no_userId_passed()
+        {
+            var userId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Create(null));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public void Create_throws_BadRequest_if_self_passed()
+        {
+            var userId = "robcory-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Create(userId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public void Create_throws_BadRequest_if_Users_have_a_Friendship()
+        {
+            var userId = "robcory-guid";
+            var targetUserId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Create(targetUserId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.BadRequest));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public void Create_throws_NotFound_if_target_User_not_found()
+        {
+            var userId = "robcory-guid";
+            var targetUserId = "nosuchuser-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Create(targetUserId));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.Never());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public async Task Create_redirects_to_Index_if_valid()
+        {
+            var userId = "robcory-guid";
+            var targetUserId = "coryhome-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.Create(targetUserId) as RedirectToRouteResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Index", result.RouteValues["action"]);
+            Assert.AreEqual(true, result.RouteValues["RequestSent"]);
+
+            mockDbContext.MockFriendships.Verify(m => m.Add(It.IsAny<Friendship>()), Times.AtMostOnce());
+            mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
+        }
+
+
     }
 }

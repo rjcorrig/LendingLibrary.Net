@@ -118,15 +118,24 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
             var currentUser = await GetCurrentUserAsync();
-            var friend = await repo.GetUserByIdAsync(id);
+            if (id == currentUser.Id)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "You cannot friend yourself!");
+            }
 
+            var friend = await repo.GetUserByIdAsync(id);
             if (currentUser == null || friend == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                throw new HttpException((int)HttpStatusCode.NotFound, "User does not exist");
+            }
+
+            if (currentUser.GetFriendshipStatusWith(friend) != FriendshipStatus.None)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "You have already connected with that user");
             }
 
             var friendship = new Friendship()
