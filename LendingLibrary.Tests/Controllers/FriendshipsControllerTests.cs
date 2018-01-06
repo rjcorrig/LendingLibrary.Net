@@ -32,7 +32,7 @@ namespace LendingLibrary.Tests.Controllers
             {
                 Assert.That(friendship.FriendId == userId || friendship.UserId == userId);
             }
-        }    
+        }
 
         [Test()]
         [TestCase(false)]
@@ -47,7 +47,7 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsNotNull(result);
 
             Assert.AreEqual(RequestSent, result.ViewBag.RequestSent);
-        }    
+        }
 
         [Test()]
         public async Task Waiting_returns_Friendships_waiting_for_approval()
@@ -66,7 +66,7 @@ namespace LendingLibrary.Tests.Controllers
             {
                 Assert.That(friendship.FriendId == userId && !friendship.RequestApproved.HasValue);
             }
-        }    
+        }
 
         [Test()]
         [TestCase(false)]
@@ -81,7 +81,7 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsNotNull(result);
 
             Assert.AreEqual(RequestConfirmed, result.ViewBag.RequestConfirmed);
-        }    
+        }
 
         [Test()]
         public void Confirm_throws_BadRequest_if_no_userId_passed()
@@ -274,7 +274,7 @@ namespace LendingLibrary.Tests.Controllers
 
             var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(userId, friendId));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
- 
+
             mockDbContext.MockFriendships.Verify(m => m.Remove(It.IsAny<Friendship>()), Times.Never());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
         }
@@ -297,5 +297,18 @@ namespace LendingLibrary.Tests.Controllers
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
 
+        [Test()]
+        public async Task SearchForNew_returns_SearchForNew_View_and_Model()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.SearchForNew() as ViewResult;
+            Assert.IsNotNull(result);
+
+            var model = result.Model as IEnumerable<ApplicationUser>;
+            Assert.IsNotNull(model);
+        }
     }
 }
