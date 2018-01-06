@@ -21,6 +21,7 @@ using NUnit.Framework;
 using LendingLibrary.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace LendingLibrary.Tests.Models
 {
@@ -30,7 +31,7 @@ namespace LendingLibrary.Tests.Models
         #region User
         //        Task<ApplicationUser> GetUserByIdAsync(string userId);
         //        ApplicationUser GetUserById(string userId);
-        //        TODO: Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId);
+        //        Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId);
         [Test()]
         public async Task GetUserByIdAsync_returns_correct_User()
         {
@@ -69,6 +70,23 @@ namespace LendingLibrary.Tests.Models
             var user = repo.GetUserById("nosuchuser-guid");
 
             Assert.IsNull(user);
+        }
+
+        [Test()]
+        public async Task GetUsersUnknownToUserAsync_returns_List_of_Users()
+        {
+            var userId = "coryhome-guid";
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            var currentUser = mockContext.MockUsers.Object.FirstOrDefault(u => u.Id == userId);
+            Assert.IsNotNull(currentUser);
+
+            var users = await repo.GetUsersUnknownToUserAsync(userId);
+
+            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUser>), users);
+            Assert.That(!users.Any(u => u.Id == userId));
+            Assert.That(users.All(u => u.GetFriendshipStatusWith(currentUser) == FriendshipStatus.None));
         }
         #endregion
 
