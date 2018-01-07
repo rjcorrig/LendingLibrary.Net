@@ -108,6 +108,7 @@
     <Compile Include="ActionFilters\HttpStatus.cs" />
     <Compile Include="Models\BookTests.cs" />
     <Compile Include="Controllers\FriendshipsControllerTests.cs" />
+    <Compile Include="Utils\Geocodio.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -116,6 +117,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="ActionFilters\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LendingLibrary\LendingLibrary.csproj">

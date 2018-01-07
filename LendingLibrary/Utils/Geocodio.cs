@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity.Spatial;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json.Linq;
@@ -8,53 +9,65 @@ using static System.Web.Configuration.WebConfigurationManager;
 
 namespace LendingLibrary.Utils
 {
-    public class Geocodio : IGeocoder
+    public class Geocodio : IGeocoder, IDisposable
     {
         protected readonly string apiKey;
         protected readonly Uri apiUrl;
+        protected readonly HttpClient client;
 
-        public Geocodio() : this(AppSettings["geocodio-url"], AppSettings["geocodio-apikey"])
+        public Geocodio() : this(AppSettings["geocodio-url"], AppSettings["geocodio-apikey"], new HttpClient())
         {
         }
 
-        public Geocodio(string apiUrl, string apiKey)
+        public Geocodio(HttpClient client): this(AppSettings["geocodio-url"], AppSettings["geocodio-apikey"], client)
+        {
+        }
+
+        public Geocodio(string apiUrl, string apiKey) : this(apiUrl, apiKey, new HttpClient())
+        {
+        }
+
+        public Geocodio(string apiUrl, string apiKey, HttpClient client)
         {
             this.apiKey = apiKey;
             this.apiUrl = new Uri(apiUrl);
+            this.client = client;
         }
 
-        public async Task<DbGeography> GeocodeAsync(string address)
+        public virtual async Task<DbGeography> GeocodeAsync(string address)
         {
             DbGeography result = default(DbGeography);
 
-            using (var httpClient = new HttpClient())
+            var builder = new UriBuilder(apiUrl);
+            builder.Port = -1;
+
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["q"] = address;
+            query["api_key"] = apiKey;
+
+            builder.Query = query.ToString();
+
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
             {
-                var builder = new UriBuilder(apiUrl);
-                builder.Port = -1;
-                var query = HttpUtility.ParseQueryString(builder.Query);
-                query["q"] = address;
-                query["api_key"] = apiKey;
-                builder.Query = query.ToString();
+                httpRequest.Headers.Add("Accept", "application/json");
 
-                using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
+                using (var httpResponse = await client.SendAsync(httpRequest, default(CancellationToken)))
                 {
-                    httpRequest.Headers.Add("Accept", "application/json");
-                    using (var httpResponse = await httpClient.SendAsync(httpRequest)) 
+                    if (httpResponse.IsSuccessStatusCode)
                     {
-                        if (httpResponse.IsSuccessStatusCode)
+                        var body = await httpResponse.Content.ReadAsStringAsync();
+                        var response = JObject.Parse(body);
+
+                        var location = response["results"]?[0]?["location"];
+
+                        if (location != null)
                         {
-                            var body = await httpResponse.Content.ReadAsStringAsync();
-                            var response = JObject.Parse(body);
+                            var lat = location?["lat"]?.Value<double>();
+                            var lng = location?["lng"]?.Value<double>();
 
-                            var location = response["results"]?[0]?["location"];
-
-                            if (location != null) {
-                                var lat = location?["lng"]?.Value<double>();
-                                var lng = location?["lng"]?.Value<double>();
-
-                                if (lat.HasValue && lng.HasValue) {
-								    return DbGeography.FromText($"POINT ({lat} {lng}");
-                                }
+                            if (lat.HasValue && lng.HasValue)
+                            {
+                                return DbGeography.FromText($"POINT ({lat} {lng}");
                             }
                         }
                     }
@@ -63,5 +76,26 @@ namespace LendingLibrary.Utils
 
             return result;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    client.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
     }
 }
