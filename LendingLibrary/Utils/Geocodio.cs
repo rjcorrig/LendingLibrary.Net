@@ -47,10 +47,15 @@ namespace LendingLibrary.Utils
                             var response = JObject.Parse(body);
 
                             var location = response["results"]?[0]?["location"];
-                            var lat = location?["lng"]?.Value<double>() ?? 0;
-                            var lng = location?["lng"]?.Value<double>() ?? 0;
 
-                            return DbGeography.FromText($"POINT ({lat} {lng}");
+                            if (location != null) {
+                                var lat = location?["lng"]?.Value<double>();
+                                var lng = location?["lng"]?.Value<double>();
+
+                                if (lat.HasValue && lng.HasValue) {
+								    return DbGeography.FromText($"POINT ({lat} {lng}");
+                                }
+                            }
                         }
                     }
                 }
