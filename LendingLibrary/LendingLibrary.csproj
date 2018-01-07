@@ -170,6 +170,8 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="ActionFilters\Log.cs" />
     <Compile Include="ActionFilters\HttpStatus.cs" />
+    <Compile Include="Utils\IGeocoder.cs" />
+    <Compile Include="Utils\Geocodio.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
