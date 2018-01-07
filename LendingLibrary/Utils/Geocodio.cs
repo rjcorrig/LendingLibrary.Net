@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using LendingLibrary.Models;
 using Newtonsoft.Json.Linq;
 using static System.Web.Configuration.WebConfigurationManager;
 
@@ -34,9 +35,9 @@ namespace LendingLibrary.Utils
             this.client = client;
         }
 
-        public virtual async Task<DbGeometry> GeocodeAsync(string address)
+        public virtual async Task<GeoPoint> GeocodeAsync(string address)
         {
-            DbGeometry result = default(DbGeometry);
+            var result = default(GeoPoint);
 
             var builder = new UriBuilder(apiUrl);
             builder.Port = -1;
@@ -67,7 +68,7 @@ namespace LendingLibrary.Utils
 
                             if (lat.HasValue && lng.HasValue)
                             {
-                                return DbGeometry.FromText($"POINT ({lat} {lng})");
+                                return new GeoPoint(lat.Value, lng.Value);
                             }
                         }
                     }

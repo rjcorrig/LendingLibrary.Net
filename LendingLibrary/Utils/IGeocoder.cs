@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Data.Entity.Spatial;
 using System.Threading.Tasks;
+using LendingLibrary.Models;
 
 namespace LendingLibrary.Utils
 {
     public interface IGeocoder
     {
-        Task<DbGeometry> GeocodeAsync(string address);
+        Task<GeoPoint> GeocodeAsync(string address);
     }
 }

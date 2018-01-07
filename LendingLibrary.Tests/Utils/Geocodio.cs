@@ -90,7 +90,8 @@ namespace LendingLibrary.Tests.Utils
             var location = await geo.GeocodeAsync("foobar");
 
             Assert.IsNotNull(location);
+            Assert.AreEqual(38.886665, location.Latitude);
+            Assert.AreEqual(-77.094733, location.Longitude);
         }
-
     }
 }
