@@ -34,9 +34,9 @@ namespace LendingLibrary.Utils
             this.client = client;
         }
 
-        public virtual async Task<DbGeography> GeocodeAsync(string address)
+        public virtual async Task<DbGeometry> GeocodeAsync(string address)
         {
-            DbGeography result = default(DbGeography);
+            DbGeometry result = default(DbGeometry);
 
             var builder = new UriBuilder(apiUrl);
             builder.Port = -1;
@@ -67,7 +67,7 @@ namespace LendingLibrary.Utils
 
                             if (lat.HasValue && lng.HasValue)
                             {
-                                return DbGeography.FromText($"POINT ({lat} {lng}");
+                                return DbGeometry.FromText($"POINT ({lat} {lng})");
                             }
                         }
                     }

@@ -1,8 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
 using Moq;
 using System.Net.Http;
-using System.Web;
 using LendingLibrary.Utils;
 using System.Threading.Tasks;
 using System.Net;
@@ -76,7 +74,7 @@ namespace LendingLibrary.Tests.Utils
         }
 
         [Test()]
-        public async Task Geocode_returns_DbGeography_on_Success()
+        public async Task Geocode_returns_DbGeometry_on_Success()
         {
             var client = new Mock<HttpClient>();
 

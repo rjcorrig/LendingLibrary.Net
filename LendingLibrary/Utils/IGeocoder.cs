@@ -6,6 +6,6 @@ namespace LendingLibrary.Utils
 {
     public interface IGeocoder
     {
-        Task<DbGeography> GeocodeAsync(string address);
+        Task<DbGeometry> GeocodeAsync(string address);
     }
 }
