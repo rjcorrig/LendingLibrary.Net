@@ -172,6 +172,7 @@
     <Compile Include="ActionFilters\HttpStatus.cs" />
     <Compile Include="Utils\IGeocoder.cs" />
     <Compile Include="Utils\Geocodio.cs" />
+    <Compile Include="Models\GeoPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

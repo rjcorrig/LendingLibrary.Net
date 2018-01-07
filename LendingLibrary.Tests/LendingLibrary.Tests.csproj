@@ -109,6 +109,7 @@
     <Compile Include="Models\BookTests.cs" />
     <Compile Include="Controllers\FriendshipsControllerTests.cs" />
     <Compile Include="Utils\Geocodio.cs" />
+    <Compile Include="Models\GeoPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
