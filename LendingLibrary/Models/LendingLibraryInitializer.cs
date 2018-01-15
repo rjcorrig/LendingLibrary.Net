@@ -43,6 +43,8 @@ namespace LendingLibrary.Models
             {
                 bool isRunningOnMono = CrossPlatform.IsRunningOnMono;
 
+                // Using center of population for each state
+                // Found at http://www.howderfamily.com/blog/state-centers-population/
                 var robcory = new ApplicationUser
                 {
                     GivenName = "Rob",
@@ -50,11 +52,13 @@ namespace LendingLibrary.Models
                     About = "Robin @ Work",
                     UserName = "rob@cory.com",
                     Email = "rob@cory.com",
-                    Address1 = "123 Main St",
-                    City = "Anytown",
+                    Address1 = "2555 W Britton Rd",
+                    City = "Perry",
                     State = "MI",
-                    Postal = "45123",
+                    Postal = "48872",
                     Country = "USA",
+                    Latitude = 42.866412,
+                    Longitude = -84.170753,
                     BirthDate = new DateTime(1975, 12, 6),
                 };
                 userManager.Create(robcory, "P@ssw0rd!");
@@ -66,11 +70,13 @@ namespace LendingLibrary.Models
                     About = "Red Hot Fox",
                     UserName = "foxyboots9@gmail.com",
                     Email = "foxyboots9@gmail.com",
-                    Address1 = "987 Elm St",
-                    City = "Someplace",
+                    Address1 = "270 Scotts Fork-Bonnie Rd",
+                    City = "Sutton",
                     State = "WV",
-                    Postal = "25123",
+                    Postal = "26601",
                     Country = "USA",
+                    Latitude = 38.767195,
+                    Longitude = -80.820221,
                     BirthDate = new DateTime(1975, 09, 19)
                 };
                 userManager.Create(foxyboots9, "P@ssw0rd!");
@@ -82,11 +88,13 @@ namespace LendingLibrary.Models
                     About = "Rob @ Home",
                     UserName = "rcory@gmail.com",
                     Email = "rcory@gmail.com",
-                    Address1 = "555 State Rd",
-                    City = "Nowhere",
+                    Address1 = "35 E Sandusky St",
+                    City = "Chesterville",
                     State = "OH",
-                    Postal = "35123",
+                    Postal = "43317",
                     Country = "USA",
+                    Latitude = 40.480854,
+                    Longitude = -82.749366,
                     BirthDate = new DateTime(1975, 12, 6),
                 };
                 userManager.Create(coryhome, "P@ssw0rd!");

@@ -57,6 +57,10 @@ namespace LendingLibrary.Models
         public virtual string State { get; set; }
         public virtual string Postal { get; set; }
         public virtual string Country { get; set; }
+        [Range(-90.0, 90.0)]
+        public virtual double Latitude { get; set; }
+        [Range(-180.0, 180.0)]
+        public virtual double Longitude { get; set; }
         public virtual ICollection<Book> Books { get; set; }
 
         // Friendship relations
