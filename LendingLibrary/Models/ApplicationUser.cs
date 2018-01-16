@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using LendingLibrary.Utils;
 
 namespace LendingLibrary.Models
 {
@@ -58,9 +59,9 @@ namespace LendingLibrary.Models
         public virtual string Postal { get; set; }
         public virtual string Country { get; set; }
         [Range(-90.0, 90.0)]
-        public virtual double Latitude { get; set; }
+        public virtual double? Latitude { get; set; }
         [Range(-180.0, 180.0)]
-        public virtual double Longitude { get; set; }
+        public virtual double? Longitude { get; set; }
         public virtual ICollection<Book> Books { get; set; }
 
         // Friendship relations
@@ -111,6 +112,17 @@ namespace LendingLibrary.Models
                 return FriendshipStatus.Received;
             }
 
+        }
+
+        public async Task<GeoPoint> UpdateLatLong(IGeocoder geo)
+        {
+            var geoPoint = await geo.GeocodeAsync(
+                        $"{Address1}, {Address2}, {City} {State} {Postal} {Country}"
+                    );
+            Latitude = geoPoint?.Latitude;
+            Longitude = geoPoint?.Longitude;
+
+            return geoPoint;
         }
         #endregion
     }

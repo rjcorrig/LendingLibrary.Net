@@ -16,11 +16,11 @@ namespace LendingLibrary.Utils
         protected readonly Uri apiUrl;
         protected readonly HttpClient client;
 
-        public Geocodio() : this(AppSettings["geocodio-url"], AppSettings["geocodio-apikey"], new HttpClient())
+        public Geocodio() : this(AppSettings["geocodio-apiurl"], AppSettings["geocodio-apikey"], new HttpClient())
         {
         }
 
-        public Geocodio(HttpClient client): this(AppSettings["geocodio-url"], AppSettings["geocodio-apikey"], client)
+        public Geocodio(HttpClient client): this(AppSettings["geocodio-apiurl"], AppSettings["geocodio-apikey"], client)
         {
         }
 

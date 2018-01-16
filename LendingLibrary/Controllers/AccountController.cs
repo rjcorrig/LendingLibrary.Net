@@ -9,6 +9,7 @@ using LendingLibrary.Models;
 using System.Net;
 using System.Security.Claims;
 using System.Data.Entity;
+using LendingLibrary.Utils;
 
 namespace LendingLibrary.Controllers
 {
@@ -152,7 +153,8 @@ namespace LendingLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var user = new ApplicationUser
+                {
                     UserName = model.Email,
                     Email = model.Email,
                     Address1 = model.Address1,
@@ -166,6 +168,9 @@ namespace LendingLibrary.Controllers
                     FamilyName = model.FamilyName,
                     About = model.About
                 };
+
+                await user.UpdateLatLong(new Geocodio());
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -501,14 +506,16 @@ namespace LendingLibrary.Controllers
                 account.FamilyName = model.FamilyName;
                 account.About = model.About;
                 account.BirthDate = model.BirthDate;
+
                 account.Address1 = model.Address1;
                 account.Address2 = model.Address2;
                 account.City = model.City;
                 account.State = model.State;
                 account.Postal = model.Postal;
                 account.Country = model.Country;
+				await account.UpdateLatLong(new Geocodio());
+    
                 account.PhoneNumber = model.PhoneNumber;
-
                 account.Email = model.Email;
                 account.UserName = model.Email;
 
