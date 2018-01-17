@@ -43,8 +43,9 @@ namespace LendingLibrary
             // container.LoadConfiguration();
 
             // TODO: Register your type's mappings here.
-            container.RegisterType<IGeocoder, Geocodio>();
-            container.RegisterType<AccountController>(new InjectionConstructor(new Geocodio()));
+            container.RegisterType<IGeocoder, Geocodio>(new InjectionConstructor());
+            container.RegisterType<AccountController>(
+                new InjectionConstructor(container.Resolve<IGeocoder>()));
         }
     }
 }
