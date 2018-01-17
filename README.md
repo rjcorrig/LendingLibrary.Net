@@ -7,6 +7,7 @@ Lending Library is a fun, free website to meet other bibliophiles online, browse
 * .NET Framework 4.5.2
 * ASP.NET MVC 5.2.3
 * Entity Framework 6.1.3
+* Unity.Mvc 5.0.12
 * MariaDB 10.2
 * Node.js (build only)
 * Webpack (build only)
