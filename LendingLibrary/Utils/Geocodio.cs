@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using LendingLibrary.Models;
 using Newtonsoft.Json.Linq;
+using Unity.Attributes;
 using static System.Web.Configuration.WebConfigurationManager;
 
 namespace LendingLibrary.Utils
@@ -16,6 +17,7 @@ namespace LendingLibrary.Utils
         protected readonly Uri apiUrl;
         protected readonly HttpClient client;
 
+        [InjectionConstructor]
         public Geocodio() : this(AppSettings["geocodio-apiurl"], AppSettings["geocodio-apikey"], new HttpClient())
         {
         }

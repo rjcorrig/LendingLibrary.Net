@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LendingLibrary.Models;
 using LendingLibrary.Utils;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
@@ -16,6 +17,7 @@ namespace LendingLibrary.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        [InjectionConstructor]
         public AccountController(IGeocoder geocoder)
         {
             Geocoder = geocoder;
