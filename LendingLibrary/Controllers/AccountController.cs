@@ -6,9 +6,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LendingLibrary.Models;
-using System.Net;
-using System.Security.Claims;
-using System.Data.Entity;
 using LendingLibrary.Utils;
 
 namespace LendingLibrary.Controllers
@@ -19,15 +16,19 @@ namespace LendingLibrary.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+        public AccountController(IGeocoder geocoder)
         {
+            Geocoder = geocoder;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IGeocoder geocoder)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            Geocoder = geocoder;
         }
+
+        public IGeocoder Geocoder { get; private set; }
 
         public ApplicationSignInManager SignInManager
         {
@@ -169,7 +170,7 @@ namespace LendingLibrary.Controllers
                     About = model.About
                 };
 
-                await user.UpdateLatLong(new Geocodio());
+                await user.UpdateLatLong(Geocoder);
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -513,7 +514,7 @@ namespace LendingLibrary.Controllers
                 account.State = model.State;
                 account.Postal = model.Postal;
                 account.Country = model.Country;
-				await account.UpdateLatLong(new Geocodio());
+                await account.UpdateLatLong(Geocoder);
     
                 account.PhoneNumber = model.PhoneNumber;
                 account.Email = model.Email;
