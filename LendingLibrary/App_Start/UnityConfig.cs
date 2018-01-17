@@ -44,7 +44,6 @@ namespace LendingLibrary
 
             // TODO: Register your type's mappings here.
             container.RegisterType<IGeocoder, Geocodio>();
-            container.RegisterType<AccountController>();
         }
     }
 }
