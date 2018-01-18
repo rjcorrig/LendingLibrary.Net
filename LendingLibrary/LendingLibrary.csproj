@@ -154,6 +154,7 @@
     <Folder Include="NodeScripts\" />
     <Folder Include="Views\Error\" />
     <Folder Include="ActionFilters\" />
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -292,6 +293,7 @@
     <None Include="Content\README.md" />
     <None Include="package.json" />
     <None Include="package-lock.json" />
+    <None Include="App_Data\MOCK_DATA.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
