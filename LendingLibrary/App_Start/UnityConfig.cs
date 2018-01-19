@@ -1,4 +1,5 @@
 using System;
+using LendingLibrary.Models;
 using LendingLibrary.Utils;
 using Microsoft.Practices.Unity.Configuration;
 using Unity;
@@ -22,6 +23,8 @@ namespace LendingLibrary
         public static void RegisterTypes(IUnityContainer container)
         {
             container.LoadConfiguration();
+
+            container.RegisterType<IApplicationDbContext, ApplicationDbContext>();
         }
     }
 }

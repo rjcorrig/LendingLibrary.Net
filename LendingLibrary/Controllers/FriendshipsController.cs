@@ -30,10 +30,6 @@ namespace LendingLibrary.Controllers
     public class FriendshipsController : BaseController
     {
         [InjectionConstructor]
-        public FriendshipsController()
-        {
-        }
-
         public FriendshipsController(IApplicationDbContext db) :
             base(db)
         {

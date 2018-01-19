@@ -31,10 +31,6 @@ namespace LendingLibrary.Controllers
     public class BooksController : BaseController
     {
         [InjectionConstructor]
-        public BooksController()
-        {
-        }
-
         public BooksController(IApplicationDbContext db) : 
             base(db)
         {
