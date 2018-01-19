@@ -23,6 +23,7 @@ using System.Web.Mvc;
 using System;
 using System.Web;
 using System.Net;
+using LendingLibrary.Utils.Extensions;
 
 namespace LendingLibrary.Controllers
 {
@@ -31,12 +32,6 @@ namespace LendingLibrary.Controllers
         protected IApplicationDbContext db;
         protected IRepository repo;
         protected Func<string> GetUserId;
-
-        public BaseController()
-        {
-            repo = new Repository();
-            db = repo.Db;
-        }
 
         public BaseController(IApplicationDbContext db)
         {
@@ -50,18 +45,6 @@ namespace LendingLibrary.Controllers
             this.db = repo.Db;
 
             GetUserId = getUserId;        
-        }
-
-        public string Name {
-            get {
-                return ControllerContext.RouteData.Values["controller"].ToString();
-            }
-        }
-
-        public string Action {
-            get {
-                return ControllerContext.RouteData.Values["action"].ToString();
-            }
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
@@ -105,8 +88,8 @@ namespace LendingLibrary.Controllers
 				filterContext.ExceptionHandled = true;
 
                 // Pass context data to the Error Controller for rendering in the view
-                TempData["Controller"] = Name;
-                TempData["Action"] = Action;
+                TempData["Controller"] = this.RouteName();
+                TempData["Action"] = this.RouteAction();
                 TempData["Message"] = httpException.Message;
                 TempData["StatusCode"] = httpException.GetHttpCode();
 

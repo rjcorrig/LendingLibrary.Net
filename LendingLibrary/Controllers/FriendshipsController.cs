@@ -22,16 +22,14 @@ using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Web;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
     [Authorize]
     public class FriendshipsController : BaseController
     {
-        public FriendshipsController()
-        {
-        }
-
+        [InjectionConstructor]
         public FriendshipsController(IApplicationDbContext db) :
             base(db)
         {

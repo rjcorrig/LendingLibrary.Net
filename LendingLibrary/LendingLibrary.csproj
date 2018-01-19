@@ -195,6 +195,7 @@
     <Compile Include="Models\GeoPoint.cs" />
     <Compile Include="App_Start\UnityMvcActivator.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
+    <Compile Include="Utils\ControllerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
