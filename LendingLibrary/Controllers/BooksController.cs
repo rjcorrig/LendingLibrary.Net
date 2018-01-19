@@ -23,12 +23,14 @@ using LendingLibrary.Models;
 using System.Linq;
 using System;
 using System.Web;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
     [Authorize]
     public class BooksController : BaseController
     {
+        [InjectionConstructor]
         public BooksController()
         {
         }
