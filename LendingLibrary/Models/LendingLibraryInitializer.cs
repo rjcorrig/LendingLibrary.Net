@@ -23,6 +23,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using LendingLibrary.Utils;
+using CsvHelper;
+using System.IO;
+using System.Web.Hosting;
 
 namespace LendingLibrary.Models
 {
@@ -41,63 +44,18 @@ namespace LendingLibrary.Models
         {
             using (var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context)))
             {
-                bool isRunningOnMono = CrossPlatform.IsRunningOnMono;
-
-                // Using center of population for each state
-                // Found at http://www.howderfamily.com/blog/state-centers-population/
-                var robcory = new ApplicationUser
+                using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/MOCK_DATA.csv")))
                 {
-                    GivenName = "Rob",
-                    FamilyName = "Cory",
-                    About = "Robin @ Work",
-                    UserName = "rob@cory.com",
-                    Email = "rob@cory.com",
-                    Address1 = "2555 W Britton Rd",
-                    City = "Perry",
-                    State = "MI",
-                    Postal = "48872",
-                    Country = "USA",
-                    Latitude = 42.866412,
-                    Longitude = -84.170753,
-                    BirthDate = new DateTime(1975, 12, 6),
-                };
-                userManager.Create(robcory, "P@ssw0rd!");
-
-                var foxyboots9 = new ApplicationUser
-                {
-                    GivenName = "Jen",
-                    FamilyName = "Cory",
-                    About = "Red Hot Fox",
-                    UserName = "foxyboots9@gmail.com",
-                    Email = "foxyboots9@gmail.com",
-                    Address1 = "270 Scotts Fork-Bonnie Rd",
-                    City = "Sutton",
-                    State = "WV",
-                    Postal = "26601",
-                    Country = "USA",
-                    Latitude = 38.767195,
-                    Longitude = -80.820221,
-                    BirthDate = new DateTime(1975, 09, 19)
-                };
-                userManager.Create(foxyboots9, "P@ssw0rd!");
-
-                var coryhome = new ApplicationUser
-                {
-                    GivenName = "Rob",
-                    FamilyName = "Cory",
-                    About = "Rob @ Home",
-                    UserName = "rcory@gmail.com",
-                    Email = "rcory@gmail.com",
-                    Address1 = "35 E Sandusky St",
-                    City = "Chesterville",
-                    State = "OH",
-                    Postal = "43317",
-                    Country = "USA",
-                    Latitude = 40.480854,
-                    Longitude = -82.749366,
-                    BirthDate = new DateTime(1975, 12, 6),
-                };
-                userManager.Create(coryhome, "P@ssw0rd!");
+                    using (var csv = new CsvReader(reader))
+                    {
+                        csv.Configuration.HeaderValidated = null;
+                        csv.Configuration.MissingFieldFound = null;
+                        foreach (var user in csv.GetRecords<ApplicationUser>())
+                        {
+                            userManager.Create(user, "P@ssw0rd!");
+                        }
+                    }
+                }
             }
         }
 
