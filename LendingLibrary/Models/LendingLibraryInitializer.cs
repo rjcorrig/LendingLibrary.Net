@@ -88,16 +88,56 @@ namespace LendingLibrary.Models
 
         private void SeedFriendships(ApplicationDbContext context)
         {
-            var robcory = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "rob@cory.com");
-            var foxyboots9 = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "foxyboots9@gmail.com");
-            var coryhome = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "rcory@gmail.com");
+            /*
+             * Assign friendships among triplets of users
+             * Unconfirmed request to next user, followed by confirmed friendship between next two users,
+             * followed by confirmed friendship to middle of next triplet
+             * [0 -> 1], [1 <-> 2], [2 <-> 4]
+             * [3 -> 4], [4 <-> 5], [5 <-> 7]
+             * [6 -> 7], [7 <-> 8], [8 <-> 10]
+             * ...
+             * [51 -> 52], [52 <-> 53], [53 <-> 1]
+             * [3n -> 3n+1], [3n+1 <-> 3n+2], [3n+2 <-> 3n+4 % N]
+             */
 
-            // An unconfirmed friendship request from robcory to foxyboots
-            robcory.Friendships.Add(new Friendship { Friend = foxyboots9, RequestSent = DateTime.UtcNow });
+            var users = context.Users.Include("Books").Include("Friendships").ToArray();
 
-            // A confirmed friendship between foxyboots and coryhome
-            foxyboots9.Friendships.Add(new Friendship { Friend = coryhome, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
-            coryhome.Friendships.Add(new Friendship { Friend = foxyboots9, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
+            for (var n = 0; n < users.Length / 3; n++)
+            {
+                users[3 * n].Friendships.Add(new Friendship 
+                { 
+                    Friend = users[3 * n + 1], 
+                    RequestSent = DateTime.UtcNow 
+                });
+
+                users[3 * n + 1].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 2],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+
+                users[3 * n + 2].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 1],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+
+                users[3 * n + 2].Friendships.Add(new Friendship
+                {
+                    Friend = users[(3 * n + 4) % users.Length],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });
+
+                users[(3 * n + 4) % users.Length].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 2],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+            }
         }
     }
 }
