@@ -50,12 +50,12 @@ namespace LendingLibrary.Models
 
         private void SeedBooks(ApplicationDbContext context)
         {
-            var users = context.Users.Include("Books").ToArray();
+            var users = context.Users.Include("Books").OrderBy(u => u.Id).ToArray();
 
             foreach (var book in importer.Get<Book>())
             {
                 // Distribute books to each user until we run out
-                var owner = users[book.ID % users.Length];
+                var owner = users[(book.ID - 1) % users.Length];
                 owner.Books.Add(new Book()
                 {
                     ID = book.ID,
