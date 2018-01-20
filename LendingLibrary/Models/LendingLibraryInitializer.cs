@@ -44,7 +44,7 @@ namespace LendingLibrary.Models
         {
             using (var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context)))
             {
-                using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/MOCK_DATA.csv")))
+                using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/ApplicationUsers_Seed.csv")))
                 {
                     using (var csv = new CsvReader(reader))
                     {
@@ -61,21 +61,29 @@ namespace LendingLibrary.Models
 
         private void SeedBooks(ApplicationDbContext context)
         {
-            var robcory = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "rob@cory.com");
-            var foxyboots9 = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "foxyboots9@gmail.com");
-            var coryhome = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "rcory@gmail.com");
+            var rng = new Random();
+			var numUsers = context.Users.Count();
 
-            robcory.Books.Add(new Book { Author = "Charles Dickens", Title = "A Tale of Two Cities", ISBN = "99177615628", Rating = 3 });
-            robcory.Books.Add(new Book { Author = "James Joyce", Title = "A Portrait of the Artist as a Young Man", ISBN = "98155659891", Rating = 4 });
-            robcory.Books.Add(new Book { Author = "Fyodor Dostoyevsky", Title = "Crime and Punishment", ISBN = "97826678161" , Rating = 2 });
-
-            foxyboots9.Books.Add(new Book { Author = "Jane Austen", Title = "Pride and Prejudice", ISBN = "78192775621", Rating = 5 });
-            foxyboots9.Books.Add(new Book { Author = "Diana Gabaldon", Title = "Outlander", ISBN = "615572515112", Rating = 5 });
-            foxyboots9.Books.Add(new Book { Author = "Emily Bronte", Title = "Wuthering Heights", ISBN = "78192775621", Rating = 5 });
-
-            coryhome.Books.Add(new Book { Author = "Mary Shelley", Title = "Frankenstein", ISBN = "78712661612", Rating = 4 });
-            coryhome.Books.Add(new Book { Author = "Larry Niven", Title = "Ringworld", ISBN = "782627657134", Rating = 5 });
-            coryhome.Books.Add(new Book { Author = "Isaac Asimov", Title = "Foundation", ISBN = "867856985515", Rating = 3 });
+            using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/Books_Seed.csv")))
+            {
+                using (var csv = new CsvReader(reader))
+                {
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.MissingFieldFound = null;
+                    foreach (var book in csv.GetRecords<Book>())
+                    {
+                        // Assign to a random user
+                        var owner = context.Users.Include("Books").OrderBy(u => u.UserName).Skip(rng.Next(numUsers)).First();
+                        owner.Books.Add(new Book()
+                        {
+                            Title = book.Title,
+                            Author = book.Author,
+                            Rating = book.Rating,
+                            ISBN = book.ISBN
+                        });
+                    }
+                }
+            }
         }
 
         private void SeedFriendships(ApplicationDbContext context)

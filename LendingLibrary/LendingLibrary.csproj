@@ -297,7 +297,8 @@
     <None Include="Content\README.md" />
     <None Include="package.json" />
     <None Include="package-lock.json" />
-    <None Include="App_Data\MOCK_DATA.csv" />
+    <None Include="App_Data\ApplicationUsers_Seed.csv" />
+    <None Include="App_Data\Books_Seed.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
