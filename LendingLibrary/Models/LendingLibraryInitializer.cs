@@ -63,6 +63,7 @@ namespace LendingLibrary.Models
         {
             var rng = new Random();
 			var numUsers = context.Users.Count();
+            var users = context.Users.Include("Books").ToArray(); 
 
             using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/Books_Seed.csv")))
             {
@@ -73,9 +74,10 @@ namespace LendingLibrary.Models
                     foreach (var book in csv.GetRecords<Book>())
                     {
                         // Assign to a random user
-                        var owner = context.Users.Include("Books").OrderBy(u => u.UserName).Skip(rng.Next(numUsers)).First();
+                        var owner = users[rng.Next(numUsers)];
                         owner.Books.Add(new Book()
                         {
+                            ID = book.ID,
                             Title = book.Title,
                             Author = book.Author,
                             Rating = book.Rating,
