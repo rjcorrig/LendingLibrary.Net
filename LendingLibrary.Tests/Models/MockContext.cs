@@ -49,100 +49,58 @@ namespace LendingLibrary.Tests.Models
 
         protected IQueryable<ApplicationUser> SetUpApplicationUsers()
         {
-            // Using center of population for each state
-            // Found at http://www.howderfamily.com/blog/state-centers-population/
-            var robcory = new ApplicationUser
-            {
-                Id = "robcory-guid",
-                GivenName = "Rob",
-                FamilyName = "Cory",
-                About = "Robin @ Work",
-                UserName = "rob@cory.com",
-                Email = "rob@cory.com",
-                Address1 = "2555 W Britton Rd",
-                City = "Perry",
-                State = "MI",
-                Postal = "48872",
-                Country = "USA",
-                Latitude = 42.866412,
-                Longitude = -84.170753,
-                BirthDate = new DateTime(1975, 12, 6),
-                Books = new List<Book>(),
-                Users = new List<Friendship>(),
-                Friendships = new List<Friendship>()
-            };
+            var userList = new List<ApplicationUser>();
+            var importer = new SeedImporter();
 
-            var foxyboots9 = new ApplicationUser
+            foreach (var user in importer.Get<ApplicationUser>())
             {
-                Id = "foxyboots9-guid",
-                GivenName = "Jen",
-                FamilyName = "Cory",
-                About = "Red Hot Fox",
-                UserName = "foxyboots9@gmail.com",
-                Email = "foxyboots9@gmail.com",
-                Address1 = "270 Scotts Fork-Bonnie Rd",
-                City = "Sutton",
-                State = "WV",
-                Postal = "26601",
-                Country = "USA",
-                Latitude = 38.767195,
-                Longitude = -80.820221,
-                BirthDate = new DateTime(1975, 09, 19),
-                Books = new List<Book>(),
-                Users = new List<Friendship>(),
-                Friendships = new List<Friendship>()
-            };
+                userList.Add(new ApplicationUser
+                {
+                    Id = user.Id,
+                    GivenName = user.GivenName,
+                    FamilyName = user.FamilyName,
+                    About = user.About,
+                    Email = user.Email,
+                    Address1 = user.Address1,
+                    City = user.City,
+                    State = user.State,
+                    Postal = user.Postal,
+                    Country = user.Country,
+                    Latitude = user.Latitude,
+                    Longitude = user.Longitude,
+                    BirthDate = user.BirthDate,
+                    Books = new List<Book>(),
+                    Users = new List<Friendship>(),
+                    Friendships = new List<Friendship>()
+                });
+            }
 
-            var coryhome = new ApplicationUser
-            {
-                Id = "coryhome-guid",
-                GivenName = "Rob",
-                FamilyName = "Cory",
-                About = "Rob @ Home",
-                UserName = "rcory@gmail.com",
-                Email = "rcory@gmail.com",
-                Address1 = "35 E Sandusky St",
-                City = "Chesterville",
-                State = "OH",
-                Postal = "43317",
-                Country = "USA",
-                Latitude = 40.480854,
-                Longitude = -82.749366,
-                BirthDate = new DateTime(1975, 12, 6),
-                Books = new List<Book>(),
-                Users = new List<Friendship>(),
-                Friendships = new List<Friendship>()
-            };
-
-            return new List<ApplicationUser>
-            {
-                robcory, foxyboots9, coryhome
-            }.AsQueryable();
+            return userList.AsQueryable();
         }
 
         protected IQueryable<Book> SetUpBooks(IQueryable<ApplicationUser> users)
         {
-            var robcory = users.Where(u => u.Id == "robcory-guid").FirstOrDefault();
-            var foxyboots9 = users.Where(u => u.Id == "foxyboots9-guid").FirstOrDefault();
-            var coryhome = users.Where(u => u.Id == "coryhome-guid").FirstOrDefault();
-
             var books = new List<Book>();
+            var importer = new SeedImporter();
+            var userArray = users.OrderBy(u => u.Id).ToArray();
 
-            books.Add(new Book { ID = 1, Owner = robcory, Author = "Charles Dickens", Title = "A Tale of Two Cities", ISBN = "99177615628", Rating = 3 });
-            books.Add(new Book { ID = 2, Owner = robcory, Author = "James Joyce", Title = "A Portrait of the Artist as a Young Man", ISBN = "98155659891", Rating = 4 });
-            books.Add(new Book { ID = 4, Owner = robcory, Author = "Fyodor Dostoyevsky", Title = "Crime and Punishment", ISBN = "97826678161", Rating = 2 });
+            foreach (var book in importer.Get<Book>())
+            {
+                // Distribute books to each user until we run out
+                var owner = userArray[(book.ID - 1) % userArray.Length];
+                var newBook = new Book()
+                {
+                    ID = book.ID,
+                    Owner = owner,
+                    Title = book.Title,
+                    Author = book.Author,
+                    Rating = book.Rating,
+                    ISBN = book.ISBN
+                };
 
-            books.Add(new Book { ID = 43, Owner = foxyboots9, Author = "Jane Austen", Title = "Pride and Prejudice", ISBN = "78192775621", Rating = 5 });
-            books.Add(new Book { ID = 57, Owner = foxyboots9, Author = "Diana Gabaldon", Title = "Outlander", ISBN = "615572515112", Rating = 5 });
-            books.Add(new Book { ID = 123, Owner = foxyboots9, Author = "Emily Bronte", Title = "Wuthering Heights", ISBN = "78192775621", Rating = 5 });
-
-            books.Add(new Book { ID = 122, Owner = coryhome, Author = "Mary Shelley", Title = "Frankenstein", ISBN = "78712661612", Rating = 4 });
-            books.Add(new Book { ID = 3, Owner = coryhome, Author = "Larry Niven", Title = "Ringworld", ISBN = "782627657134", Rating = 5 });
-            books.Add(new Book { ID = 321, Owner = coryhome, Author = "Isaac Asimov", Title = "Foundation", ISBN = "867856985515", Rating = 3 });
-
-            books.FindAll(b => b.Owner == robcory).ForEach(b => robcory.Books.Add(b));
-            books.FindAll(b => b.Owner == foxyboots9).ForEach(b => foxyboots9.Books.Add(b));
-            books.FindAll(b => b.Owner == coryhome).ForEach(b => coryhome.Books.Add(b));
+                books.Add(newBook);
+                owner.Books.Add(newBook);
+            }
 
             return books.AsQueryable();
         }

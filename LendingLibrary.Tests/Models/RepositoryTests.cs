@@ -127,7 +127,7 @@ namespace LendingLibrary.Tests.Models
         {
             var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
-            var book = await repo.GetBookByIdAsync(103);
+            var book = await repo.GetBookByIdAsync(-1);
 
             Assert.IsNull(book);
         }
@@ -139,7 +139,7 @@ namespace LendingLibrary.Tests.Models
             var repo = new Repository(mockContext.Object);
             var books = await repo.GetBooksByOwnerIdAsync("foxyboots9-guid");
 
-            Assert.AreEqual(3, books.Count());
+            Assert.AreEqual(2, books.Count());
             foreach (var book in books)
             {
                 Assert.AreEqual("foxyboots9-guid", book.Owner.Id);

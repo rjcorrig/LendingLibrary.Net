@@ -39,13 +39,13 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Details(43) as ViewResult;
+            var result = await controller.Details(21) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
 
             var model = result.Model as Book;
-            Assert.AreEqual(model.ID, 43);
+            Assert.AreEqual(model.ID, 21);
         }
 
         [Test()]
@@ -55,13 +55,13 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Details(122) as ViewResult;
+            var result = await controller.Details(15) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
 
             var model = result.Model as Book;
-            Assert.AreEqual(model.ID, 122);
+            Assert.AreEqual(model.ID, 15);
             Assert.AreNotEqual(model.Owner.Id, userId);
         }
 
@@ -82,7 +82,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
 
-            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Details(41));
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Details(-1));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }    
 
@@ -221,13 +221,13 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Edit(43) as ViewResult;
+            var result = await controller.Edit(21) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
 
             var model = result.Model as Book;
-            Assert.AreEqual(model.ID, 43);
+            Assert.AreEqual(model.ID, 21);
         }
 
         [Test()]
@@ -247,7 +247,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
 
-            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(41));
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(-1));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }    
 
@@ -308,13 +308,13 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Delete(43) as ViewResult;
+            var result = await controller.Delete(21) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
 
             var model = result.Model as Book;
-            Assert.AreEqual(model.ID, 43);
+            Assert.AreEqual(model.ID, 21);
         }
 
         [Test()]
@@ -334,7 +334,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
 
-            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(41));
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Delete(-1));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
@@ -354,7 +354,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.DeleteConfirmed(43) as RedirectToRouteResult;
+            var result = await controller.DeleteConfirmed(21) as RedirectToRouteResult;
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.RouteValues["action"], "Index");
@@ -369,7 +369,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockContext = new MockContext();
             var controller = new BooksController(mockContext.Object);
 
-            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(41));
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.DeleteConfirmed(-1));
             Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
