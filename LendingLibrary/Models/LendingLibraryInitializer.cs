@@ -61,8 +61,6 @@ namespace LendingLibrary.Models
 
         private void SeedBooks(ApplicationDbContext context)
         {
-            var rng = new Random();
-			var numUsers = context.Users.Count();
             var users = context.Users.Include("Books").ToArray(); 
 
             using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/Books_Seed.csv")))
@@ -73,8 +71,8 @@ namespace LendingLibrary.Models
                     csv.Configuration.MissingFieldFound = null;
                     foreach (var book in csv.GetRecords<Book>())
                     {
-                        // Assign to a random user
-                        var owner = users[rng.Next(numUsers)];
+                        // Distribute books to each user until we run out
+                        var owner = users[book.ID % users.Length];
                         owner.Books.Add(new Book()
                         {
                             ID = book.ID,
