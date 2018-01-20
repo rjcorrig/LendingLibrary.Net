@@ -26,6 +26,7 @@ using LendingLibrary.Utils;
 using CsvHelper;
 using System.IO;
 using System.Web.Hosting;
+using static System.Reflection.Assembly;
 
 namespace LendingLibrary.Models
 {
@@ -42,18 +43,18 @@ namespace LendingLibrary.Models
 
         private void SeedUsers(ApplicationDbContext context)
         {
+            
             using (var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context)))
             {
-                using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/ApplicationUsers_Seed.csv")))
+                using (var stream = GetExecutingAssembly().GetManifestResourceStream("LendingLibrary.App_Data.ApplicationUsers_Seed.csv"))
+                using (var reader = new StreamReader(stream))
+                using (var csv = new CsvReader(reader))
                 {
-                    using (var csv = new CsvReader(reader))
+                    csv.Configuration.HeaderValidated = null;
+                    csv.Configuration.MissingFieldFound = null;
+                    foreach (var user in csv.GetRecords<ApplicationUser>())
                     {
-                        csv.Configuration.HeaderValidated = null;
-                        csv.Configuration.MissingFieldFound = null;
-                        foreach (var user in csv.GetRecords<ApplicationUser>())
-                        {
-                            userManager.Create(user, "P@ssw0rd!");
-                        }
+                        userManager.Create(user, "P@ssw0rd!");
                     }
                 }
             }
@@ -63,25 +64,24 @@ namespace LendingLibrary.Models
         {
             var users = context.Users.Include("Books").ToArray(); 
 
-            using (var reader = File.OpenText(HostingEnvironment.MapPath("~/App_Data/Books_Seed.csv")))
+            using (var stream = GetExecutingAssembly().GetManifestResourceStream("LendingLibrary.App_Data.Books_Seed.csv"))
+            using (var reader = new StreamReader(stream))
+            using (var csv = new CsvReader(reader))
             {
-                using (var csv = new CsvReader(reader))
+                csv.Configuration.HeaderValidated = null;
+                csv.Configuration.MissingFieldFound = null;
+                foreach (var book in csv.GetRecords<Book>())
                 {
-                    csv.Configuration.HeaderValidated = null;
-                    csv.Configuration.MissingFieldFound = null;
-                    foreach (var book in csv.GetRecords<Book>())
+                    // Distribute books to each user until we run out
+                    var owner = users[book.ID % users.Length];
+                    owner.Books.Add(new Book()
                     {
-                        // Distribute books to each user until we run out
-                        var owner = users[book.ID % users.Length];
-                        owner.Books.Add(new Book()
-                        {
-                            ID = book.ID,
-                            Title = book.Title,
-                            Author = book.Author,
-                            Rating = book.Rating,
-                            ISBN = book.ISBN
-                        });
-                    }
+                        ID = book.ID,
+                        Title = book.Title,
+                        Author = book.Author,
+                        Rating = book.Rating,
+                        ISBN = book.ISBN
+                    });
                 }
             }
         }
