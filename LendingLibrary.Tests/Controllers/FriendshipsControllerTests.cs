@@ -116,7 +116,7 @@ namespace LendingLibrary.Tests.Controllers
         [Test()]
         public async Task Confirm_redirects_to_Waiting_if_valid()
         {
-            var userId = "foxyboots9-guid";
+            var userId = "rsoame-guid";
             var requestorId = "robcory-guid";
             var mockDbContext = new MockContext();
             var controller = new FriendshipsController(mockDbContext.Object, () => userId);
@@ -163,7 +163,7 @@ namespace LendingLibrary.Tests.Controllers
         public void Create_throws_BadRequest_if_Users_have_a_Friendship()
         {
             var userId = "robcory-guid";
-            var targetUserId = "foxyboots9-guid";
+            var targetUserId = "rsoame-guid";
             var mockDbContext = new MockContext();
             var controller = new FriendshipsController(mockDbContext.Object, () => userId);
 
@@ -244,9 +244,9 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        [TestCase("coryhome-guid", "foxyboots9-guid")]
-        [TestCase("foxyboots9-guid", "coryhome-guid")]
-        [TestCase("robcory-guid", "foxyboots9-guid")]
+        [TestCase("rmckune-guid", "rsoame-guid")]
+        [TestCase("rsoame-guid", "rmckune-guid")]
+        [TestCase("robcory-guid", "rsoame-guid")]
         public async Task Delete_returns_Delete_View_if_Users_connected(string userId, string friendId)
         {
             var mockDbContext = new MockContext();
@@ -306,9 +306,9 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        [TestCase("coryhome-guid", "foxyboots9-guid")]
-        [TestCase("foxyboots9-guid", "coryhome-guid")]
-        [TestCase("robcory-guid", "foxyboots9-guid")]
+        [TestCase("rmckune-guid", "rsoame-guid")]
+        [TestCase("rsoame-guid", "rmckune-guid")]
+        [TestCase("robcory-guid", "rsoame-guid")]
         public async Task DeleteConfirmed_redirects_to_Index_if_valid(string userId, string friendId)
         {
             var mockDbContext = new MockContext();

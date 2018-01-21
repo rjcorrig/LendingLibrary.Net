@@ -177,7 +177,7 @@ namespace LendingLibrary.Tests.Models
         {
             var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
-            var userId = "foxyboots9-guid";
+            var userId = "rsoame-guid";
             var friendships = await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(userId);
 
             Assert.IsInstanceOf(typeof(IEnumerable<Friendship>), friendships);
@@ -187,15 +187,15 @@ namespace LendingLibrary.Tests.Models
         }
 
         [Test()]
-        // robcory and coryhome don't know each other
-        [TestCase("robcory-guid", "coryhome-guid", false)]
-        [TestCase("coryhome-guid", "robcory-guid", false)]
-        // coryhome and foxyboots are friends
-        [TestCase("coryhome-guid", "foxyboots9-guid", true)]
-        [TestCase("foxyboots9-guid", "coryhome-guid", true)]
-        // Requested by robcory but not approved by foxyboots9
-		[TestCase("robcory-guid", "foxyboots9-guid", true)]
-        [TestCase("foxyboots9-guid", "robcory-guid", false)] 
+        // robcory and rmckune don't know each other
+        [TestCase("robcory-guid", "rmckune-guid", false)]
+        [TestCase("rmckune-guid", "robcory-guid", false)]
+        // rsoame and rmckune are friends
+        [TestCase("rsoame-guid", "rmckune-guid", true)]
+        [TestCase("rmckune-guid", "rsoame-guid", true)]
+        // Requested by robcory but not approved by rsoame
+		[TestCase("robcory-guid", "rsoame-guid", true)]
+        [TestCase("rsoame-guid", "robcory-guid", false)] 
         public async Task GetFriendshipBetweenUserIdsAsync_returns_Friendship_or_null(string userId, string friendId, bool expected)
         {
             var mockContext = new MockContext();

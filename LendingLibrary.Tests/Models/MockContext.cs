@@ -107,46 +107,80 @@ namespace LendingLibrary.Tests.Models
 
         protected IQueryable<Friendship> SetUpFriendships(IQueryable<ApplicationUser> users)
         {
-            var robcory = users.Where(u => u.Id == "robcory-guid").FirstOrDefault();
-            var foxyboots9 = users.Where(u => u.Id == "foxyboots9-guid").FirstOrDefault();
-            var coryhome = users.Where(u => u.Id == "coryhome-guid").FirstOrDefault();
-
             var friendships = new List<Friendship>();
+            var userArray = users.OrderBy(u => u.Id).ToArray();
 
-            // An unconfirmed friendship request from robcory to foxyboots
-            friendships.Add(new Friendship { 
-                User = robcory, 
-                UserId = robcory.Id,
-                Friend = foxyboots9,
-                FriendId = foxyboots9.Id,
-                RequestSent = DateTime.UtcNow 
-            });
+            for (var n = 0; n < userArray.Length / 3; n++)
+            {
+                var first = userArray[3 * n];
+                var second = userArray[3 * n + 1];
+                var third = userArray[3 * n + 2];
+                var next = userArray[(3 * n + 4) % userArray.Length];
 
-            // A confirmed friendship between foxyboots and coryhome
-            friendships.Add(new Friendship { 
-                User = foxyboots9, 
-                UserId = foxyboots9.Id,
-                Friend = coryhome, 
-                FriendId = coryhome.Id,
-                RequestSent = DateTime.UtcNow.AddDays(-5), 
-                RequestApproved = DateTime.UtcNow 
-            });
-            friendships.Add(new Friendship { 
-                User = coryhome, 
-                UserId = coryhome.Id,
-                Friend = foxyboots9, 
-                FriendId = foxyboots9.Id,
-                RequestSent = DateTime.UtcNow.AddDays(-5), 
-                RequestApproved = DateTime.UtcNow 
-            });
+                var unconfirmed = new Friendship
+                {
+                    User = first,
+                    UserId = first.Id,
+                    Friend = second,
+                    FriendId = second.Id,
+                    RequestSent = DateTime.UtcNow
+                };
+                friendships.Add(unconfirmed);
 
-            friendships.FindAll(f => f.User == robcory).ForEach(f => robcory.Friendships.Add(f));
-            friendships.FindAll(f => f.User == foxyboots9).ForEach(f => foxyboots9.Friendships.Add(f));
-            friendships.FindAll(f => f.User == coryhome).ForEach(f => coryhome.Friendships.Add(f));
+                var confirmed = new Friendship
+                {
+                    User = second,
+                    UserId = second.Id,
+                    Friend = third,
+                    FriendId = third.Id,
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                };
+                friendships.Add(confirmed);
 
-            friendships.FindAll(f => f.Friend == robcory).ForEach(f => robcory.Users.Add(f));
-            friendships.FindAll(f => f.Friend == foxyboots9).ForEach(f => foxyboots9.Users.Add(f));
-            friendships.FindAll(f => f.Friend == coryhome).ForEach(f => coryhome.Users.Add(f));
+                var reciprocal = new Friendship
+                {
+                    User = third,
+                    UserId = third.Id,
+                    Friend = second,
+                    FriendId = second.Id,
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                };
+                friendships.Add(reciprocal);
+
+                var confirmedNext = new Friendship
+                {
+                    User = third,
+                    UserId = third.Id,
+                    Friend = next,
+                    FriendId = next.Id,
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                };
+                friendships.Add(confirmedNext);
+
+                var reciprocalNext = new Friendship
+                {
+                    User = next,
+                    UserId = next.Id,
+                    Friend = third,
+                    FriendId = third.Id,
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                };
+                friendships.Add(reciprocalNext);
+
+                friendships.FindAll(f => f.User == first).ForEach(f => first.Friendships.Add(f));
+                friendships.FindAll(f => f.User == second).ForEach(f => second.Friendships.Add(f));
+                friendships.FindAll(f => f.User == third).ForEach(f => third.Friendships.Add(f));
+                friendships.FindAll(f => f.User == next).ForEach(f => next.Friendships.Add(f));
+
+                friendships.FindAll(f => f.Friend == first).ForEach(f => first.Users.Add(f));
+                friendships.FindAll(f => f.Friend == second).ForEach(f => second.Users.Add(f));
+                friendships.FindAll(f => f.Friend == third).ForEach(f => third.Users.Add(f));
+                friendships.FindAll(f => f.Friend == next).ForEach(f => next.Users.Add(f));
+            }
 
             return friendships.AsQueryable();
         }

@@ -55,13 +55,13 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var result = await controller.Details(15) as ViewResult;
+            var result = await controller.Details(20) as ViewResult;
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf(typeof(Book), result.Model);
 
             var model = result.Model as Book;
-            Assert.AreEqual(model.ID, 15);
+            Assert.AreEqual(model.ID, 20);
             Assert.AreNotEqual(model.Owner.Id, userId);
         }
 
@@ -120,7 +120,7 @@ namespace LendingLibrary.Tests.Controllers
         public async Task Index_returns_a_Friends_books()
         {
             var userId = "foxyboots9-guid";
-            var friendId = "coryhome-guid";
+            var friendId = "ffishpool-guid";
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
