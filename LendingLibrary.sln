@@ -1,15 +1,16 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27A56F10-FA18-4C79-A76C-2FA65193E23E}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary", "LendingLibrary\LendingLibrary.csproj", "{D638CFDC-25E7-4898-8BA2-BF3A1F44D88B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LendingLibrary.Tests", "LendingLibrary.Tests\LendingLibrary.Tests.csproj", "{0F902A75-3754-4DA4-B802-6AA7BA8F6F85}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27A56F10-FA18-4C79-A76C-2FA65193E23E}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-		LICENSE.md = LICENSE.md
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +26,8 @@ Global
 		{0F902A75-3754-4DA4-B802-6AA7BA8F6F85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F902A75-3754-4DA4-B802-6AA7BA8F6F85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F902A75-3754-4DA4-B802-6AA7BA8F6F85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
