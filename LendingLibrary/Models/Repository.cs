@@ -55,16 +55,19 @@ namespace LendingLibrary.Models
             return Db.Users.Where(u => u.Id == userId).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId)
+        public async Task<IEnumerable<ApplicationUser>> GetUsersUnknownToUserAsync(string userId, int skip = 0, int take = int.MaxValue)
         {
             // All users not me, 
             // with no friendship requests to me (otherUser.Friendships)
             // and no friendship requests from me (otherUser.Users)
             return await Db.Users.Include("Friendships").Include("Users")
-                .Where(u => u.Id != userId)
-                .Where(u => !u.Friendships.Any(f => f.FriendId == userId))
-                .Where(u => !u.Users.Any(f => f.UserId == userId))
-                .ToListAsync();
+                           .Where(u => u.Id != userId)
+                           .Where(u => !u.Friendships.Any(f => f.FriendId == userId))
+                           .Where(u => !u.Users.Any(f => f.UserId == userId))
+                           .OrderBy(u => u.Id)
+                           .Skip(skip)
+                           .Take(take)
+                           .ToListAsync();
         }
         #endregion
 

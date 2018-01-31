@@ -9,6 +9,7 @@ using LendingLibrary.Models;
 using System.Web;
 using System.Net;
 using Moq;
+using System.Linq;
 
 namespace LendingLibrary.Tests.Controllers
 {
@@ -335,6 +336,24 @@ namespace LendingLibrary.Tests.Controllers
 
             var model = result.Model as IEnumerable<ApplicationUser>;
             Assert.IsNotNull(model);
+        }
+
+        [Test()]
+        [TestCase(1,5,5)]
+        [TestCase(1,10,10)]
+        [TestCase(2,5,5)]
+        public async Task SearchForNew_returns_paged_SearchForNew_View_and_Model(int page, int take, int expected)
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new FriendshipsController(mockDbContext.Object, () => userId);
+
+            var result = await controller.SearchForNew(page, take) as ViewResult;
+            Assert.IsNotNull(result);
+
+            var model = result.Model as IEnumerable<ApplicationUser>;
+            Assert.IsNotNull(model);
+            Assert.AreEqual(expected, model.Count());
         }
     }
 }

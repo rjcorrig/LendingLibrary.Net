@@ -88,6 +88,49 @@ namespace LendingLibrary.Tests.Models
             Assert.That(!users.Any(u => u.Id == userId));
             Assert.That(users.All(u => u.GetFriendshipStatusWith(currentUser) == FriendshipStatus.None));
         }
+
+        [Test()]
+        public async Task GetUsersUnknownToUserAsync_returns_paged_List_of_Users()
+        {
+            var userId = "coryhome-guid";
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            var currentUser = mockContext.MockUsers.Object.FirstOrDefault(u => u.Id == userId);
+            Assert.IsNotNull(currentUser);
+
+            var take = 5;
+            var users = await repo.GetUsersUnknownToUserAsync(userId, take: take);
+
+            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUser>), users);
+            Assert.That(!users.Any(u => u.Id == userId));
+            Assert.That(users.All(u => u.GetFriendshipStatusWith(currentUser) == FriendshipStatus.None));
+            Assert.AreEqual(take, users.Count());
+        }
+
+        [Test()]
+        public async Task GetUsersUnknownToUserAsync_returns_next_paged_List_of_Users()
+        {
+            var userId = "coryhome-guid";
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            var currentUser = mockContext.MockUsers.Object.FirstOrDefault(u => u.Id == userId);
+            Assert.IsNotNull(currentUser);
+
+            var perPage = 5;
+            var page1 = (await repo.GetUsersUnknownToUserAsync(userId, 0, perPage)).ToArray();
+            var page2 = (await repo.GetUsersUnknownToUserAsync(userId, perPage, perPage)).ToArray();
+
+            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUser>), page2);
+            Assert.That(!page2.Any(u => u.Id == userId));
+            Assert.That(page2.All(u => u.GetFriendshipStatusWith(currentUser) == FriendshipStatus.None));
+            Assert.AreEqual(perPage, page2.Count());
+            Assert.AreNotEqual(page1[0], page2[0]);
+            Assert.AreNotEqual(page1[perPage-1], page2[perPage-1]);
+            Assert.AreNotEqual(page1[perPage - 1], page2[0]);
+        }
+
         #endregion
 
         #region Book

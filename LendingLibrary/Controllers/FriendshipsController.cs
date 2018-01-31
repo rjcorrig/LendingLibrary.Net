@@ -211,11 +211,11 @@ namespace LendingLibrary.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> SearchForNew()
+        public async Task<ActionResult> SearchForNew(int pageNo = 1, int perPage = 5)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            return View(await repo.GetUsersUnknownToUserAsync(currentUser.Id));
+            return View(await repo.GetUsersUnknownToUserAsync(currentUser.Id, perPage * (pageNo - 1), perPage));
         }
     }
 }
