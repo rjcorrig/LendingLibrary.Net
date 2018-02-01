@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *@
 
-@model IEnumerable<LendingLibrary.Models.ApplicationUserNameAndCity>
+@model LendingLibrary.Models.SearchForNewViewModel
 
 @{
     ViewBag.Title = "Find Friends!";
@@ -27,21 +27,21 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserName)
+            @Html.DisplayNameFor(model => model.FriendSuggestions.FirstOrDefault().UserName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.City)
+            @Html.DisplayNameFor(model => model.FriendSuggestions.FirstOrDefault().City)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.State)
+            @Html.DisplayNameFor(model => model.FriendSuggestions.FirstOrDefault().State)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Country)
+            @Html.DisplayNameFor(model => model.FriendSuggestions.FirstOrDefault().Country)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in Model.FriendSuggestions) {
     <tr>
         @using (Html.BeginForm("Create", "Friendships"))
         {
