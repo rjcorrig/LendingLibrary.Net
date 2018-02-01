@@ -77,8 +77,13 @@ namespace LendingLibrary.Models
 
         public FriendshipStatus GetFriendshipStatusWith(ApplicationUser other)
         {
+            return GetFriendshipStatusWith(other.Id);
+        }
+
+        public FriendshipStatus GetFriendshipStatusWith(string otherId)
+        {
             // Do we have a friendship request (approved or not) sent to the other user?
-            var friend = Friendships.FirstOrDefault(f => f.FriendId == other.Id);
+            var friend = Friendships.FirstOrDefault(f => f.FriendId == otherId);
             if (friend != null)
             {
                 // Yes, we do
@@ -95,7 +100,7 @@ namespace LendingLibrary.Models
             }
 
             // Ok, do we have a friendship request sent to us by the other user?
-            friend = Users.FirstOrDefault(u => u.UserId == other.Id);
+            friend = Users.FirstOrDefault(u => u.UserId == otherId);
             if (friend == null)
             {
                 // No, never heard of them

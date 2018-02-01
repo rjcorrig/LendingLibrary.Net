@@ -86,7 +86,7 @@ namespace LendingLibrary.Tests.Models
 
             Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), users);
             Assert.That(!users.Any(u => u.Id == userId));
-//            Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u) == FriendshipStatus.None));
+            Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
         }
 
         [Test()]
@@ -104,7 +104,7 @@ namespace LendingLibrary.Tests.Models
 
             Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), users);
             Assert.That(!users.Any(u => u.Id == userId));
-//            Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u) == FriendshipStatus.None));
+            Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
             Assert.AreEqual(take, users.Count());
         }
 
@@ -124,7 +124,7 @@ namespace LendingLibrary.Tests.Models
 
             Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), page2);
             Assert.That(!page2.Any(u => u.Id == userId));
-//            Assert.That(page2.All(u => currentUser.GetFriendshipStatusWith(u) == FriendshipStatus.None));
+            Assert.That(page2.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
             Assert.AreEqual(perPage, page2.Count());
             Assert.AreNotEqual(page1[0], page2[0]);
             Assert.AreNotEqual(page1[perPage-1], page2[perPage-1]);
