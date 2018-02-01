@@ -73,8 +73,8 @@ namespace LendingLibrary.Models
                                 Country = u.Country
                             })
                            .OrderBy(u => u.Id)
-                           .Skip(skip)
-                           .Take(take)
+                           .Skip(() => skip)
+                           .Take(() => take)
                            .ToListAsync();
         }
         #endregion
