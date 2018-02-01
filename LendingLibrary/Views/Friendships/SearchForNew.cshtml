@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *@
 
-@model IEnumerable<LendingLibrary.Models.ApplicationUser>
+@model IEnumerable<LendingLibrary.Models.ApplicationUserNameAndCity>
 
 @{
     ViewBag.Title = "Find Friends!";
@@ -48,7 +48,7 @@
             @Html.AntiForgeryToken();
             @Html.Hidden("id", item.Id);
             <td>
-                @Html.ActionLink(item.GivenName + " " + item.FamilyName, "Details", "Account", new { id = item.Id }, null)
+                @Html.ActionLink(item.UserName, "Details", "Account", new { id = item.Id }, null)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.City)

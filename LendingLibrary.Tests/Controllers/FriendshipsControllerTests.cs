@@ -334,7 +334,7 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.SearchForNew() as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<ApplicationUser>;
+            var model = result.Model as IEnumerable<ApplicationUserNameAndCity>;
             Assert.IsNotNull(model);
         }
 
@@ -351,7 +351,7 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.SearchForNew(page, take) as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<ApplicationUser>;
+            var model = result.Model as IEnumerable<ApplicationUserNameAndCity>;
             Assert.IsNotNull(model);
             Assert.AreEqual(expected, model.Count());
         }
