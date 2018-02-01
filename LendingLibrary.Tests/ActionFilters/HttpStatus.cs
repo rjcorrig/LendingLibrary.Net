@@ -27,24 +27,5 @@ namespace LendingLibrary.Tests.ActionFilters
 
             Assert.AreEqual(httpContext.Object.Response.StatusCode, (int)HttpStatusCode.NotAcceptable);
         }
-
-        [Test()]
-        public void Changes_Response_StatusCode_to_given_int()
-        {
-            var context = new ActionExecutingContext();
-            var filter = new HttpStatus(406);
-
-            var response = new Mock<HttpResponseBase>();
-            response.SetupProperty(r => r.StatusCode);
-
-            var httpContext = new Mock<HttpContextBase>();
-            httpContext.Setup(c => c.Response).Returns(response.Object);
-
-            context.HttpContext = httpContext.Object;
-            filter.OnActionExecuting(context);
-
-            Assert.AreEqual(httpContext.Object.Response.StatusCode, 406);
-        }
-
     }
 }

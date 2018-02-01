@@ -8,13 +8,9 @@ namespace LendingLibrary.ActionFilters
     {
         protected int status;
 
-        public HttpStatus(HttpStatusCode statusCode) : this((int)statusCode)
+        public HttpStatus(HttpStatusCode statusCode)
         {
-        }
-
-        public HttpStatus(int statusCode)
-        {
-            status = statusCode;
+            status = (int)statusCode;
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
