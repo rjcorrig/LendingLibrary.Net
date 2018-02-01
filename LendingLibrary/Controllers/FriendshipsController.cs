@@ -23,6 +23,7 @@ using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Web;
 using Unity.Attributes;
+using System.Linq;
 
 namespace LendingLibrary.Controllers
 {
@@ -215,7 +216,15 @@ namespace LendingLibrary.Controllers
         {
             var currentUser = await GetCurrentUserAsync();
 
-            return View(await repo.GetUsersUnknownToUserAsync(currentUser.Id, perPage * (pageNo - 1), perPage));
+            var suggestions = await repo.GetUsersUnknownToUserAsync(currentUser.Id, perPage * (pageNo - 1), perPage + 1);
+
+            return View(new SearchForNewViewModel
+            {
+                PageNumber = pageNo,
+                UsersPerPage = perPage,
+                HasMore = suggestions.Count() > perPage,
+                FriendSuggestions = suggestions.Take(perPage)
+            });
         }
     }
 }

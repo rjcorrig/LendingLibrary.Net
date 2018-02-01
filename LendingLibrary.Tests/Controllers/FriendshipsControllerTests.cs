@@ -325,7 +325,7 @@ namespace LendingLibrary.Tests.Controllers
         }
 
         [Test()]
-        public async Task SearchForNew_returns_SearchForNew_View_and_Model()
+        public async Task SearchForNew_returns_SearchForNew_ViewModel()
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
@@ -334,15 +334,18 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.SearchForNew() as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<ApplicationUserNameAndCity>;
+            var model = result.Model as SearchForNewViewModel;
             Assert.IsNotNull(model);
         }
 
         [Test()]
-        [TestCase(1,5,5)]
-        [TestCase(1,10,10)]
-        [TestCase(2,5,5)]
-        public async Task SearchForNew_returns_paged_SearchForNew_View_and_Model(int page, int take, int expected)
+        [TestCase(1,5,5,true)]
+        [TestCase(1,10,10,true)]
+        [TestCase(2,5,5,true)]
+        [TestCase(1,50,50,true)]
+        [TestCase(2,50,1,false)]
+        public async Task SearchForNew_returns_paged_SearchForNewViewModel(
+            int page, int take, int expected, bool moreResults)
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
@@ -351,9 +354,12 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.SearchForNew(page, take) as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<ApplicationUserNameAndCity>;
+            var model = result.Model as SearchForNewViewModel;
             Assert.IsNotNull(model);
-            Assert.AreEqual(expected, model.Count());
+            Assert.AreEqual(expected, model.FriendSuggestions.Count());
+            Assert.AreEqual(moreResults, model.HasMore);
+            Assert.AreEqual(page, model.PageNumber);
+            Assert.AreEqual(take, model.UsersPerPage);
         }
     }
 }
