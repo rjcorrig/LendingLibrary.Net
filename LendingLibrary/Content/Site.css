@@ -29,3 +29,12 @@ input[type="text"].google-search {
     background-size: contain;
     background-position-x: 8px;
 }
+
+.suggestions th, .suggestions td {
+    width: 20%;
+}
+
+.suggestions th:last-child, .suggestions td:last-child {
+    text-align: right;
+}
+

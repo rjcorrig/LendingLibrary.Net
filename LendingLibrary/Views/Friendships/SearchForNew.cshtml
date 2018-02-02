@@ -24,7 +24,32 @@
 
 <h2>Find Friends!</h2>
 
-<table class="table">
+<table class="table suggestions">
+    @if (Model.FriendSuggestions.Count() > 0) 
+    {
+    <tr>
+        <th>
+            @if (Model.PageNumber > 1)
+            {
+            <a class="btn btn-info" href="@Url.Action("SearchForNew", new { pageNo = Model.PageNumber - 1, perPage = Model.UsersPerPage })">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Previous
+            </a>
+            }
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>
+            @if (Model.HasMore)
+            {
+            <a class="btn btn-info" href="@Url.Action("SearchForNew", new { pageNo = Model.PageNumber + 1, perPage = Model.UsersPerPage })">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Next
+            </a>
+            }
+        </th>
+    </tr>
+    }
+
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.FriendSuggestions.FirstOrDefault().UserName)
@@ -41,7 +66,8 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model.FriendSuggestions) {
+    @foreach (var item in Model.FriendSuggestions) 
+    {
     <tr>
         @using (Html.BeginForm("Create", "Friendships"))
         {
@@ -66,6 +92,6 @@
             </td>
         }
     </tr>
-}
+    }
 
 </table>
