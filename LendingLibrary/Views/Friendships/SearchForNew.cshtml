@@ -27,32 +27,35 @@
 <table class="table suggestions">
     @if (Model.FriendSuggestions.Count() > 0) 
     {
-    <tr>
-        <th>
-            @if (Model.PageNumber > 1)
-            {
-            <a class="btn btn-info" href="@Url.Action("SearchForNew", new { pageNo = Model.PageNumber - 1, perPage = Model.UsersPerPage })">
-                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Previous
-            </a>
-            }
-        </th>
-        <th></th>
-        <th>
-            <div class="form-group">
-                @Html.LabelFor(model => Model.UsersPerPage)
-                @Html.DropDownListFor(model => Model.UsersPerPage, Model.UsersPerPageSelectList, new { @class = "form-control" })
-            </div>
-        </th>
-        <th></th>
-        <th>
-            @if (Model.HasMore)
-            {
-            <a class="btn btn-info" href="@Url.Action("SearchForNew", new { pageNo = Model.PageNumber + 1, perPage = Model.UsersPerPage })">
-                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Next
-            </a>
-            }
-        </th>
-    </tr>
+        <tr>
+        @using(Html.BeginForm("SearchForNew", "Friendships", FormMethod.Get))
+        {
+            <th>
+                @if (Model.PageNumber > 1)
+                {
+                <button class="btn btn-info" type="submit" name="pageNo" id="btnPrevious" value="@(Model.PageNumber-1)">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Previous
+                </button>
+                }
+            </th>
+            <th></th>
+            <th>
+                <div class="form-group">
+                    @Html.LabelFor(model => Model.UsersPerPage)
+                    @Html.DropDownListFor(model => Model.UsersPerPage, Model.UsersPerPageSelectList, new { @class = "form-control", Name = "perPage" })
+                </div>
+            </th>
+            <th></th>
+            <th>
+                @if (Model.HasMore)
+                {
+                <button class="btn btn-info" type="submit" name="pageNo" id="btnNext" value="@(Model.PageNumber+1)">
+                     Next <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> 
+                </button>
+                }
+            </th>
+        }
+        </tr>
     }
 
     <tr>
