@@ -37,7 +37,12 @@
             }
         </th>
         <th></th>
-        <th></th>
+        <th>
+            <div class="form-group">
+                @Html.LabelFor(model => Model.UsersPerPage)
+                @Html.DropDownListFor(model => Model.UsersPerPage, Model.UsersPerPageSelectList, new { @class = "form-control" })
+            </div>
+        </th>
         <th></th>
         <th>
             @if (Model.HasMore)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace LendingLibrary.Models
 {
@@ -16,9 +17,22 @@ namespace LendingLibrary.Models
 
     public class SearchForNewViewModel
     {
-        public bool HasMore;
-        public int PageNumber;
-        public int UsersPerPage;
-        public IEnumerable<ApplicationUserNameAndCity> FriendSuggestions;
+        public bool HasMore { get; set; }
+        public int PageNumber { get; set; }
+        [Display(Name = "Show")]
+        public int UsersPerPage { get; set; }
+        public IEnumerable<SelectListItem> UsersPerPageSelectList { get; set; }
+        public IEnumerable<ApplicationUserNameAndCity> FriendSuggestions { get; set; }
+
+        public SearchForNewViewModel()
+        {
+            UsersPerPageSelectList = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "5", Value = "5", Selected = true },
+                new SelectListItem { Text = "10", Value = "10" },
+                new SelectListItem { Text = "25", Value = "25" },
+                new SelectListItem { Text = "50", Value = "50" }
+            };
+        }
     }
 }

@@ -38,3 +38,8 @@ input[type="text"].google-search {
     text-align: right;
 }
 
+.suggestions select {
+    display: inline-block;
+    width: auto;
+}
+
