@@ -31,5 +31,6 @@ namespace LendingLibrary.Models
         public virtual ApplicationUser Owner { get; set; }
         [Range(0, 5)]
         public virtual double Rating { get; set; }
+        public virtual string Genre { get; set; }
     }
 }

@@ -175,7 +175,8 @@ namespace LendingLibrary.Tests.Controllers
                 ISBN = "1234567890",
                 Title = "Harry Potter and the Half-Blood Prince",
                 Author = "J. K. Rowling",
-                Rating = 4
+                Rating = 4,
+                Genre = "Children"
             };
 
             controller.ModelState.Clear();
@@ -200,7 +201,8 @@ namespace LendingLibrary.Tests.Controllers
                 ID = 159,
                 ISBN = "1234567890",
                 Author = "J. K. Rowling",
-                Rating = 4
+                Rating = 4,
+                Genre = "Children"
             };
 
             controller.ModelState.AddModelError("Title", "Title is required");

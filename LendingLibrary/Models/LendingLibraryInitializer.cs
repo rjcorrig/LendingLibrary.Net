@@ -62,7 +62,8 @@ namespace LendingLibrary.Models
                     Title = book.Title,
                     Author = book.Author,
                     Rating = book.Rating,
-                    ISBN = book.ISBN
+                    ISBN = book.ISBN,
+                    Genre = book.Genre
                 });
             }
         }
