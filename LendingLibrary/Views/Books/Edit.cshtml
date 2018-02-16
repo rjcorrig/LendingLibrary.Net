@@ -102,20 +102,6 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/bootstrap-rating/bootstrap-rating.js")
     @Scripts.Render("~/Scripts/lendinglibrary.js")
-
-<script>
-    $("#ISBNLookup").on("click", function (e) {
-	    lendingLibrary.isbn.resolve($("#ISBN").val(), function (err, book) {
-	        if (err) {
-	            console.log(err);
-	        } else {
-	            $("#Title").val(book.title);
-	            $("#Author").val(book.authors.join(", "));
-                $("#Genre").val(book.categories[0]);
-	        }
-	    });
-    });
-</script>
-
+    @Scripts.Render("~/Scripts/books-view-isbn-lookup.js")
 }
 
