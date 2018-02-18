@@ -92,6 +92,7 @@ namespace LendingLibrary.Tests.Models
                 {
                     ID = book.ID,
                     Owner = owner,
+                    OwnerId = owner.Id,
                     Title = book.Title,
                     Author = book.Author,
                     Rating = book.Rating,
