@@ -71,7 +71,7 @@
     </dl>
 </div>
 <p>
-    <a class="btn btn-default" href="@Url.Action("Index")">
+    <a class="btn btn-default" href="javascript:window.history.back()">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to List
     </a>
     @if (Model.OwnerId == User.Identity.GetUserId())
