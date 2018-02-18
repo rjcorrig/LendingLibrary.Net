@@ -270,7 +270,7 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 43);
+            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 21);
 
             controller.ModelState.Clear();
             var result = await controller.Edit(book) as RedirectToRouteResult;
@@ -301,6 +301,40 @@ namespace LendingLibrary.Tests.Controllers
 
             mockDbContext.Verify(m => m.SetModified(It.IsAny<Book>()), Times.Never());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.Never());
+        }
+
+        [Test()]
+        public void Edit_Post_throws_Forbidden_if_not_mine()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 4);
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(book));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.Forbidden));
+        }
+
+        [Test()]
+        public void Edit_Post_throws_NotFound_if_not_found()
+        {
+            var userId = "foxyboots9-guid";
+            var mockDbContext = new MockContext();
+            var controller = new BooksController(mockDbContext.Object, () => userId);
+            var originalBook = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 4);
+            var book = new Book
+            {
+                ID = -1,
+                OwnerId = originalBook.OwnerId,
+                Title = originalBook.Title,
+                Author = originalBook.Author,
+                Genre = originalBook.Genre,
+                ISBN = originalBook.ISBN,
+                Rating = originalBook.Rating
+            };
+
+            var httpException = Assert.ThrowsAsync<HttpException>(async () => await controller.Edit(book));
+            Assert.That(httpException.GetHttpCode(), Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test()]

@@ -157,9 +157,22 @@ namespace LendingLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating,OwnerId")] Book book)
         {
-            // TODO: Secure this API--should not be able to edit a book we don't own!
             if (ModelState.IsValid)
             {
+                // Block attempt to edit someone else's book
+                var originalBook = await repo.GetBookByIdAsync(book.ID);
+                if (originalBook == null)
+                {
+                    throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
+                }
+
+                var currentUserId = GetCurrentUserId();
+                if (originalBook.OwnerId != currentUserId)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
+                }
+
+                book.OwnerId = currentUserId;
                 repo.SetModified(book);
                 await repo.SaveAsync();
                 return RedirectToAction("Index");
