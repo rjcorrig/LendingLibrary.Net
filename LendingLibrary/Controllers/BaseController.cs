@@ -71,6 +71,18 @@ namespace LendingLibrary.Controllers
             }
         }
 
+        protected string GetCurrentUserId()
+        {
+            if (GetUserId != null)
+            {
+                return GetUserId();
+            }
+            else
+            {
+                return User.Identity.GetUserId();
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

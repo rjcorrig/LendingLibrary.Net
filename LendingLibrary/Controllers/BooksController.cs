@@ -44,27 +44,28 @@ namespace LendingLibrary.Controllers
         // GET: Books
         public async Task<ActionResult> Index(string userId)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
             
             // If no user supplied, look at my bookshelf
             if (userId == null) { 
-                userId = currentUser.Id;
+                userId = currentUserId;
             }
 
             // If not my bookshelf, check to see I'm permitted to view it--am I friends with the target user?
-            if (userId != currentUser.Id)
+            if (userId != currentUserId)
             {
-                var friendship = currentUser.Friendships.FirstOrDefault(f => f.FriendId == userId && f.RequestApproved.HasValue);
-                if (friendship == null)
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, userId);
+                if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends to view that user's books");
                 }
             }
 
-            var model = new BookIndexViewModel();
-            model.Books = await repo.GetBooksByOwnerIdAsync(userId);
-            model.User = await repo.GetUserByIdAsync(userId);
-
+            var model = new BookIndexViewModel
+            {
+                Books = await repo.GetBooksByOwnerIdAsync(userId),
+                User = await repo.GetUserByIdAsync(userId)
+            };
             return View(model);
         }
 
@@ -84,11 +85,11 @@ namespace LendingLibrary.Controllers
             }
 
             // If not my book, check to see I'm permitted to view it--am I friends with the target user?
-            var currentUser = await GetCurrentUserAsync();
-            if (book.Owner.Id != currentUser.Id)
+            var currentUserId = GetCurrentUserId();
+            if (book.Owner.Id != currentUserId)
             {
-                var friendship = currentUser.Friendships.FirstOrDefault(f => f.FriendId == book.Owner.Id && f.RequestApproved.HasValue);
-                if (friendship == null)
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.Owner.Id);
+                if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends with the owner to view this book");
                 }
@@ -140,8 +141,8 @@ namespace LendingLibrary.Controllers
             else 
             {
                 // Check if it's my book to modify
-                var currentUser = await GetCurrentUserAsync();
-                if (book.Owner.Id != currentUser.Id)
+                var currentUserId = GetCurrentUserId();
+                if (book.Owner.Id != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
@@ -181,8 +182,8 @@ namespace LendingLibrary.Controllers
             else
             {
                 // Check if it's my book to modify
-                var currentUser = await GetCurrentUserAsync();
-                if (book.Owner.Id != currentUser.Id)
+                var currentUserId = GetCurrentUserId();
+                if (book.Owner.Id != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
@@ -209,8 +210,8 @@ namespace LendingLibrary.Controllers
             else
             {
                 // Check if it's my book to modify
-                var currentUser = await GetCurrentUserAsync();
-                if (book.Owner.Id != currentUser.Id)
+                var currentUserId = GetCurrentUserId();
+                if (book.Owner.Id != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }

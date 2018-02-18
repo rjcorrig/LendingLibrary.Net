@@ -82,7 +82,7 @@ namespace LendingLibrary.Models
         #region Book
         public async Task<Book> GetBookByIdAsync(int? id)
         {
-            return await Db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            return await Db.Books.Include(b => b.Owner).FirstOrDefaultAsync(b => b.ID == id);
         }
 
         public async Task<IEnumerable<Book>> GetBooksByOwnerIdAsync(string userId)
