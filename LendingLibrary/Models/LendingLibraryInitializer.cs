@@ -30,9 +30,20 @@ namespace LendingLibrary.Models
 
         protected override void Seed(ApplicationDbContext context)
         {
-            SeedUsers(context);
-            SeedBooks(context);
-            SeedFriendships(context);
+            try
+            {
+                // Turn off change detection for speed
+                context.Configuration.AutoDetectChangesEnabled = false;
+
+                SeedUsers(context);
+                SeedBooks(context);
+                SeedFriendships(context);
+            }
+            finally
+            {
+                // Resume change detection
+                context.Configuration.AutoDetectChangesEnabled = true;
+            }
 
             base.Seed(context);
         }
