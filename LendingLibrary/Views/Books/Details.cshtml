@@ -74,7 +74,7 @@
     <a class="btn btn-default" href="@Url.Action("Index")">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to List
     </a>
-    @if (Model.Owner.Id == User.Identity.GetUserId())
+    @if (Model.OwnerId == User.Identity.GetUserId())
     {
         <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.ID })">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
