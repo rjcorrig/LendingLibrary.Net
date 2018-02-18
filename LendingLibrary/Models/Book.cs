@@ -28,6 +28,7 @@ namespace LendingLibrary.Models
         public virtual string Title { get; set; }
         [Required]
         public virtual string Author { get; set; }
+        public virtual string OwnerId { get; set; }
         public virtual ApplicationUser Owner { get; set; }
         [Range(0, 5)]
         public virtual double Rating { get; set; }

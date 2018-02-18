@@ -86,9 +86,9 @@ namespace LendingLibrary.Controllers
 
             // If not my book, check to see I'm permitted to view it--am I friends with the target user?
             var currentUserId = GetCurrentUserId();
-            if (book.Owner.Id != currentUserId)
+            if (book.OwnerId != currentUserId)
             {
-                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.Owner.Id);
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends with the owner to view this book");
@@ -142,7 +142,7 @@ namespace LendingLibrary.Controllers
             {
                 // Check if it's my book to modify
                 var currentUserId = GetCurrentUserId();
-                if (book.Owner.Id != currentUserId)
+                if (book.OwnerId != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
@@ -155,7 +155,7 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating")] Book book)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating,OwnerId")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -183,7 +183,7 @@ namespace LendingLibrary.Controllers
             {
                 // Check if it's my book to modify
                 var currentUserId = GetCurrentUserId();
-                if (book.Owner.Id != currentUserId)
+                if (book.OwnerId != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
@@ -211,7 +211,7 @@ namespace LendingLibrary.Controllers
             {
                 // Check if it's my book to modify
                 var currentUserId = GetCurrentUserId();
-                if (book.Owner.Id != currentUserId)
+                if (book.OwnerId != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
