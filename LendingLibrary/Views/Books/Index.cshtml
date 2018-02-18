@@ -23,7 +23,7 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Bookshelf for @Html.DisplayFor(model => model.User.GivenName) @Html.DisplayFor(model => model.User.FamilyName)</h2>
+<h2>Bookshelf for @Html.DisplayFor(model => model.User.UserName)</h2>
 
 @Html.Partial("_IndexTable", Model.Books)
 

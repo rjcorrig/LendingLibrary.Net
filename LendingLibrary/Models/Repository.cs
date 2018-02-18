@@ -77,6 +77,16 @@ namespace LendingLibrary.Models
                            .Take(() => take)
                            .ToListAsync();
         }
+
+        public async Task<ApplicationUserName> GetUserNameByIdAsync(string userId)
+        {
+            return await Db.Users.Where(u => u.Id == userId)
+                           .Select(u => new ApplicationUserName
+                           {
+                                Id = u.Id,
+                                UserName = u.GivenName + " " + u.FamilyName
+                           }).FirstOrDefaultAsync();
+        }
         #endregion
 
         #region Book

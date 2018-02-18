@@ -30,6 +30,7 @@ namespace LendingLibrary.Models
         Task<ApplicationUser> GetUserByIdAsync(string userId);
         ApplicationUser GetUserById(string userId);
         Task<IEnumerable<ApplicationUserNameAndCity>> GetUsersUnknownToUserAsync(string userId, int skip, int take);
+        Task<ApplicationUserName> GetUserNameByIdAsync(string userId);
         #endregion
 
         #region Book

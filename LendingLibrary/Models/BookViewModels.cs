@@ -20,9 +20,15 @@ using System.Collections.Generic;
 
 namespace LendingLibrary.Models
 {
+    public class ApplicationUserName
+    {
+        public string Id { get; set; }
+        public string UserName { get; set; }
+    }
+
     public class BookIndexViewModel
     {
-        public ApplicationUser User { get; set; }
+        public ApplicationUserName User { get; set; }
         public IEnumerable<Book> Books { get; set; }
     }
 }
