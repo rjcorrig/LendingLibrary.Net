@@ -157,6 +157,7 @@ namespace LendingLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating,OwnerId")] Book book)
         {
+            // TODO: Secure this API--should not be able to edit a book we don't own!
             if (ModelState.IsValid)
             {
                 repo.SetModified(book);
