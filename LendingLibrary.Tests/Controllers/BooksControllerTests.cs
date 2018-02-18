@@ -270,7 +270,16 @@ namespace LendingLibrary.Tests.Controllers
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
 
-            var book = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 21);
+            var originalBook = mockDbContext.MockBooks.Object.FirstOrDefault(b => b.ID == 21);
+            var book = new Book
+            {
+                ID = originalBook.ID,
+                Title = originalBook.Title,
+                Author = originalBook.Author,
+                Genre = originalBook.Genre,
+                ISBN = originalBook.ISBN,
+                Rating = originalBook.Rating
+            };
 
             controller.ModelState.Clear();
             var result = await controller.Edit(book) as RedirectToRouteResult;
@@ -278,7 +287,6 @@ namespace LendingLibrary.Tests.Controllers
             Assert.IsNotNull(result);
             Assert.AreEqual(result.RouteValues["action"], "Index");
 
-            mockDbContext.Verify(m => m.SetModified(It.IsAny<Book>()), Times.Once());
             mockDbContext.Verify(m => m.SaveChangesAsync(), Times.AtLeastOnce());
         }
 

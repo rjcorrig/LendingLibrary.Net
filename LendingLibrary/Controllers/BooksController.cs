@@ -155,29 +155,33 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating,OwnerId")] Book book)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating")] Book model)
         {
             if (ModelState.IsValid)
             {
                 // Block attempt to edit someone else's book
-                var originalBook = await repo.GetBookByIdAsync(book.ID);
-                if (originalBook == null)
+                var book = await repo.GetBookByIdAsync(model.ID);
+                if (book == null)
                 {
                     throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
                 }
 
                 var currentUserId = GetCurrentUserId();
-                if (originalBook.OwnerId != currentUserId)
+                if (book.OwnerId != currentUserId)
                 {
                     throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
 
-                book.OwnerId = currentUserId;
-                repo.SetModified(book);
+                book.Author = model.Author;
+                book.Genre = model.Genre;
+                book.ISBN = model.ISBN;
+                book.Rating = model.Rating;
+                book.Title = model.Title;
+
                 await repo.SaveAsync();
                 return RedirectToAction("Index");
             }
-            return View(book);
+            return View(model);
         }
 
         // GET: Books/Delete/5
