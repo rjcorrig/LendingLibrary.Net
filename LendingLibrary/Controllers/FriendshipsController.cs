@@ -46,9 +46,9 @@ namespace LendingLibrary.Controllers
         {
             ViewBag.RequestSent = RequestSent;
 
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            return View(await repo.GetFriendshipsByUserIdAsync(currentUser.Id));
+            return View(await repo.GetFriendshipsByUserIdAsync(currentUserId));
         }
 
         // GET: Friendships/Waiting
@@ -57,9 +57,9 @@ namespace LendingLibrary.Controllers
         {
             ViewBag.RequestConfirmed = RequestConfirmed;
 
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            return View(await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(currentUser.Id));
+            return View(await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(currentUserId));
         }
 
         // POST: Friendships/Confirm
@@ -157,8 +157,8 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
-            var currentUser = await GetCurrentUserAsync();
-            if (currentUser.Id != userId && currentUser.Id != friendId)
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId != userId && currentUserId != friendId)
             {
                 throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
             }
@@ -181,8 +181,8 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
-            var currentUser = await GetCurrentUserAsync();
-            if (currentUser.Id != userId && currentUser.Id != friendId)
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId != userId && currentUserId != friendId)
             {
                 throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
             }
