@@ -74,16 +74,10 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
-            var currentUser = await GetCurrentUserAsync();
-            var requestor = await repo.GetUserByIdAsync(userId);
-
-            if (requestor == null)
-            {
-                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
-            }
+            var currentUserId = GetCurrentUserId();
 
             // Confirm the original friendship request
-            var friendRequest = await repo.GetFriendshipBetweenUserIdsAsync(requestor.Id, currentUser.Id);
+            var friendRequest = await repo.GetFriendshipBetweenUserIdsAsync(userId, currentUserId);
             if (friendRequest == null || friendRequest.RequestApproved.HasValue)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
@@ -91,13 +85,13 @@ namespace LendingLibrary.Controllers
             friendRequest.RequestApproved = DateTime.UtcNow;
 
             // Find the matching reciprocal friendship record, if it exists
-            var reciprocalRequest = await repo.GetFriendshipBetweenUserIdsAsync(currentUser.Id, requestor.Id);
+            var reciprocalRequest = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, userId);
             if (reciprocalRequest == null)
             {
                 reciprocalRequest = new Friendship()
                 {
-                    User = currentUser,
-                    Friend = requestor,
+                    UserId = currentUserId,
+                    FriendId = userId,
                     RequestSent = friendRequest.RequestSent,
                     RequestApproved = friendRequest.RequestApproved
                 };
@@ -214,9 +208,9 @@ namespace LendingLibrary.Controllers
 
         public async Task<ActionResult> SearchForNew(int pageNo = 1, int perPage = 5)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            var suggestions = await repo.GetUsersUnknownToUserAsync(currentUser.Id, perPage * (pageNo - 1), perPage + 1);
+            var suggestions = await repo.GetUsersUnknownToUserAsync(currentUserId, perPage * (pageNo - 1), perPage + 1);
 
             return View(new SearchForNewViewModel
             {
