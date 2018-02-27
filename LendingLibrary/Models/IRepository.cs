@@ -42,8 +42,8 @@ namespace LendingLibrary.Models
         #endregion
 
         #region Friendship
-        Task<IEnumerable<Friendship>> GetFriendshipsByUserIdAsync(string userId);
-        Task<IEnumerable<Friendship>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId);
+        Task<IEnumerable<FriendshipWithNames>> GetFriendshipsByUserIdAsync(string userId);
+        Task<IEnumerable<FriendshipWithNames>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId);
 
         Task<Friendship> GetFriendshipBetweenUserIdsAsync(string userId, string friendId);
 

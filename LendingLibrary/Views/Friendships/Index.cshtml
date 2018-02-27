@@ -18,7 +18,7 @@
 
 @using Microsoft.AspNet.Identity
 
-@model IEnumerable<LendingLibrary.Models.Friendship>
+@model IEnumerable<LendingLibrary.Models.FriendshipWithNames>
 
 @{
     ViewBag.Title = "Index";
@@ -60,13 +60,13 @@
                 if (item.UserId == User.Identity.GetUserId())
                 {
                     // A Request I initiated, show other user name
-                    FriendName = item.Friend.GivenName + " " + item.Friend.FamilyName;
+                    FriendName = item.FriendName;
                     FriendId = item.FriendId;
                 }
                 else
                 {
                     // A Request sent to me, show owning user name
-                    FriendName = item.User.GivenName + " " + item.User.FamilyName;
+                    FriendName = item.UserName;
                     FriendId = item.UserId;
                 }
 

@@ -15,6 +15,18 @@ namespace LendingLibrary.Models
         public string Country { get; set; }
     }
 
+    public class FriendshipWithNames
+    {
+        public string UserId { get; set; }
+        public string FriendId { get; set; }
+        [Display(Name = "Request Sent")]
+        public DateTime RequestSent { get; set; }
+        [Display(Name = "Request Approved")]
+        public DateTime? RequestApproved { get; set; }
+        public string UserName { get; set; }
+        public string FriendName { get; set; }
+    }
+
     public class SearchForNewViewModel
     {
         public bool HasMore { get; set; }
