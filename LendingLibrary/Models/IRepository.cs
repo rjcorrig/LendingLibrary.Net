@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LendingLibrary.Models
@@ -29,7 +30,8 @@ namespace LendingLibrary.Models
         #region User
         Task<ApplicationUser> GetUserByIdAsync(string userId);
         ApplicationUser GetUserById(string userId);
-        Task<IEnumerable<ApplicationUserNameAndCity>> GetUsersUnknownToUserAsync(string userId, int skip, int take);
+
+        IQueryable<ApplicationUser> GetUsersUnknownToUser(string userId, int skip, int take);
         Task<ApplicationUserName> GetUserNameByIdAsync(string userId);
         #endregion
 

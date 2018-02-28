@@ -73,7 +73,7 @@ namespace LendingLibrary.Tests.Models
         }
 
         [Test()]
-        public async Task GetUsersUnknownToUserAsync_returns_List_of_Users_and_Cities()
+        public void GetUsersUnknownToUser_returns_Queryable_of_Users()
         {
             var userId = "coryhome-guid";
             var mockContext = new MockContext();
@@ -82,15 +82,15 @@ namespace LendingLibrary.Tests.Models
             var currentUser = mockContext.MockUsers.Object.FirstOrDefault(u => u.Id == userId);
             Assert.IsNotNull(currentUser);
 
-            var users = await repo.GetUsersUnknownToUserAsync(userId);
+            var users = repo.GetUsersUnknownToUser(userId);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), users);
+            Assert.IsInstanceOf(typeof(IQueryable<ApplicationUser>), users);
             Assert.That(!users.Any(u => u.Id == userId));
             Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
         }
 
         [Test()]
-        public async Task GetUsersUnknownToUserAsync_returns_paged_List_of_Users_and_Cities()
+        public void GetUsersUnknownToUser_returns_paged_List_of_Users()
         {
             var userId = "coryhome-guid";
             var mockContext = new MockContext();
@@ -100,16 +100,16 @@ namespace LendingLibrary.Tests.Models
             Assert.IsNotNull(currentUser);
 
             var take = 5;
-            var users = await repo.GetUsersUnknownToUserAsync(userId, take: take);
+            var users = repo.GetUsersUnknownToUser(userId, take: take);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), users);
+            Assert.IsInstanceOf(typeof(IQueryable<ApplicationUser>), users);
             Assert.That(!users.Any(u => u.Id == userId));
             Assert.That(users.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
             Assert.AreEqual(take, users.Count());
         }
 
         [Test()]
-        public async Task GetUsersUnknownToUserAsync_returns_next_paged_List_of_Users_and_Cities()
+        public void GetUsersUnknownToUser_returns_next_paged_List_of_Users()
         {
             var userId = "coryhome-guid";
             var mockContext = new MockContext();
@@ -119,10 +119,9 @@ namespace LendingLibrary.Tests.Models
             Assert.IsNotNull(currentUser);
 
             var perPage = 5;
-            var page1 = (await repo.GetUsersUnknownToUserAsync(userId, 0, perPage)).ToArray();
-            var page2 = (await repo.GetUsersUnknownToUserAsync(userId, perPage, perPage)).ToArray();
+            var page1 = repo.GetUsersUnknownToUser(userId, 0, perPage).ToArray();
+            var page2 = repo.GetUsersUnknownToUser(userId, perPage, perPage).ToArray();
 
-            Assert.IsInstanceOf(typeof(IEnumerable<ApplicationUserNameAndCity>), page2);
             Assert.That(!page2.Any(u => u.Id == userId));
             Assert.That(page2.All(u => currentUser.GetFriendshipStatusWith(u.Id) == FriendshipStatus.None));
             Assert.AreEqual(perPage, page2.Count());

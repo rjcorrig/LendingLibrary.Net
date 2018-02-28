@@ -24,6 +24,7 @@ using LendingLibrary.Models;
 using System.Web;
 using Unity.Attributes;
 using System.Linq;
+using System.Data.Entity;
 
 namespace LendingLibrary.Controllers
 {
@@ -210,7 +211,16 @@ namespace LendingLibrary.Controllers
         {
             var currentUserId = GetCurrentUserId();
 
-            var suggestions = await repo.GetUsersUnknownToUserAsync(currentUserId, perPage * (pageNo - 1), perPage + 1);
+            var suggestionQuery = repo.GetUsersUnknownToUser(currentUserId, perPage * (pageNo - 1), perPage + 1);
+
+            var suggestions = await suggestionQuery.Select(u => new ApplicationUserNameAndCity
+            {
+                Id = u.Id,
+                UserName = u.GivenName + " " + u.FamilyName,
+                City = u.City,
+                State = u.State,
+                Country = u.Country
+            }).ToListAsync();
 
             return View(new SearchForNewViewModel
             {
