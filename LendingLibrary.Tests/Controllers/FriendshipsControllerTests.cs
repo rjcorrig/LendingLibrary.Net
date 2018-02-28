@@ -26,7 +26,7 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.Index() as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<Friendship>;
+            var model = result.Model as IEnumerable<FriendshipWithNames>;
             Assert.IsNotNull(model);
 
             foreach (var friendship in model)
@@ -60,7 +60,7 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.Waiting() as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as IEnumerable<Friendship>;
+            var model = result.Model as IEnumerable<FriendshipWithNames>;
             Assert.IsNotNull(model);
 
             foreach (var friendship in model)

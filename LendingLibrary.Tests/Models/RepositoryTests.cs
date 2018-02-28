@@ -210,7 +210,7 @@ namespace LendingLibrary.Tests.Models
             var userId = "foxyboots9-guid";
             var friendships = await repo.GetFriendshipsByUserIdAsync(userId);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<Friendship>), friendships);
+            Assert.IsInstanceOf(typeof(IEnumerable<FriendshipWithNames>), friendships);
             Assert.Greater(friendships.Count(), 0);
             Assert.That(friendships.All(f => f.UserId == userId ^ f.FriendId == userId));
         }
@@ -223,7 +223,7 @@ namespace LendingLibrary.Tests.Models
             var userId = "rsoame-guid";
             var friendships = await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(userId);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<Friendship>), friendships);
+            Assert.IsInstanceOf(typeof(IEnumerable<FriendshipWithNames>), friendships);
             Assert.Greater(friendships.Count(), 0);
             Assert.AreEqual("robcory-guid", friendships.First().UserId);
             Assert.That(friendships.All(f => f.FriendId == userId && !f.RequestApproved.HasValue));
