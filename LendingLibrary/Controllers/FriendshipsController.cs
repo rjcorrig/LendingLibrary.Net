@@ -178,7 +178,7 @@ namespace LendingLibrary.Controllers
                 throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
             }
 
-            Friendship friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
+            var friendship = await repo.GetFriendshipWithNamesBetweenUserIdsAsync(userId, friendId);
             if (friendship == null)
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");

@@ -126,6 +126,21 @@ namespace LendingLibrary.Models
             return await Db.Friendships.FirstOrDefaultAsync(f => f.UserId == userId && f.FriendId == friendId);
         }
 
+        public async Task<FriendshipWithNames> GetFriendshipWithNamesBetweenUserIdsAsync(string userId, string friendId)
+        {
+            return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
+                           .Select(f => new FriendshipWithNames
+                            {
+                                UserId = f.UserId,
+                                FriendId = f.FriendId,
+                                UserName = f.User.GivenName + " " + f.User.FamilyName,
+                                FriendName = f.Friend.GivenName + " " + f.Friend.FamilyName,
+                                RequestSent = f.RequestSent,
+                                RequestApproved = f.RequestApproved
+                            })
+                           .FirstOrDefaultAsync(f => f.UserId == userId && f.FriendId == friendId);
+        }
+
         public Friendship Add(Friendship friendship)
         {
             return Db.Friendships.Add(friendship);            

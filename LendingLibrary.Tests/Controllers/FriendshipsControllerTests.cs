@@ -256,7 +256,7 @@ namespace LendingLibrary.Tests.Controllers
             var result = await controller.Delete(userId, friendId) as ViewResult;
             Assert.IsNotNull(result);
 
-            var model = result.Model as Friendship;
+            var model = result.Model as FriendshipWithNames;
             Assert.IsNotNull(model);
         }
 

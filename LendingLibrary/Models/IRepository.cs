@@ -49,6 +49,7 @@ namespace LendingLibrary.Models
         IQueryable<Friendship> GetFriendshipsAwaitingApprovalByUserId(string userId);
 
         Task<Friendship> GetFriendshipBetweenUserIdsAsync(string userId, string friendId);
+        Task<FriendshipWithNames> GetFriendshipWithNamesBetweenUserIdsAsync(string userId, string friendId);
 
         Friendship Add(Friendship friendship);
         Friendship Remove(Friendship friendship);

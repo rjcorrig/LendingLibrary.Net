@@ -245,7 +245,35 @@ namespace LendingLibrary.Tests.Models
 
             var friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
             Assert.AreEqual(expected, friendship != null);
+            if (friendship != null)
+            {
+                Assert.IsInstanceOf(typeof(Friendship), friendship);
+            }
         }
+
+        [Test()]
+        // robcory and rmckune don't know each other
+        [TestCase("robcory-guid", "rmckune-guid", false)]
+        [TestCase("rmckune-guid", "robcory-guid", false)]
+        // rsoame and rmckune are friends
+        [TestCase("rsoame-guid", "rmckune-guid", true)]
+        [TestCase("rmckune-guid", "rsoame-guid", true)]
+        // Requested by robcory but not approved by rsoame
+        [TestCase("robcory-guid", "rsoame-guid", true)]
+        [TestCase("rsoame-guid", "robcory-guid", false)]
+        public async Task GetFriendshipWithNamesBetweenUserIdsAsync_returns_FriendshipWithNames_or_null(string userId, string friendId, bool expected)
+        {
+            var mockContext = new MockContext();
+            var repo = new Repository(mockContext.Object);
+
+            var friendship = await repo.GetFriendshipWithNamesBetweenUserIdsAsync(userId, friendId);
+            Assert.AreEqual(expected, friendship != null);
+            if (friendship != null)
+            {
+                Assert.IsInstanceOf(typeof(FriendshipWithNames), friendship);
+            }
+        }
+
 
         [Test()]
         public void Add_Friendship_adds_Friendship_to_Friendships()

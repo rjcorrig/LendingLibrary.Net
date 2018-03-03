@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *@
 
-@model LendingLibrary.Models.Friendship
+@model LendingLibrary.Models.FriendshipWithNames
 
 @{
     ViewBag.Title = "Delete";
@@ -34,7 +34,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.User.UserName)
+            @Html.DisplayFor(model => model.UserName)
         </dd>
 
         <dt>
@@ -42,7 +42,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Friend.UserName)
+            @Html.DisplayFor(model => model.FriendName)
         </dd>
 
         <dt>
