@@ -46,7 +46,7 @@ namespace LendingLibrary.Models
 
         #region Friendship
         IQueryable<Friendship> GetFriendshipsByUserId(string userId);
-        Task<IEnumerable<FriendshipWithNames>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId);
+        IQueryable<Friendship> GetFriendshipsAwaitingApprovalByUserId(string userId);
 
         Task<Friendship> GetFriendshipBetweenUserIdsAsync(string userId, string friendId);
 

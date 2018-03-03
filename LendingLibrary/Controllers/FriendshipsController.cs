@@ -70,7 +70,17 @@ namespace LendingLibrary.Controllers
 
             var currentUserId = GetCurrentUserId();
 
-            return View(await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(currentUserId));
+            return View(await repo.GetFriendshipsAwaitingApprovalByUserId(currentUserId)
+                        .Select(f => new FriendshipWithNames
+                        {
+                            UserId = f.UserId,
+                            FriendId = f.FriendId,
+                            UserName = f.User.GivenName + " " + f.User.FamilyName,
+                            FriendName = f.Friend.GivenName + " " + f.Friend.FamilyName,
+                            RequestSent = f.RequestSent,
+                            RequestApproved = f.RequestApproved
+                        })
+                        .ToListAsync());
         }
 
         // POST: Friendships/Confirm

@@ -215,14 +215,14 @@ namespace LendingLibrary.Tests.Models
         }
 
         [Test()]
-        public async Task GetFriendshipsAwaitingApprovalByUserIdAsync_returns_Friendships_waiting_for_User()
+        public void GetFriendshipsAwaitingApprovalByUserIdAsync_returns_Friendships_waiting_for_User()
         {
             var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var userId = "rsoame-guid";
-            var friendships = await repo.GetFriendshipsAwaitingApprovalByUserIdAsync(userId);
+            var friendships = repo.GetFriendshipsAwaitingApprovalByUserId(userId);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<FriendshipWithNames>), friendships);
+            Assert.IsInstanceOf(typeof(IQueryable<Friendship>), friendships);
             Assert.Greater(friendships.Count(), 0);
             Assert.AreEqual("robcory-guid", friendships.First().UserId);
             Assert.That(friendships.All(f => f.FriendId == userId && !f.RequestApproved.HasValue));
