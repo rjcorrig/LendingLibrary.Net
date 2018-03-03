@@ -103,24 +103,14 @@ namespace LendingLibrary.Models
         #endregion
 
         #region Friendship
-        public async Task<IEnumerable<FriendshipWithNames>> GetFriendshipsByUserIdAsync(string userId)
+        public IQueryable<Friendship> GetFriendshipsByUserId(string userId)
         {
             // First Where filter gets Friendships involving this user
             // Second removes duplicate confirmed friendships by limiting those to
             // rows where the current user is the owning user
-            return await Db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                .Where(f => f.FriendId == userId || f.UserId == userId)
-                .Where(f => !f.RequestApproved.HasValue || f.UserId == userId)
-                .Select(f => new FriendshipWithNames
-                {
-                    UserId = f.UserId,
-                    FriendId = f.FriendId,
-                    UserName = f.User.GivenName + " " + f.User.FamilyName,
-                    FriendName = f.Friend.GivenName + " " + f.Friend.FamilyName,
-                    RequestSent = f.RequestSent,
-                    RequestApproved = f.RequestApproved
-                })
-                .ToListAsync();
+            return Db.Friendships.Include(f => f.Friend).Include(f => f.User)
+                     .Where(f => f.FriendId == userId || f.UserId == userId)
+                     .Where(f => !f.RequestApproved.HasValue || f.UserId == userId);
         }
 
         public async Task<IEnumerable<FriendshipWithNames>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId)

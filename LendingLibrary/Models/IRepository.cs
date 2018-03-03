@@ -30,9 +30,10 @@ namespace LendingLibrary.Models
         #region User
         Task<ApplicationUser> GetUserByIdAsync(string userId);
         ApplicationUser GetUserById(string userId);
+		Task<ApplicationUserName> GetUserNameByIdAsync(string userId);
 
         IQueryable<ApplicationUser> GetUsersUnknownToUser(string userId, int skip, int take);
-        Task<ApplicationUserName> GetUserNameByIdAsync(string userId);
+
         #endregion
 
         #region Book
@@ -44,7 +45,7 @@ namespace LendingLibrary.Models
         #endregion
 
         #region Friendship
-        Task<IEnumerable<FriendshipWithNames>> GetFriendshipsByUserIdAsync(string userId);
+        IQueryable<Friendship> GetFriendshipsByUserId(string userId);
         Task<IEnumerable<FriendshipWithNames>> GetFriendshipsAwaitingApprovalByUserIdAsync(string userId);
 
         Task<Friendship> GetFriendshipBetweenUserIdsAsync(string userId, string friendId);

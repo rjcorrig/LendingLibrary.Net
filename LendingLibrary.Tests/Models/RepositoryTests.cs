@@ -202,14 +202,14 @@ namespace LendingLibrary.Tests.Models
         #region Friendship
 
         [Test()]
-        public async Task GetFriendshipsByUserIdAsync_returns_Friendships_with_User()
+        public void GetFriendshipsByUserIdAsync_returns_Friendships_with_User()
         {
             var mockContext = new MockContext();
             var repo = new Repository(mockContext.Object);
             var userId = "foxyboots9-guid";
-            var friendships = await repo.GetFriendshipsByUserIdAsync(userId);
+            var friendships = repo.GetFriendshipsByUserId(userId);
 
-            Assert.IsInstanceOf(typeof(IEnumerable<FriendshipWithNames>), friendships);
+            Assert.IsInstanceOf(typeof(IQueryable<Friendship>), friendships);
             Assert.Greater(friendships.Count(), 0);
             Assert.That(friendships.All(f => f.UserId == userId ^ f.FriendId == userId));
         }
