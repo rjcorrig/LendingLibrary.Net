@@ -198,6 +198,8 @@
     <Compile Include="Utils\ControllerExtensions.cs" />
     <Compile Include="Models\SeedImporter.cs" />
     <Compile Include="Models\FriendshipsViewModels.cs" />
+    <Compile Include="Controllers\BooksApiController.cs" />
+    <Compile Include="App_Start\UnityResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
