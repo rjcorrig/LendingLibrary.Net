@@ -18,17 +18,12 @@ namespace LendingLibrary
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
-                name: "Books",
-                routeTemplate: "api/books/{id}",
-                defaults: new { controller = "BooksApi", id = RouteParameter.Optional }
-            );
-
-            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            // Tell Web API to use application's Unity container for DI
             var container = UnityConfig.Container;
             config.DependencyResolver = new UnityResolver(container);
         }

@@ -1,33 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
+﻿/*
+ * LendingLibrary - An online private bookshelf catalog and sharing application
+ * Copyright (C) 2017 Robert Corrigan
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 using LendingLibrary.Models;
 using Microsoft.AspNet.Identity;
-using Unity.Attributes;
+using System.Threading.Tasks;
+using System;
+using System.Web.Http;
 
-namespace LendingLibrary.Controllers
+namespace LendingLibrary.ControllersApi
 {
-    public class BooksApiController : ApiController
+    public class BaseController : ApiController
     {
         protected IApplicationDbContext db;
         protected IRepository repo;
         protected Func<string> GetUserId;
 
-        [InjectionConstructor]
-        public BooksApiController(IApplicationDbContext db)
+        public BaseController(IApplicationDbContext db)
         {
             repo = new Repository(db);
             this.db = repo.Db;
         }
 
-        public BooksApiController(IApplicationDbContext db, Func<string> getUserId)
+        public BaseController(IApplicationDbContext db, Func<string> getUserId)
         {
             repo = new Repository(db);
             this.db = repo.Db;
 
-            GetUserId = getUserId;
+            GetUserId = getUserId;        
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
@@ -36,7 +50,7 @@ namespace LendingLibrary.Controllers
             {
                 return await repo.GetUserByIdAsync(GetUserId());
             }
-            else
+            else 
             {
                 return await repo.GetUserByIdAsync(User.Identity.GetUserId());
             }
@@ -73,38 +87,6 @@ namespace LendingLibrary.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        public async Task<IHttpActionResult> GetBooks()
-        {
-            var currentUserId = GetCurrentUserId();
-            var books = await repo.GetBooksByOwnerIdAsync(currentUserId);
-
-            return Ok(books.Select(book => new Book 
-            { 
-                Author = book.Author,
-                Genre = book.Genre,
-                ISBN = book.ISBN,
-                ID = book.ID,
-                OwnerId = book.OwnerId,
-                Rating = book.Rating,
-                Title = book.Title
-            }));
-        }
-
-        public async Task<IHttpActionResult> GetBook(int id)
-        {
-            var book = await repo.GetBookByIdAsync(id);
-            return Ok(new Book
-            {
-                Author = book.Author,
-                Genre = book.Genre,
-                ISBN = book.ISBN,
-                ID = book.ID,
-                OwnerId = book.OwnerId,
-                Rating = book.Rating,
-                Title = book.Title
-            });
         }
     }
 }
