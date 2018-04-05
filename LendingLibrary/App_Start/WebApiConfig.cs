@@ -10,7 +10,8 @@ namespace LendingLibrary
 
             // Serialize to JSON
             var json = config.Formatters.JsonFormatter;
-            json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+            json.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            json.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
             config.Formatters.Remove(config.Formatters.XmlFormatter);
 
             // Web API routes

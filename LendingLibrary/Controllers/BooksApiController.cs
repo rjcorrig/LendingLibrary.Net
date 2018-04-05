@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using LendingLibrary.Models;
@@ -79,13 +80,31 @@ namespace LendingLibrary.Controllers
             var currentUserId = GetCurrentUserId();
             var books = await repo.GetBooksByOwnerIdAsync(currentUserId);
 
-            return Ok(books);
+            return Ok(books.Select(book => new Book 
+            { 
+                Author = book.Author,
+                Genre = book.Genre,
+                ISBN = book.ISBN,
+                ID = book.ID,
+                OwnerId = book.OwnerId,
+                Rating = book.Rating,
+                Title = book.Title
+            }));
         }
 
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
-            return Ok(book);
+            return Ok(new Book
+            {
+                Author = book.Author,
+                Genre = book.Genre,
+                ISBN = book.ISBN,
+                ID = book.ID,
+                OwnerId = book.OwnerId,
+                Rating = book.Rating,
+                Title = book.Title
+            });
         }
     }
 }
