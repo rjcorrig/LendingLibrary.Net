@@ -34,4 +34,27 @@ namespace LendingLibrary.Models
         public virtual double Rating { get; set; }
         public virtual string Genre { get; set; }
     }
+
+    public class BookDTO
+    {
+        public int ID { get; set; }
+        public string ISBN { get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public string OwnerId { get; set; }
+        public double Rating { get; set; }
+        public string Genre { get; set; }
+
+        public BookDTO(Book book) 
+        {
+            Author = book.Author;
+            Genre = book.Genre;
+            ISBN = book.ISBN;
+            ID = book.ID;
+            OwnerId = book.OwnerId;
+            Rating = book.Rating;
+            Title = book.Title;
+        }
+    }
+
 }

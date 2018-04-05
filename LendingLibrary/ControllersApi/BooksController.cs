@@ -44,31 +44,13 @@ namespace LendingLibrary.ControllersApi
             var currentUserId = GetCurrentUserId();
             var books = await repo.GetBooksByOwnerIdAsync(currentUserId);
 
-            return Ok(books.Select(book => new Book 
-            { 
-                Author = book.Author,
-                Genre = book.Genre,
-                ISBN = book.ISBN,
-                ID = book.ID,
-                OwnerId = book.OwnerId,
-                Rating = book.Rating,
-                Title = book.Title
-            }));
+            return Ok(books.Select(book => new BookDTO(book))); 
         }
 
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
-            return Ok(new Book
-            {
-                Author = book.Author,
-                Genre = book.Genre,
-                ISBN = book.ISBN,
-                ID = book.ID,
-                OwnerId = book.OwnerId,
-                Rating = book.Rating,
-                Title = book.Title
-            });
+            return Ok(new BookDTO(book));
         }
     }
 }
