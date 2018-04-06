@@ -14,8 +14,14 @@ namespace LendingLibrary
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+			
+            // Recommended in https://blogs.msdn.microsoft.com/mvpawardprogram/2017/05/02/adding-webapi-oauth-auth/
+            // but duplicates call to route setup--not needed?
+
+            //GlobalConfiguration.Configure(WebApiConfig.Register);
 
             GlobalConfiguration.Configuration.EnsureInitialized();
+
         }
     }
 }

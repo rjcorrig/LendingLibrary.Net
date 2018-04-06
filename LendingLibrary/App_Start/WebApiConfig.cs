@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Microsoft.Owin.Security.OAuth;
 
 namespace LendingLibrary
 {
@@ -7,6 +8,10 @@ namespace LendingLibrary
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+
+            // Configure WebApi to use only bearer token authentication
+//            config.SuppressDefaultHostAuthentication();
+//            config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
             // Serialize to JSON
             var json = config.Formatters.JsonFormatter;
