@@ -25,9 +25,9 @@ using Unity.Attributes;
 
 namespace LendingLibrary.ControllersApi
 {
+    [Authorize]
     public class BooksController : BaseController
     {
-
         [InjectionConstructor]
         public BooksController(IApplicationDbContext db) : 
             base(db)
