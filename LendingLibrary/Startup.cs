@@ -14,7 +14,7 @@ namespace LendingLibrary
 
             app.UseCors(CorsOptions.AllowAll);
 
-			var config = new HttpConfiguration();
+            var config = new HttpConfiguration();
             app.UseWebApi(config);
         }
     }
