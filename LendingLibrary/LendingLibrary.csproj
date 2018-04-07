@@ -168,6 +168,7 @@
     <Folder Include="ActionFilters\" />
     <Folder Include="App_Data\" />
     <Folder Include="ControllersApi\" />
+    <Folder Include="Auth\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -211,6 +212,8 @@
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="ControllersApi\BooksController.cs" />
     <Compile Include="ControllersApi\BaseController.cs" />
+    <Compile Include="Auth\ChallengeResult.cs" />
+    <Compile Include="Auth\ApplicationOAuthProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
