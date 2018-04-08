@@ -63,7 +63,9 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-                    return StatusCode(HttpStatusCode.Forbidden);
+                    return Content<ApiMessage>(
+                        HttpStatusCode.Forbidden,
+                        new ApiMessage("You must be friends with the owner to view this book"));
                 }
             }
 

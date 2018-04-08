@@ -87,7 +87,7 @@ namespace LendingLibrary.Tests.ControllersApi
             var controller = new BooksController(mockDbContext.Object, () => userId);
             var bookId = 4;
 
-            var result = await controller.GetBook(bookId) as StatusCodeResult;
+            var result = await controller.GetBook(bookId) as NegotiatedContentResult<ApiMessage>;
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode);
         }
