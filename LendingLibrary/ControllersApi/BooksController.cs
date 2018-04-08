@@ -18,8 +18,10 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
 using LendingLibrary.Models;
 using Unity.Attributes;
 
@@ -50,6 +52,21 @@ namespace LendingLibrary.ControllersApi
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
+            if (book == null) 
+            {
+                return NotFound();
+            }
+
+            var currentUserId = GetCurrentUserId();
+            if (book.OwnerId != currentUserId)
+            {
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
+                if (friendship == null || !friendship.RequestApproved.HasValue)
+                {
+                    return StatusCode(HttpStatusCode.Forbidden);
+                }
+            }
+
             return Ok(new BookDTO(book));
         }
     }
