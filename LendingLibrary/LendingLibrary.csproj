@@ -214,7 +214,6 @@
     <Compile Include="ControllersApi\BaseController.cs" />
     <Compile Include="Auth\ChallengeResult.cs" />
     <Compile Include="Auth\ApplicationOAuthProvider.cs" />
-    <Compile Include="Models\ApiMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

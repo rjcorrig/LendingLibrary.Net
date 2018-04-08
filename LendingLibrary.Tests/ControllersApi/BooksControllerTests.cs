@@ -20,9 +20,9 @@ using LendingLibrary.ControllersApi;
 using LendingLibrary.Models;
 using LendingLibrary.Tests.Models;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
 
@@ -87,9 +87,12 @@ namespace LendingLibrary.Tests.ControllersApi
             var controller = new BooksController(mockDbContext.Object, () => userId);
             var bookId = 4;
 
-            var result = await controller.GetBook(bookId) as NegotiatedContentResult<ApiMessage>;
+            var req = new HttpRequestMessage();
+            controller.ControllerContext.Request = req;
+
+            var result = await controller.GetBook(bookId) as ResponseMessageResult;
             Assert.IsNotNull(result);
-            Assert.AreEqual(HttpStatusCode.Forbidden, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Forbidden, result.Response.StatusCode);
         }
 
         [Test()]

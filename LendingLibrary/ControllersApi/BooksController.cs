@@ -19,6 +19,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -63,9 +64,11 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-                    return Content<ApiMessage>(
+                    var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,
-                        new ApiMessage("You must be friends with the owner to view this book"));
+                        "You must be friends with the owner to view this book");
+                    
+                    return ResponseMessage(forbidden);
                 }
             }
 
