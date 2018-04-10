@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *@
 
-@model IEnumerable<LendingLibrary.Models.Friendship>
+@model IEnumerable<LendingLibrary.Models.FriendshipWithNames>
 
 @{
     ViewBag.Title = "Approve Pending Friendship Requests";
@@ -50,10 +50,10 @@
             @Html.AntiForgeryToken();
             @Html.Hidden("userId", item.UserId);
             <td>
-                @Html.ActionLink(item.User.GivenName + " " + item.User.FamilyName, "Details", "Account", new { id = item.UserId }, null)
+                @Html.ActionLink(item.UserName, "Details", "Account", new { id = item.UserId }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Friend.UserName)
+                @Html.DisplayFor(modelItem => item.FriendName)
             </td>
             <td class="utc-datetime">
 			    @Html.DisplayFor(modelItem => item.RequestSent)

@@ -17,25 +17,28 @@
 */
 
 using System;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
+using System.Web;
+using Unity.Attributes;
+using System.Linq;
+using System.Data.Entity;
 
 namespace LendingLibrary.Controllers
 {
     [Authorize]
     public class FriendshipsController : BaseController
     {
-        public FriendshipsController()
+        [InjectionConstructor]
+        public FriendshipsController(IApplicationDbContext db) :
+            base(db)
         {
         }
 
-        public FriendshipsController(IApplicationDbContext db, IApplicationUserManager manager) :
-            base(db, manager)
+        public FriendshipsController(IApplicationDbContext db, Func<string> getUserId) :
+            base(db, getUserId)
         {
         }
 
@@ -44,16 +47,19 @@ namespace LendingLibrary.Controllers
         {
             ViewBag.RequestSent = RequestSent;
 
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            // First Where filter gets Friendships involving this user
-            // Second removes duplicate confirmed friendships by limiting those to
-            // rows where the current user is the owning user
-            var friendships = db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                .Where(f => f.FriendId == currentUser.Id || f.UserId == currentUser.Id)
-                .Where(f => !f.RequestApproved.HasValue || f.UserId == currentUser.Id);
-
-            return View(await friendships.ToListAsync());
+            return View(await repo.GetFriendshipsByUserId(currentUserId)
+                        .Select(f => new FriendshipWithNames
+                        {
+                            UserId = f.UserId,
+                            FriendId = f.FriendId,
+                            UserName = f.User.GivenName + " " + f.User.FamilyName,
+                            FriendName = f.Friend.GivenName + " " + f.Friend.FamilyName,
+                            RequestSent = f.RequestSent,
+                            RequestApproved = f.RequestApproved
+                        })
+                        .ToListAsync());
         }
 
         // GET: Friendships/Waiting
@@ -62,13 +68,19 @@ namespace LendingLibrary.Controllers
         {
             ViewBag.RequestConfirmed = RequestConfirmed;
 
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            var friendships = db.Friendships.Include(f => f.Friend).Include(f => f.User)
-                .Where(f => f.FriendId == currentUser.Id)
-                .Where(f => !f.RequestApproved.HasValue);
-
-            return View(await friendships.ToListAsync());
+            return View(await repo.GetFriendshipsAwaitingApprovalByUserId(currentUserId)
+                        .Select(f => new FriendshipWithNames
+                        {
+                            UserId = f.UserId,
+                            FriendId = f.FriendId,
+                            UserName = f.User.GivenName + " " + f.User.FamilyName,
+                            FriendName = f.Friend.GivenName + " " + f.Friend.FamilyName,
+                            RequestSent = f.RequestSent,
+                            RequestApproved = f.RequestApproved
+                        })
+                        .ToListAsync());
         }
 
         // POST: Friendships/Confirm
@@ -80,35 +92,34 @@ namespace LendingLibrary.Controllers
         {
             if (userId == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
-            var currentUser = await GetCurrentUserAsync();
-            var requestor = await manager.FindByIdAsync(userId);
+            var currentUserId = GetCurrentUserId();
 
             // Confirm the original friendship request
-            var friendRequest = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == requestor.Id && f.FriendId == currentUser.Id);
-            if (friendRequest == null)
+            var friendRequest = await repo.GetFriendshipBetweenUserIdsAsync(userId, currentUserId);
+            if (friendRequest == null || friendRequest.RequestApproved.HasValue)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
             }
             friendRequest.RequestApproved = DateTime.UtcNow;
 
             // Find the matching reciprocal friendship record, if it exists
-            var reciprocalRequest = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == currentUser.Id && f.FriendId == requestor.Id);
+            var reciprocalRequest = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, userId);
             if (reciprocalRequest == null)
             {
                 reciprocalRequest = new Friendship()
                 {
-                    User = currentUser,
-                    Friend = requestor,
+                    UserId = currentUserId,
+                    FriendId = userId,
                     RequestSent = friendRequest.RequestSent,
                     RequestApproved = friendRequest.RequestApproved
                 };
-                db.Friendships.Add(reciprocalRequest);
+                repo.Add(reciprocalRequest);
             }
 
-            await db.SaveChangesAsync();
+            await repo.SaveAsync();
             return RedirectToAction("Waiting", new { RequestConfirmed = true });
         }
 
@@ -121,15 +132,24 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
             var currentUser = await GetCurrentUserAsync();
-            var friend = await manager.FindByIdAsync(id);
+            if (id == currentUser.Id)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "You cannot friend yourself!");
+            }
 
+            var friend = await repo.GetUserByIdAsync(id);
             if (currentUser == null || friend == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                throw new HttpException((int)HttpStatusCode.NotFound, "User does not exist");
+            }
+
+            if (currentUser.GetFriendshipStatusWith(friend) != FriendshipStatus.None)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "You have already connected with that user");
             }
 
             var friendship = new Friendship()
@@ -140,7 +160,7 @@ namespace LendingLibrary.Controllers
             };
 
             currentUser.Friendships.Add(friendship);
-            await db.SaveChangesAsync();
+            await repo.SaveAsync();
             return RedirectToAction("Index", new { RequestSent = true });
         }
 
@@ -149,12 +169,19 @@ namespace LendingLibrary.Controllers
         {
             if (userId == null || friendId == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
-            Friendship friendship = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == userId && f.FriendId == friendId);
+
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId != userId && currentUserId != friendId)
+            {
+                throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
+            }
+
+            var friendship = await repo.GetFriendshipWithNamesBetweenUserIdsAsync(userId, friendId);
             if (friendship == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "No friendship request exists from that user");
             }
             return View(friendship);
         }
@@ -164,38 +191,64 @@ namespace LendingLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string userId, string friendId)
         {
-            // Remove the targeted Friendship row
-            var friendship = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == userId && f.FriendId == friendId);
-            db.Friendships.Remove(friendship);
-
-            // Remove the reciprocal row, if any
-            var reciprocal = await db.Friendships.FirstOrDefaultAsync(f => f.UserId == friendId && f.FriendId == userId);
-            if (reciprocal != null)
+            if (userId == null || friendId == null)
             {
-                db.Friendships.Remove(reciprocal);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No user was passed");
             }
 
-            await db.SaveChangesAsync();
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId != userId && currentUserId != friendId)
+            {
+                throw new HttpException((int)HttpStatusCode.Forbidden, "You aren't allowed to delete others' connections!");
+            }
+
+            // Locate the targeted Friendship row
+            var friendship = await repo.GetFriendshipBetweenUserIdsAsync(userId, friendId);
+
+            // Locate the reciprocal row, if any
+            var reciprocal = await repo.GetFriendshipBetweenUserIdsAsync(friendId, userId);
+
+            if (friendship == null && reciprocal == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "No connection exists between those users");
+            }
+
+            if (friendship != null)
+            {
+                repo.Remove(friendship);
+            }
+
+            if (reciprocal != null)
+            {
+                repo.Remove(reciprocal);
+            }
+
+            await repo.SaveAsync();
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> SearchForNew()
+        public async Task<ActionResult> SearchForNew(int pageNo = 1, int perPage = 5)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
 
-            // All users not me, 
-            // with no friendship requests to me (otherUser.Friendships)
-            // and no friendship requests from me (otherUser.Users)
-            var nonFriends = await db.Users.Include("Friendships").Include("Users")
-                .Where(u => u.Id != currentUser.Id)
-                .Where(u => !u.Friendships.Any(f => f.FriendId == currentUser.Id))
-                .Where(u => !u.Users.Any(f => f.UserId == currentUser.Id))
-                .ToListAsync();
+            var suggestionQuery = repo.GetUsersUnknownToUser(currentUserId, perPage * (pageNo - 1), perPage + 1);
 
-            // robcory should see coryhome (has a request to foxyboots)
-            // foxyboots should see nobody (has a request from robcory and one to coryhome)
-            // coryhome should see robcory (has a request from foxyboots)
-            return View(nonFriends);
+            var suggestions = await suggestionQuery.Select(u => new ApplicationUserNameAndCity
+            {
+                Id = u.Id,
+                UserName = u.GivenName + " " + u.FamilyName,
+                City = u.City,
+                State = u.State,
+                Country = u.Country
+            }).ToListAsync();
+
+            return View(new SearchForNewViewModel
+            {
+                PageNumber = pageNo,
+                UsersPerPage = perPage,
+                HasMore = suggestions.Count() > perPage,
+                FriendSuggestions = suggestions.Take(perPage)
+            });
         }
     }
 }

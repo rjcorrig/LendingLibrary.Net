@@ -21,18 +21,29 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Claims;
-using LendingLibrary.Utils;
 
 namespace LendingLibrary.Models
 {
     public class LendingLibraryDbInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
     {
+        private readonly SeedImporter importer = new SeedImporter();
+
         protected override void Seed(ApplicationDbContext context)
         {
-            SeedUsers(context);
-            SeedBooks(context);
-            SeedFriendships(context);
+            try
+            {
+                // Turn off change detection for speed
+                context.Configuration.AutoDetectChangesEnabled = false;
+
+                SeedUsers(context);
+                SeedBooks(context);
+                SeedFriendships(context);
+            }
+            finally
+            {
+                // Resume change detection
+                context.Configuration.AutoDetectChangesEnabled = true;
+            }
 
             base.Seed(context);
         }
@@ -41,89 +52,85 @@ namespace LendingLibrary.Models
         {
             using (var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(context)))
             {
-                bool isRunningOnMono = CrossPlatform.IsRunningOnMono;
-
-                var robcory = new ApplicationUser
+                foreach (var user in importer.Get<ApplicationUser>())
                 {
-                    GivenName = "Rob",
-                    FamilyName = "Cory",
-                    About = "Robin @ Work",
-                    UserName = "rob@cory.com",
-                    Email = "rob@cory.com",
-                    Address1 = "123 Main St",
-                    City = "Anytown",
-                    State = "MI",
-                    Postal = "45123",
-                    Country = "USA",
-                    BirthDate = new DateTime(1975, 12, 6),
-                };
-                userManager.Create(robcory, "P@ssw0rd!");
-
-                var foxyboots9 = new ApplicationUser
-                {
-                    GivenName = "Jen",
-                    FamilyName = "Cory",
-                    About = "Red Hot Fox",
-                    UserName = "foxyboots9@gmail.com",
-                    Email = "foxyboots9@gmail.com",
-                    Address1 = "987 Elm St",
-                    City = "Someplace",
-                    State = "WV",
-                    Postal = "25123",
-                    Country = "USA",
-                    BirthDate = new DateTime(1975, 09, 19)
-                };
-                userManager.Create(foxyboots9, "P@ssw0rd!");
-
-                var coryhome = new ApplicationUser
-                {
-                    GivenName = "Rob",
-                    FamilyName = "Cory",
-                    About = "Rob @ Home",
-                    UserName = "rcory@gmail.com",
-                    Email = "rcory@gmail.com",
-                    Address1 = "555 State Rd",
-                    City = "Nowhere",
-                    State = "OH",
-                    Postal = "35123",
-                    Country = "USA",
-                    BirthDate = new DateTime(1975, 12, 6),
-                };
-                userManager.Create(coryhome, "P@ssw0rd!");
+                    userManager.Create(user, "P@ssw0rd!");
+                }
             }
         }
 
         private void SeedBooks(ApplicationDbContext context)
         {
-            var robcory = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "rob@cory.com");
-            var foxyboots9 = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "foxyboots9@gmail.com");
-            var coryhome = context.Users.Include("Books").FirstOrDefault(u => u.UserName == "rcory@gmail.com");
+            var users = context.Users.Include("Books").OrderBy(u => u.Id).ToArray();
 
-            robcory.Books.Add(new Book { Author = "Charles Dickens", Title = "A Tale of Two Cities", ISBN = "99177615628", Rating = 3 });
-            robcory.Books.Add(new Book { Author = "James Joyce", Title = "A Portrait of the Artist as a Young Man", ISBN = "98155659891", Rating = 4 });
-            robcory.Books.Add(new Book { Author = "Fyodor Dostoyevsky", Title = "Crime and Punishment", ISBN = "97826678161" , Rating = 2 });
-
-            foxyboots9.Books.Add(new Book { Author = "Jane Austen", Title = "Pride and Prejudice", ISBN = "78192775621", Rating = 5 });
-            foxyboots9.Books.Add(new Book { Author = "Diana Gabaldon", Title = "Outlander", ISBN = "615572515112", Rating = 5 });
-            foxyboots9.Books.Add(new Book { Author = "Emily Bronte", Title = "Wuthering Heights", ISBN = "78192775621", Rating = 5 });
-
-            coryhome.Books.Add(new Book { Author = "Mary Shelley", Title = "Frankenstein", ISBN = "78712661612", Rating = 4 });
-            coryhome.Books.Add(new Book { Author = "Larry Niven", Title = "Ringworld", ISBN = "782627657134", Rating = 5 });
-            coryhome.Books.Add(new Book { Author = "Isaac Asimov", Title = "Foundation", ISBN = "867856985515", Rating = 3 });
+            foreach (var book in importer.Get<Book>())
+            {
+                // Distribute books to each user until we run out
+                var owner = users[(book.ID - 1) % users.Length];
+                owner.Books.Add(new Book()
+                {
+                    ID = book.ID,
+                    Title = book.Title,
+                    Author = book.Author,
+                    Rating = book.Rating,
+                    ISBN = book.ISBN,
+                    Genre = book.Genre
+                });
+            }
         }
 
         private void SeedFriendships(ApplicationDbContext context)
         {
-            var robcory = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "rob@cory.com");
-            var foxyboots9 = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "foxyboots9@gmail.com");
-            var coryhome = context.Users.Include("Books").Include("Friendships").FirstOrDefault(u => u.UserName == "rcory@gmail.com");
+            /*
+             * Assign friendships among triplets of users
+             * Unconfirmed request to next user, followed by confirmed friendship between next two users,
+             * followed by confirmed friendship to middle of next triplet
+             * [0 -> 1], [1 <-> 2], [2 <-> 4]
+             * [3 -> 4], [4 <-> 5], [5 <-> 7]
+             * [6 -> 7], [7 <-> 8], [8 <-> 10]
+             * ...
+             * [51 -> 52], [52 <-> 53], [53 <-> 1]
+             * [3n -> 3n+1], [3n+1 <-> 3n+2], [3n+2 <-> 3n+4 % N]
+             */
 
-            // An unconfirmed friendship request from robcory to foxyboots
-            robcory.Friendships.Add(new Friendship { Friend = foxyboots9, RequestSent = DateTime.UtcNow });
+            var users = context.Users.Include("Books").Include("Friendships").ToArray();
 
-            // A confirmed friendship between foxyboots and coryhome
-            foxyboots9.Friendships.Add(new Friendship { Friend = coryhome, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
-            coryhome.Friendships.Add(new Friendship { Friend = foxyboots9, RequestSent = DateTime.UtcNow.AddDays(-5), RequestApproved = DateTime.UtcNow });
+            for (var n = 0; n < users.Length / 3; n++)
+            {
+                users[3 * n].Friendships.Add(new Friendship 
+                { 
+                    Friend = users[3 * n + 1], 
+                    RequestSent = DateTime.UtcNow 
+                });
+
+                users[3 * n + 1].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 2],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+
+                users[3 * n + 2].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 1],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+
+                users[3 * n + 2].Friendships.Add(new Friendship
+                {
+                    Friend = users[(3 * n + 4) % users.Length],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });
+
+                users[(3 * n + 4) % users.Length].Friendships.Add(new Friendship
+                {
+                    Friend = users[3 * n + 2],
+                    RequestSent = DateTime.UtcNow.AddDays(-n),
+                    RequestApproved = DateTime.UtcNow
+                });            
+            }
         }
     }
 }

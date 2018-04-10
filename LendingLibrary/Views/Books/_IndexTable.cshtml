@@ -31,9 +31,12 @@
     <th>
         @Html.DisplayNameFor(model => model.Author)
     </th>
-	<th>
-		@Html.DisplayNameFor(model => model.Rating)
-	</th>
+    <th>
+        @Html.DisplayNameFor(model => model.Genre)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Rating)
+    </th>
     <th></th>
 </tr>
 
@@ -49,11 +52,14 @@
         <td>
             @Html.DisplayFor(modelItem => item.Author)
         </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Genre)
+        </td>
 		<td>
 			@Html.BootstrapRating(modelItem => item.Rating).ReadOnly
 		</td>
         <td>
-            @if (item.Owner.Id == User.Identity.GetUserId())
+            @if (item.OwnerId == User.Identity.GetUserId())
                 {
                 <a class="btn btn-primary" href="@Url.Action("Edit", new { id = item.ID })">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
@@ -70,7 +76,7 @@
                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Details
             </a>
 
-            @if (item.Owner.Id == User.Identity.GetUserId())
+            @if (item.OwnerId == User.Identity.GetUserId())
                 {
                 <a class="btn btn-danger" href="@Url.Action("Delete", new { id = item.ID })">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete

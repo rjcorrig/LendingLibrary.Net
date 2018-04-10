@@ -16,56 +16,56 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using LendingLibrary.Models;
 using System.Linq;
+using System;
+using System.Web;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
     [Authorize]
     public class BooksController : BaseController
     {
-        public BooksController()
+        [InjectionConstructor]
+        public BooksController(IApplicationDbContext db) : 
+            base(db)
         {
         }
 
-        public BooksController(IApplicationDbContext db, IApplicationUserManager manager) : 
-            base(db, manager)
+        public BooksController(IApplicationDbContext db, Func<string> getUserId) :
+            base(db, getUserId)
         {
         }
 
         // GET: Books
         public async Task<ActionResult> Index(string userId)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var currentUserId = GetCurrentUserId();
             
             // If no user supplied, look at my bookshelf
             if (userId == null) { 
-                userId = currentUser.Id;
+                userId = currentUserId;
             }
 
             // If not my bookshelf, check to see I'm permitted to view it--am I friends with the target user?
-            if (userId != currentUser.Id)
+            if (userId != currentUserId)
             {
-                var friendship = currentUser.Friendships.FirstOrDefault(f => f.FriendId == userId && f.RequestApproved.HasValue);
-                if (friendship == null)
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, userId);
+                if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends to view that user's books");
                 }
             }
 
-            var model = new BookIndexViewModel();
-            model.Books = await db.Books.Where(b => b.Owner.Id == userId).ToListAsync();
-            model.User = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (model.User == null)
+            var model = new BookIndexViewModel
             {
-                return HttpNotFound();
-            }
-
+                Books = await repo.GetBooksByOwnerIdAsync(userId),
+                User = await repo.GetUserNameByIdAsync(userId)
+            };
             return View(model);
         }
 
@@ -74,22 +74,35 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
 
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
  
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
+
+            // If not my book, check to see I'm permitted to view it--am I friends with the target user?
+            var currentUserId = GetCurrentUserId();
+            if (book.OwnerId != currentUserId)
+            {
+                var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
+                if (friendship == null || !friendship.RequestApproved.HasValue)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be friends with the owner to view this book");
+                }
+            }
+
             return View(book);
         }
 
         // GET: Books/Create
         public ActionResult Create()
         {
-            return View();
+            Book book = new Book();
+            return View(book);
         }
 
         // POST: Books/Create
@@ -97,15 +110,15 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "ID,ISBN,Title,Author,Rating")] Book book)
+        public async Task<ActionResult> Create([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating")] Book book)
         {
             var currentUser = await GetCurrentUserAsync();
 
             if (ModelState.IsValid)
             {
                 book.Owner = currentUser;
-                db.Books.Add(book);
-                await db.SaveChangesAsync();
+                repo.Add(book);
+                await repo.SaveAsync();
                 return RedirectToAction("Index");
             }
 
@@ -117,21 +130,21 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
 
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
             else 
             {
                 // Check if it's my book to modify
-                var currentUser = await GetCurrentUserAsync();
-                if (book.Owner.Id != currentUser.Id)
+                var currentUserId = GetCurrentUserId();
+                if (book.OwnerId != currentUserId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
             }
             return View(book);
@@ -142,15 +155,33 @@ namespace LendingLibrary.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Rating")] Book book)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,ISBN,Title,Author,Genre,Rating")] Book model)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(book).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                // Block attempt to edit someone else's book
+                var book = await repo.GetBookByIdAsync(model.ID);
+                if (book == null)
+                {
+                    throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
+                }
+
+                var currentUserId = GetCurrentUserId();
+                if (book.OwnerId != currentUserId)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
+                }
+
+                book.Author = model.Author;
+                book.Genre = model.Genre;
+                book.ISBN = model.ISBN;
+                book.Rating = model.Rating;
+                book.Title = model.Title;
+
+                await repo.SaveAsync();
                 return RedirectToAction("Index");
             }
-            return View(book);
+            return View(model);
         }
 
         // GET: Books/Delete/5
@@ -158,21 +189,21 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
             }
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
+            Book book = await repo.GetBookByIdAsync(id);
 
             if (book == null)
             {
-                return HttpNotFound();
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
             }
             else
             {
                 // Check if it's my book to modify
-                var currentUser = await GetCurrentUserAsync();
-                if (book.Owner.Id != currentUser.Id)
+                var currentUserId = GetCurrentUserId();
+                if (book.OwnerId != currentUserId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
                 }
             }
 
@@ -182,11 +213,30 @@ namespace LendingLibrary.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int? id)
         {
-            Book book = await db.Books.FirstOrDefaultAsync(b => b.ID == id);
-            db.Books.Remove(book);
-            await db.SaveChangesAsync();
+            if (id == null)
+            {
+                throw new HttpException((int)HttpStatusCode.BadRequest, "No book was selected");
+            }
+
+            Book book = await repo.GetBookByIdAsync(id);
+            if (book == null)
+            {
+                throw new HttpException((int)HttpStatusCode.NotFound, "Not Found");
+            }
+            else
+            {
+                // Check if it's my book to modify
+                var currentUserId = GetCurrentUserId();
+                if (book.OwnerId != currentUserId)
+                {
+                    throw new HttpException((int)HttpStatusCode.Forbidden, "You must be the owner this book to edit it");
+                }
+            }
+
+            repo.Remove(book);
+            await repo.SaveAsync();
             return RedirectToAction("Index");
         }
     }

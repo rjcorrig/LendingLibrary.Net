@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0F902A75-3754-4DA4-B802-6AA7BA8F6F85}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LendingLibrary.Tests</RootNamespace>
     <AssemblyName>LendingLibrary.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -37,9 +37,6 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Razor">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
     </Reference>
@@ -86,9 +83,34 @@
     <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.7.145\lib\net45\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunitlite">
+      <HintPath>..\packages\NUnitLite.3.9.0\lib\net45\nunitlite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\ApplicationUserTests.cs" />
+    <Compile Include="Models\RepositoryTests.cs" />
+    <Compile Include="Models\TestDbAsyncQueryProvider.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Controllers\BooksControllerTests.cs" />
+    <Compile Include="Models\MockContext.cs" />
+    <Compile Include="Controllers\ErrorControllerTests.cs" />
+    <Compile Include="ActionFilters\HttpStatus.cs" />
+    <Compile Include="Models\BookTests.cs" />
+    <Compile Include="Controllers\FriendshipsControllerTests.cs" />
+    <Compile Include="Utils\Geocodio.cs" />
+    <Compile Include="Models\GeoPoint.cs" />
+    <Compile Include="ControllersApi\BooksControllerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +118,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="ActionFilters\" />
+    <Folder Include="Utils\" />
+    <Folder Include="ControllersApi\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LendingLibrary\LendingLibrary.csproj">

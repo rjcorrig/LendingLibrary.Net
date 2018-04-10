@@ -24,6 +24,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using LendingLibrary.Utils;
 
 namespace LendingLibrary.Models
 {
@@ -33,8 +34,13 @@ namespace LendingLibrary.Models
         #region VSGenerated
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
+            return await GenerateUserIdentityAsync(manager, DefaultAuthenticationTypes.ApplicationCookie);
+        }
+
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
+        {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
             // Add custom user claims here
             return userIdentity;
         }
@@ -57,6 +63,10 @@ namespace LendingLibrary.Models
         public virtual string State { get; set; }
         public virtual string Postal { get; set; }
         public virtual string Country { get; set; }
+        [Range(-90.0, 90.0)]
+        public virtual double? Latitude { get; set; }
+        [Range(-180.0, 180.0)]
+        public virtual double? Longitude { get; set; }
         public virtual ICollection<Book> Books { get; set; }
 
         // Friendship relations
@@ -72,8 +82,13 @@ namespace LendingLibrary.Models
 
         public FriendshipStatus GetFriendshipStatusWith(ApplicationUser other)
         {
+            return GetFriendshipStatusWith(other.Id);
+        }
+
+        public FriendshipStatus GetFriendshipStatusWith(string otherId)
+        {
             // Do we have a friendship request (approved or not) sent to the other user?
-            var friend = Friendships.FirstOrDefault(f => f.FriendId == other.Id);
+            var friend = Friendships.FirstOrDefault(f => f.FriendId == otherId);
             if (friend != null)
             {
                 // Yes, we do
@@ -90,7 +105,7 @@ namespace LendingLibrary.Models
             }
 
             // Ok, do we have a friendship request sent to us by the other user?
-            friend = Users.FirstOrDefault(u => u.UserId == other.Id);
+            friend = Users.FirstOrDefault(u => u.UserId == otherId);
             if (friend == null)
             {
                 // No, never heard of them
@@ -107,6 +122,17 @@ namespace LendingLibrary.Models
                 return FriendshipStatus.Received;
             }
 
+        }
+
+        public async Task<GeoPoint> UpdateLatLong(IGeocoder geo)
+        {
+            var geoPoint = await geo.GeocodeAsync(
+                        $"{Address1}, {Address2}, {City} {State} {Postal} {Country}"
+                    );
+            Latitude = geoPoint?.Latitude;
+            Longitude = geoPoint?.Longitude;
+
+            return geoPoint;
         }
         #endregion
     }

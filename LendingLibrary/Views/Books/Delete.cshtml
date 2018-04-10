@@ -53,6 +53,22 @@
             @Html.DisplayFor(model => model.Author)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rating)
+        </dt>
+
+        <dd>
+            @Html.BootstrapRating(model => model.Rating).ReadOnly
+        </dd>
+        
     </dl>
 
     @using (Html.BeginForm()) {
@@ -68,3 +84,7 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    @Scripts.Render("~/Scripts/bootstrap-rating/bootstrap-rating.js")
+}

@@ -1,6 +1,7 @@
 docs/MySql*
 
 connectionStrings.config
+appSettingsSecret.config
 node_modules
 Scripts/lendinglibrary.js
 

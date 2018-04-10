@@ -6,9 +6,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LendingLibrary.Models;
-using System.Net;
-using System.Security.Claims;
-using System.Data.Entity;
+using LendingLibrary.Utils;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
@@ -18,15 +17,20 @@ namespace LendingLibrary.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController()
+        [InjectionConstructor]
+        public AccountController(IGeocoder geocoder)
         {
+            Geocoder = geocoder;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IGeocoder geocoder)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            Geocoder = geocoder;
         }
+
+        public IGeocoder Geocoder { get; private set; }
 
         public ApplicationSignInManager SignInManager
         {
@@ -152,7 +156,8 @@ namespace LendingLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var user = new ApplicationUser
+                {
                     UserName = model.Email,
                     Email = model.Email,
                     Address1 = model.Address1,
@@ -166,6 +171,9 @@ namespace LendingLibrary.Controllers
                     FamilyName = model.FamilyName,
                     About = model.About
                 };
+
+                await user.UpdateLatLong(Geocoder);
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -444,14 +452,14 @@ namespace LendingLibrary.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("BadRequest", "Error");
             }
 
             ApplicationUser account = await UserManager.FindByIdAsync(id);
 
             if (account == null)
             {
-                return HttpNotFound();
+                return RedirectToAction("NotFound", "Error");
             }
 
             // Am I allowed to see all account details?
@@ -468,13 +476,13 @@ namespace LendingLibrary.Controllers
         public async Task<ActionResult> Edit(string id) {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return RedirectToAction("BadRequest", "Error");
             }
 
             // Can only edit myself
             var currentId = User.Identity.GetUserId();
             if (id != currentId) {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                return RedirectToAction("Forbidden", "Error");
             }
 
             var account = await UserManager.FindByIdAsync(id);
@@ -494,21 +502,23 @@ namespace LendingLibrary.Controllers
                 var currentId = User.Identity.GetUserId();
                 if (model.Id != currentId)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                    return RedirectToAction("Forbidden", "Error");
                 }
 
                 account.GivenName = model.GivenName;
                 account.FamilyName = model.FamilyName;
                 account.About = model.About;
                 account.BirthDate = model.BirthDate;
+
                 account.Address1 = model.Address1;
                 account.Address2 = model.Address2;
                 account.City = model.City;
                 account.State = model.State;
                 account.Postal = model.Postal;
                 account.Country = model.Country;
+                await account.UpdateLatLong(Geocoder);
+    
                 account.PhoneNumber = model.PhoneNumber;
-
                 account.Email = model.Email;
                 account.UserName = model.Email;
 

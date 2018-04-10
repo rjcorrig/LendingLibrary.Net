@@ -7,6 +7,7 @@ Lending Library is a fun, free website to meet other bibliophiles online, browse
 * .NET Framework 4.5.2
 * ASP.NET MVC 5.2.3
 * Entity Framework 6.1.3
+* Unity.Mvc 5.0.12
 * MariaDB 10.2
 * Node.js (build only)
 * Webpack (build only)
@@ -28,6 +29,10 @@ then, build with Webpack:
 ## License
 
 Released under the [GNU Affero GPL License v3.0](https://www.gnu.org/licenses/agpl-3.0.html).
+
+See also [Google Books API Terms of Service](https://developers.google.com/books/terms),
+[Open Library Licensing](https://openlibrary.org/developers/licensing) and
+[WorldCat xISBN Terms of Service](http://www.oclc.org/worldcat/community/terms.en.html).
 
 ## Credits
 

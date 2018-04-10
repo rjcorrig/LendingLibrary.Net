@@ -32,7 +32,9 @@ namespace LendingLibrary.Models
         IDbSet<ApplicationUser> Users { get; set; }
 
         Task<int> SaveChangesAsync();
-        DbEntityEntry Entry(object entity);
+        void SetModified(object entity);
+
+        Database Database { get; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
@@ -44,7 +46,9 @@ namespace LendingLibrary.Models
 
         public static ApplicationDbContext Create()
         {
-            return new ApplicationDbContext();
+            var context = new ApplicationDbContext();
+            context.Database.Log = Console.Write;
+            return context;
         }
         #endregion
 
@@ -65,8 +69,14 @@ namespace LendingLibrary.Models
             modelBuilder.Entity<ApplicationUser>().HasMany(u => u.Users).WithRequired(f => f.Friend).HasForeignKey(f => f.FriendId).WillCascadeOnDelete(false);
         }
 
-        public IDbSet<Book> Books { get; set; }
-        public IDbSet<Friendship> Friendships { get; set; }
+        public virtual IDbSet<Book> Books { get; set; }
+        public virtual IDbSet<Friendship> Friendships { get; set; }
+
+        public virtual void SetModified(object entity)
+        {
+            Entry(entity).State = EntityState.Modified;
+        }
+
         #endregion
     }
 }

@@ -18,38 +18,69 @@
 
 using LendingLibrary.Models;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System;
+using System.Web;
+using System.Net;
+using LendingLibrary.Utils.Extensions;
 
 namespace LendingLibrary.Controllers
 {
     public class BaseController : Controller
     {
         protected IApplicationDbContext db;
-        protected IApplicationUserManager manager;
+        protected IRepository repo;
+        protected Func<string> GetUserId;
 
-        public BaseController()
+        public BaseController(IApplicationDbContext db)
         {
-            var context = new ApplicationDbContext();
-            db = context;
-            manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
+            repo = new Repository(db);
+            this.db = repo.Db;
         }
 
-        public BaseController(IApplicationDbContext db, IApplicationUserManager manager)
+        public BaseController(IApplicationDbContext db, Func<string> getUserId)
         {
-            this.db = db;
-            this.manager = manager;
+            repo = new Repository(db);
+            this.db = repo.Db;
+
+            GetUserId = getUserId;        
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await manager.FindByIdAsync(User.Identity.GetUserId());
+            if (GetUserId != null)
+            {
+                return await repo.GetUserByIdAsync(GetUserId());
+            }
+            else 
+            {
+                return await repo.GetUserByIdAsync(User.Identity.GetUserId());
+            }
         }
 
         protected ApplicationUser GetCurrentUser()
         {
-            return manager.FindById(User.Identity.GetUserId());
+            if (GetUserId != null)
+            {
+                return repo.GetUserById(GetUserId());
+            }
+            else
+            {
+                return repo.GetUserById(User.Identity.GetUserId());
+            }
+        }
+
+        protected string GetCurrentUserId()
+        {
+            if (GetUserId != null)
+            {
+                return GetUserId();
+            }
+            else
+            {
+                return User.Identity.GetUserId();
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -59,6 +90,46 @@ namespace LendingLibrary.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+            var httpException = filterContext.Exception as HttpException;
+
+            if (httpException != null) {
+				filterContext.ExceptionHandled = true;
+
+                // Pass context data to the Error Controller for rendering in the view
+                TempData["Controller"] = this.RouteName();
+                TempData["Action"] = this.RouteAction();
+                TempData["Message"] = httpException.Message;
+                TempData["StatusCode"] = httpException.GetHttpCode();
+
+                switch (httpException.GetHttpCode())
+                {
+                    case (int)HttpStatusCode.Forbidden:
+                        {
+                            filterContext.Result = RedirectToAction("Forbidden", "Error");
+                            return;
+                        }
+                    case (int)HttpStatusCode.NotFound:
+                        {
+                            filterContext.Result = RedirectToAction("NotFound", "Error");
+                            return;
+                        }
+                    case (int)HttpStatusCode.BadRequest:
+                        {
+                            filterContext.Result = RedirectToAction("BadRequest", "Error");
+                            return;
+                        }
+                    default:
+                        {
+                            filterContext.Result = RedirectToAction("Index", "Error");
+                            return;
+                        }
+                }
+            }
+            base.OnException(filterContext);
         }
     }
 }

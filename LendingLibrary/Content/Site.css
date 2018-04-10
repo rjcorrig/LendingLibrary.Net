@@ -23,3 +23,23 @@ textarea,
 .input-group {
     max-width: 280px;
 }
+
+input[type="text"].google-search {
+    background: white url(https://developers.google.com/books/images/google_watermark.gif) no-repeat;
+    background-size: contain;
+    background-position-x: 8px;
+}
+
+.suggestions th, .suggestions td {
+    width: 20%;
+}
+
+.suggestions th:last-child, .suggestions td:last-child {
+    text-align: right;
+}
+
+.suggestions select {
+    display: inline-block;
+    width: auto;
+}
+
