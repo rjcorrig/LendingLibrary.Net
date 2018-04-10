@@ -1,4 +1,4 @@
-@*
+﻿@*
  * LendingLibrary - An online private bookshelf catalog and sharing application
  * Copyright (C) 2017 Robert Corrigan
  *
@@ -102,23 +102,6 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/bootstrap-rating/bootstrap-rating.js")
     @Scripts.Render("~/Scripts/lendinglibrary.js")
-<<<<<<< HEAD
-
-<script>
-    $("#ISBNLookup").on("click", function (e) {
-	    lendingLibrary.isbn.resolve( $("#ISBN").val() )
-	    .then(function (book) {
-            $("#Title").val(book.title);
-            $("#Author").val(book.authors.join(", "));
-	    })
-	    .catch(function (err) {
-	        console.log(err);
-	    });
-    });
-</script>
-
-=======
     @Scripts.Render("~/Scripts/books-view-isbn-lookup.js")
->>>>>>> d847f17a934305150bd36987dfa0b56bf1014b79
 }
 

@@ -2,13 +2,13 @@
 // See README.md
 
 $("#ISBNLookup").on("click", function (e) {
-    lendingLibrary.isbn.resolve($("#ISBN").val(), function (err, book) {
-        if (err) {
-            console.log(err);
-        } else {
-            $("#Title").val(book.title);
-            $("#Author").val(book.authors.join(", "));
-            $("#Genre").val(book.categories[0]);
-        }
+    lendingLibrary.isbn.resolve( $("#ISBN").val() )
+    .then(function (book) {
+        $("#Title").val(book.title);
+        $("#Author").val(book.authors.join(", "));
+        $("#Genre").val(book.categories[0]);
+    })
+    .catch(function (err) {
+        console.log(err);
     });
 });

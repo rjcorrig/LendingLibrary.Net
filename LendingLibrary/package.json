@@ -9,7 +9,7 @@
   "author": "Robert Corrigan",
   "license": "AGPL-3.0",
   "dependencies": {
-    "node-isbn": "github:rjcorrig/node-isbn#axios"
+    "node-isbn": "^1.4.0"
   },
   "devDependencies": {
     "webpack": "^3.8.1"
