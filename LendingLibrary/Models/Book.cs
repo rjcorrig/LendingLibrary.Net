@@ -45,6 +45,10 @@ namespace LendingLibrary.Models
         public double Rating { get; set; }
         public string Genre { get; set; }
 
+        public BookDTO()
+        {
+        }
+
         public BookDTO(Book book) 
         {
             Author = book.Author;
