@@ -22,7 +22,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
 using LendingLibrary.Models;
 using Unity.Attributes;
 
@@ -32,7 +31,7 @@ namespace LendingLibrary.ControllersApi
     public class BooksController : BaseController
     {
         [InjectionConstructor]
-        public BooksController(IApplicationDbContext db) : 
+        public BooksController(IApplicationDbContext db) :
             base(db)
         {
         }
@@ -42,18 +41,27 @@ namespace LendingLibrary.ControllersApi
         {
         }
 
+        /// <summary>
+        /// Gets all of the books in the user's bookshelf
+        /// </summary>
+        /// <returns>An array of Book objects</returns>
         public async Task<IHttpActionResult> GetBooks()
         {
             var currentUserId = GetCurrentUserId();
             var books = await repo.GetBooksByOwnerIdAsync(currentUserId);
 
-            return Ok(books.Select(book => new BookDTO(book))); 
+            return Ok(books.Select(book => new BookDTO(book)));
         }
 
+        /// <summary>
+        /// Gets a single Book by its id.
+        /// </summary>
+        /// <returns>A single book object, or a NotFound or Error response</returns>
+        /// <param name="id">The id of the Book</param>
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
-            if (book == null) 
+            if (book == null)
             {
                 return NotFound();
             }
@@ -67,7 +75,7 @@ namespace LendingLibrary.ControllersApi
                     var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,
                         "You must be friends with the owner to view this book");
-                    
+
                     return ResponseMessage(forbidden);
                 }
             }

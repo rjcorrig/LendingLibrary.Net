@@ -4,4 +4,5 @@ connectionStrings.config
 appSettingsSecret.config
 node_modules
 Scripts/lendinglibrary.js
+App_Data/XmlDocument.xml
 
