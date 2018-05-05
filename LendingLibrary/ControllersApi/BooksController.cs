@@ -17,11 +17,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using LendingLibrary.Models;
 using Unity.Attributes;
 
@@ -45,6 +47,8 @@ namespace LendingLibrary.ControllersApi
         /// Gets all of the books in the user's bookshelf
         /// </summary>
         /// <returns>An array of Book objects</returns>
+        /// <response code="200"></response>
+        [ResponseType(typeof(IEnumerable<BookDTO>))]
         public async Task<IHttpActionResult> GetBooks()
         {
             var currentUserId = GetCurrentUserId();
@@ -58,6 +62,8 @@ namespace LendingLibrary.ControllersApi
         /// </summary>
         /// <returns>A single book object, or a NotFound or Error response</returns>
         /// <param name="id">The id of the Book</param>
+        /// <response code="200"></response>
+        [ResponseType(typeof(BookDTO))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);

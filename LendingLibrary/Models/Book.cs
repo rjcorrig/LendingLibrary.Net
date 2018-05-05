@@ -35,14 +35,44 @@ namespace LendingLibrary.Models
         public virtual string Genre { get; set; }
     }
 
+    /// <summary>
+    /// Book Data Transfer Object.
+    /// </summary>
     public class BookDTO
     {
+        /// <summary>
+        /// The Book's id.
+        /// </summary>
         public int ID { get; set; }
+
+        /// <summary>
+        /// The Book's ISBN.
+        /// </summary>
         public string ISBN { get; set; }
+
+        /// <summary>
+        /// The Book's title
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// The Book's author
+        /// </summary>
         public string Author { get; set; }
+
+        /// <summary>
+        /// The account id of the Book's owner
+        /// </summary>
         public string OwnerId { get; set; }
+
+        /// <summary>
+        /// The Book's rating
+        /// </summary>
         public double Rating { get; set; }
+
+        /// <summary>
+        /// The Book's genre
+        /// </summary>
         public string Genre { get; set; }
 
         public BookDTO()
