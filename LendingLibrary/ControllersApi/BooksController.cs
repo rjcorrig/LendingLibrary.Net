@@ -46,8 +46,9 @@ namespace LendingLibrary.ControllersApi
         /// <summary>
         /// Gets all of the books in the user's bookshelf
         /// </summary>
-        /// <returns>An array of Book objects</returns>
+        /// <remarks>Returns an array of all Book objects in the user's bookshelf</remarks>
         /// <response code="200"></response>
+        /// <response code="401">The client is not logged in</response>
         [ResponseType(typeof(IEnumerable<BookDTO>))]
         public async Task<IHttpActionResult> GetBooks()
         {
@@ -60,9 +61,12 @@ namespace LendingLibrary.ControllersApi
         /// <summary>
         /// Gets a single Book by its id.
         /// </summary>
-        /// <returns>A single book object, or a NotFound or Error response</returns>
+        /// <remarks>Returns a single book object, or a NotFound or Forbidden response</remarks>
         /// <param name="id">The id of the Book</param>
         /// <response code="200"></response>
+        /// <response code="401">The client is not logged in</response>
+        /// <response code="403">The Book does not belong to the logged in account</response>
+        /// <response code="404">The Book was not found</response>
         [ResponseType(typeof(BookDTO))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
