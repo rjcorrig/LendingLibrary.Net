@@ -66,7 +66,7 @@ namespace LendingLibrary.ControllersApi
 		[ResponseType(typeof(BookDTO))]
         [SwaggerResponse(401, "The client is not logged in", typeof(ApiError))]
         [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(ApiError))]
-        [SwaggerResponse(404, "No book with that id exists", typeof(ApiError))]
+        [SwaggerResponse(404, "No book with that id exists")]
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
