@@ -220,6 +220,7 @@
     <Compile Include="Auth\ChallengeResult.cs" />
     <Compile Include="Auth\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
+    <Compile Include="Models\ApiError.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
