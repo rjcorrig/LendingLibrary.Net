@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json.Serialization;
 
 namespace LendingLibrary
 {
@@ -17,6 +18,10 @@ namespace LendingLibrary
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             json.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+
+            json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            json.UseDataContractJsonSerializer = false;
+
             config.Formatters.Remove(config.Formatters.XmlFormatter);
 
             // Web API routes
