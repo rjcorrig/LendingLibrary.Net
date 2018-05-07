@@ -31,6 +31,7 @@ using Unity.Attributes;
 namespace LendingLibrary.ControllersApi
 {
     [Authorize]
+    [RoutePrefix("api/books")]
     public class BooksController : BaseController
     {
         [InjectionConstructor]
@@ -48,6 +49,7 @@ namespace LendingLibrary.ControllersApi
         /// Gets all of the books in the user's bookshelf
         /// </summary>
         /// <remarks>Returns an array of all Book objects in the user's bookshelf</remarks>
+        [Route("")]
 		[ResponseType(typeof(IEnumerable<BookDTO>))]
         [SwaggerResponse(401, "The client is not logged in", typeof(ApiError))]
         public async Task<IHttpActionResult> GetBooks()
@@ -63,7 +65,8 @@ namespace LendingLibrary.ControllersApi
         /// </summary>
         /// <remarks>Returns a single book object, or a NotFound or Forbidden response</remarks>
         /// <param name="id">The id of the Book</param>
-		[ResponseType(typeof(BookDTO))]
+        [Route("{id:int}")]
+        [ResponseType(typeof(BookDTO))]
         [SwaggerResponse(401, "The client is not logged in", typeof(ApiError))]
         [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(ApiError))]
         [SwaggerResponse(404, "No book with that id exists")]
