@@ -27,7 +27,7 @@ namespace LendingLibrary.Models
     /// </summary>
     public class ApiError
     {
-        internal HttpError HttpError;
+        internal HttpError HttpError { get; private set; }
 
         /// <summary>
         /// The error code
