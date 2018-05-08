@@ -51,7 +51,7 @@ namespace LendingLibrary.ControllersApi
         /// <remarks>Returns an array of all Book objects in the user's bookshelf</remarks>
         [Route("")]
 		[ResponseType(typeof(IEnumerable<BookDTO>))]
-        [SwaggerResponse(401, "The client is not logged in", typeof(ApiError))]
+        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedApiError))]
         public async Task<IHttpActionResult> GetBooks()
         {
             var currentUserId = GetCurrentUserId();
@@ -67,15 +67,30 @@ namespace LendingLibrary.ControllersApi
         /// <param name="id">The id of the Book</param>
         [Route("{id:int}")]
         [ResponseType(typeof(BookDTO))]
-        [SwaggerResponse(401, "The client is not logged in", typeof(ApiError))]
-        [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(ApiError))]
-        [SwaggerResponse(404, "No book with that id exists")]
+        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedApiError))]
+        [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(WrappedApiError))]
+        [SwaggerResponse(404, "No book with that id exists", typeof(WrappedApiError))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-                return NotFound();
+                var notFoundError = new HttpError() 
+                {
+                    {
+                        "Error", new HttpError()
+                        {
+                            { "Code", HttpStatusCode.NotFound.ToString() },
+                            { "Message", $"No book with id {id} exists" }
+                        }
+                    }
+                };
+
+                var notFound = ControllerContext.Request.CreateErrorResponse(
+                    HttpStatusCode.NotFound,
+                    notFoundError);
+
+                return ResponseMessage(notFound);
             }
 
             var currentUserId = GetCurrentUserId();
@@ -84,9 +99,20 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
+                    var forbiddenError = new HttpError() 
+                    {
+                        {
+                            "Error", new HttpError()
+                            {
+                                { "Code", HttpStatusCode.Forbidden.ToString() },
+                                { "Message", "You must be friends with the owner to view this book" }
+                            }
+                        }
+                    };
+
                     var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,
-                        "You must be friends with the owner to view this book");
+                        forbiddenError);
 
                     return ResponseMessage(forbidden);
                 }
