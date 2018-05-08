@@ -221,7 +221,7 @@
     <Compile Include="Auth\ChallengeResult.cs" />
     <Compile Include="Auth\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
-    <Compile Include="Models\ApiError.cs" />
+    <Compile Include="Models\WrappedApiError.cs" />
     <Compile Include="Utils\HttpRequestMessageExtensions.cs" />
     <Compile Include="App_Start\AddSchemaExamples.cs" />
   </ItemGroup>

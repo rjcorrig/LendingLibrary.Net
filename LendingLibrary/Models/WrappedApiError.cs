@@ -27,16 +27,16 @@ namespace LendingLibrary.Models
     /// </summary>
     public class ApiError
     {
-        protected HttpError _httpError;
+        internal HttpError HttpError;
 
         /// <summary>
         /// The error code
         /// </summary>
         [Required]
         public string Code {
-            get => _httpError["Code"].ToString();
+            get => HttpError["Code"].ToString();
             set {
-                _httpError["Code"] = value;
+                HttpError["Code"] = value;
             } 
         }
 
@@ -45,9 +45,9 @@ namespace LendingLibrary.Models
         /// </summary>
         [Required]
         public string Message {
-            get => _httpError["Message"].ToString();
+            get => HttpError["Message"].ToString();
             set {
-                _httpError["Message"] = value;
+                HttpError["Message"] = value;
             }
         }
 
@@ -56,12 +56,12 @@ namespace LendingLibrary.Models
         /// </summary>
         public ApiError()
         {
-            _httpError = new HttpError();
+            HttpError = new HttpError();
         }
 
         public ApiError(HttpError httpError)
         {
-            _httpError = httpError;
+            HttpError = httpError;
         }
     }
 

@@ -31,11 +31,7 @@ namespace LendingLibrary.Utils.Extensions
             HttpError httpError = new HttpError()
             {
                 {
-                    "Error", new HttpError()
-                    {
-                        { "Code", apiError.Code },
-                        { "Message", apiError.Message }
-                    }
+                    "Error", apiError.HttpError
                 }
             };
             return request.CreateErrorResponse(statusCode, httpError);
