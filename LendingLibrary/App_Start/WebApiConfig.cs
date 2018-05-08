@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using LendingLibrary.ExceptionFilters;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 
@@ -32,6 +33,8 @@ namespace LendingLibrary
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Filters.Add(new GlobalExceptionFilterAttribute());
 
             // Tell Web API to use application's Unity container for DI
             var container = UnityConfig.Container;

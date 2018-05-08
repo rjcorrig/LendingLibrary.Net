@@ -28,10 +28,11 @@ using LendingLibrary.Models;
 using Swashbuckle.Swagger.Annotations;
 using Unity.Attributes;
 using LendingLibrary.Utils.Extensions;
+using LendingLibrary.Auth;
 
 namespace LendingLibrary.ControllersApi
 {
-    [Authorize]
+    [ApiAuthorize]
     [RoutePrefix("api/books")]
     public class BooksController : BaseController
     {

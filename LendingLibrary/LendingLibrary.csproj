@@ -175,6 +175,7 @@
     <Folder Include="ControllersApi\" />
     <Folder Include="Auth\" />
     <Folder Include="SwaggerScripts\" />
+    <Folder Include="ExceptionFilters\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -224,6 +225,8 @@
     <Compile Include="Models\WrappedApiError.cs" />
     <Compile Include="Utils\HttpRequestMessageExtensions.cs" />
     <Compile Include="App_Start\AddSchemaExamples.cs" />
+    <Compile Include="ExceptionFilters\GlobalExceptionFilterAttribute.cs" />
+    <Compile Include="Auth\ApiAuthorize.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />
