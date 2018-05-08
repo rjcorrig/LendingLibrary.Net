@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Web.Http;
 
@@ -31,6 +32,7 @@ namespace LendingLibrary.Models
         /// <summary>
         /// The error code
         /// </summary>
+        [Required]
         public string Code {
             get => _httpError["Code"].ToString();
             set {
@@ -41,6 +43,7 @@ namespace LendingLibrary.Models
         /// <summary>
         /// The error message
         /// </summary>
+        [Required]
         public string Message {
             get => _httpError["Message"].ToString();
             set {
@@ -70,6 +73,7 @@ namespace LendingLibrary.Models
         /// <summary>
         /// The error object
         /// </summary>
+        [Required]
         public ApiError Error { get; private set; }
 
         public WrappedApiError(ApiError apiError)
