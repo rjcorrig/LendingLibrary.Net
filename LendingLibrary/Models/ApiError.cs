@@ -17,7 +17,7 @@ namespace LendingLibrary.Models
         public string Code {
             get => _httpError["Code"].ToString();
             set {
-                _httpError["Code"] = value.ToString();
+                _httpError["Code"] = value;
             } 
         }
 
@@ -27,7 +27,7 @@ namespace LendingLibrary.Models
         public string Message {
             get => _httpError["Message"].ToString();
             set {
-                _httpError["Message"] = value.ToString();
+                _httpError["Message"] = value;
             }
         }
 
@@ -58,6 +58,11 @@ namespace LendingLibrary.Models
         public WrappedApiError(ApiError apiError)
         {
             Error = apiError;
+        }
+
+        public WrappedApiError(HttpError httpError)
+        {
+            Error = new ApiError(httpError);
         }
 
         public WrappedApiError(HttpStatusCode code, string message)
