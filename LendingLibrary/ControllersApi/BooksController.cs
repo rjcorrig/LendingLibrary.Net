@@ -27,6 +27,7 @@ using System.Web.Http.Description;
 using LendingLibrary.Models;
 using Swashbuckle.Swagger.Annotations;
 using Unity.Attributes;
+using LendingLibrary.Utils.Extensions;
 
 namespace LendingLibrary.ControllersApi
 {

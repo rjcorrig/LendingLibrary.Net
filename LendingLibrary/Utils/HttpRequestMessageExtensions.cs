@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using LendingLibrary.Models;
 
-namespace LendingLibrary.Utils
+namespace LendingLibrary.Utils.Extensions
 {
     public static class HttpRequestMessageExtensions
     {
