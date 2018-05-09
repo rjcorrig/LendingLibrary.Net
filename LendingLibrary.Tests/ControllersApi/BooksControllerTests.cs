@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Http;
 using System.Web.Http.Results;
 
 namespace LendingLibrary.Tests.ControllersApi
@@ -80,7 +81,7 @@ namespace LendingLibrary.Tests.ControllersApi
         }
 
         [Test()]
-        public async Task GetBook_returns_Forbidden_if_not_friends()
+        public async Task GetBook_returns_HttpError_with_Forbidden_Code_if_not_friends()
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
@@ -93,19 +94,36 @@ namespace LendingLibrary.Tests.ControllersApi
             var result = await controller.GetBook(bookId) as ResponseMessageResult;
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.Forbidden, result.Response.StatusCode);
+
+            var error = await result.Response.Content.ReadAsAsync<HttpError>();
+            Assert.IsNotNull(error);
+            var innerError = error["Error"] as HttpError;
+            Assert.IsTrue(innerError?.ContainsKey("Code"));
+            Assert.IsTrue(innerError?.ContainsKey("Message"));
+            Assert.AreEqual(HttpStatusCode.Forbidden.ToString(), innerError?["Code"]);
         }
 
         [Test()]
-        public async Task GetBook_returns_NotFound_if_not_found()
+        public async Task GetBook_returns_HttpError_with_NotFound_Code_if_not_found()
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
             var controller = new BooksController(mockDbContext.Object, () => userId);
             var bookId = -1;
 
-            var result = await controller.GetBook(bookId) as NotFoundResult;
-            Assert.IsNotNull(result);
-        }
+            var req = new HttpRequestMessage();
+            controller.ControllerContext.Request = req;
 
+            var result = await controller.GetBook(bookId) as ResponseMessageResult;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.Response.StatusCode);
+
+            var error = await result.Response.Content.ReadAsAsync<HttpError>();
+            Assert.IsNotNull(error);
+            var innerError = error["Error"] as HttpError;
+            Assert.IsTrue(innerError?.ContainsKey("Code"));
+            Assert.IsTrue(innerError?.ContainsKey("Message"));
+            Assert.AreEqual(HttpStatusCode.NotFound.ToString(), innerError?["Code"]);
+        }
     }
 }
