@@ -95,4 +95,52 @@ namespace LendingLibrary.Models
             };
         }
     }
+
+    /// <summary>
+    /// Wraps a NotFound error from an API call
+    /// </summary>
+    public class WrappedNotFoundApiError : WrappedApiError
+    {
+        public WrappedNotFoundApiError(string message)
+            : base(HttpStatusCode.NotFound, message)
+        {
+        }
+
+        public WrappedNotFoundApiError()
+            : this("Not Found")
+        {
+        }
+    }
+
+    /// <summary>
+    /// Wraps a Forbidden error from an API call
+    /// </summary>
+    public class WrappedForbiddenApiError : WrappedApiError
+    {
+        public WrappedForbiddenApiError(string message)
+            : base(HttpStatusCode.Forbidden, message)
+        {
+        }
+
+        public WrappedForbiddenApiError()
+            : this("Forbidden")
+        {
+        }
+    }
+
+    /// <summary>
+    /// Wraps an Unauthorized error from an API call
+    /// </summary>
+    public class WrappedUnauthorizedApiError : WrappedApiError
+    {
+        public WrappedUnauthorizedApiError(string message)
+            : base(HttpStatusCode.Unauthorized, message)
+        {
+        }
+
+        public WrappedUnauthorizedApiError()
+            : this("Unauthorized")
+        {
+        }
+    }
 }

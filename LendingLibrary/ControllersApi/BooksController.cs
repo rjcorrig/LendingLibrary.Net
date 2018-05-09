@@ -53,7 +53,7 @@ namespace LendingLibrary.ControllersApi
         /// <remarks>Returns an array of all Book objects in the user's bookshelf</remarks>
         [Route("")]
 		[ResponseType(typeof(IEnumerable<BookDTO>))]
-        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedApiError))]
+        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedUnauthorizedApiError))]
         public async Task<IHttpActionResult> GetBooks()
         {
             var currentUserId = GetCurrentUserId();
@@ -69,16 +69,15 @@ namespace LendingLibrary.ControllersApi
         /// <param name="id">The id of the Book</param>
         [Route("{id:int}")]
         [ResponseType(typeof(BookDTO))]
-        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedApiError))]
-        [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(WrappedApiError))]
-        [SwaggerResponse(404, "No book with that id exists", typeof(WrappedApiError))]
+        [SwaggerResponse(401, "The client is not logged in", typeof(WrappedUnauthorizedApiError))]
+        [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(WrappedForbiddenApiError))]
+        [SwaggerResponse(404, "No book with that id exists", typeof(WrappedNotFoundApiError))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-                var notFoundError = new WrappedApiError(HttpStatusCode.NotFound, 
-                                                        $"No book with id {id} exists");
+                var notFoundError = new WrappedNotFoundApiError($"No book with id {id} exists");
 
                 var notFound = ControllerContext.Request.CreateErrorResponse(
                     HttpStatusCode.NotFound,
@@ -93,8 +92,7 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-                    var forbiddenError = new WrappedApiError(HttpStatusCode.Forbidden, 
-                                                             "You must be friends with the owner to view this book");
+                    var forbiddenError = new WrappedForbiddenApiError("You must be friends with the owner to view this book");
 
                     var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,
