@@ -32,10 +32,10 @@ namespace LendingLibrary.Auth
     {
 		protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
 		{
-			var wrappedError = new UnauthorizedApiError("You must log in to access the API").Wrap();
+			var apiError = new UnauthorizedApiError("You must log in to access the API");
 
             actionContext.Response = actionContext.Request.CreateErrorResponse(
-                HttpStatusCode.Unauthorized, wrappedError);
+                HttpStatusCode.Unauthorized, apiError);
 		}
 	}
 }

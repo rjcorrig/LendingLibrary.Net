@@ -36,5 +36,11 @@ namespace LendingLibrary.Utils.Extensions
             };
             return request.CreateErrorResponse(statusCode, httpError);
         }
+
+		public static HttpResponseMessage CreateErrorResponse(this HttpRequestMessage request, HttpStatusCode statusCode, ApiError error)
+        {
+			var wrappedError = error.Wrap();
+			return request.CreateErrorResponse(statusCode, wrappedError);
+        }
     }
 }

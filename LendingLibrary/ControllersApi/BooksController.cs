@@ -82,7 +82,7 @@ namespace LendingLibrary.ControllersApi
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-				var notFoundError = new NotFoundApiError($"No book with id {id} exists").Wrap();
+				var notFoundError = new NotFoundApiError($"No book with id {id} exists");
 
 				var notFound = ControllerContext.Request.CreateErrorResponse(
 					HttpStatusCode.NotFound, notFoundError);
@@ -96,7 +96,7 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-					var forbiddenError = new ForbiddenApiError("You must be friends with the owner to view this book").Wrap();
+					var forbiddenError = new ForbiddenApiError("You must be friends with the owner to view this book");
 
                     var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,

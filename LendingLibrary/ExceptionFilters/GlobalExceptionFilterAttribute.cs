@@ -33,9 +33,8 @@ namespace LendingLibrary.ExceptionFilters
 		{
             var exception = actionExecutedContext.Exception;
 			var apiError = new InternalServerApiError(exception);
-			var wrappedError = apiError.Wrap();
             actionExecutedContext.Response = actionExecutedContext.Request.CreateErrorResponse(
-                HttpStatusCode.InternalServerError, wrappedError);
+                HttpStatusCode.InternalServerError, apiError);
 		}
 	}
 }
