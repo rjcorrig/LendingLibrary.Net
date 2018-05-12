@@ -81,7 +81,7 @@ namespace LendingLibrary.Tests.ControllersApi
         }
 
         [Test()]
-        public async Task GetBook_returns_HttpError_with_Forbidden_Code_if_not_friends()
+        public async Task GetBook_returns_WrappedApiError_of_ForbiddenApiError_if_not_friends()
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
@@ -95,16 +95,14 @@ namespace LendingLibrary.Tests.ControllersApi
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.Forbidden, result.Response.StatusCode);
 
-            var error = await result.Response.Content.ReadAsAsync<HttpError>();
+			var error = await result.Response.Content.ReadAsAsync<WrappedApiError<ForbiddenApiError>>();
             Assert.IsNotNull(error);
-            var innerError = error["Error"] as HttpError;
-            Assert.IsTrue(innerError?.ContainsKey("Code"));
-            Assert.IsTrue(innerError?.ContainsKey("Message"));
-            Assert.AreEqual(HttpStatusCode.Forbidden.ToString(), innerError?["Code"]);
+			var innerError = error.Error;
+			Assert.AreEqual(HttpStatusCode.Forbidden.ToString(), innerError.Code);
         }
 
         [Test()]
-        public async Task GetBook_returns_HttpError_with_NotFound_Code_if_not_found()
+        public async Task GetBook_returns_WrappedApiError_of_NotFoundApiError_if_not_found()
         {
             var userId = "foxyboots9-guid";
             var mockDbContext = new MockContext();
@@ -118,12 +116,10 @@ namespace LendingLibrary.Tests.ControllersApi
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.NotFound, result.Response.StatusCode);
 
-            var error = await result.Response.Content.ReadAsAsync<HttpError>();
+			var error = await result.Response.Content.ReadAsAsync<WrappedApiError<NotFoundApiError>>();
             Assert.IsNotNull(error);
-            var innerError = error["Error"] as HttpError;
-            Assert.IsTrue(innerError?.ContainsKey("Code"));
-            Assert.IsTrue(innerError?.ContainsKey("Message"));
-            Assert.AreEqual(HttpStatusCode.NotFound.ToString(), innerError?["Code"]);
+			var innerError = error.Error;
+			Assert.AreEqual(HttpStatusCode.NotFound.ToString(), innerError.Code);
         }
     }
 }

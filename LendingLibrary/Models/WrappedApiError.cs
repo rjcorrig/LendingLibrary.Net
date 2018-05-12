@@ -32,7 +32,11 @@ namespace LendingLibrary.Models
         /// </summary>
         [Required]
 		[JsonProperty(PropertyName = "error")]
-        public T Error { get; private set; }
+        public T Error { get; set; }
+
+		public WrappedApiError()
+		{
+		}
 
         public WrappedApiError(T apiError)
         {
@@ -49,7 +53,7 @@ namespace LendingLibrary.Models
     }
 
 	/// <summary>
-    /// Encapsulates an HttpError object with properties usable by ApiExplorer
+    /// An API Error object conforming to Microsoft API guidelines
     /// </summary>
     public class ApiError
     {
