@@ -18,7 +18,6 @@
 
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
 using System.Web.Http.Filters;
 using LendingLibrary.Models;
 using LendingLibrary.Utils.Extensions;
@@ -33,7 +32,8 @@ namespace LendingLibrary.ExceptionFilters
 		public override void OnException(HttpActionExecutedContext actionExecutedContext)
 		{
             var exception = actionExecutedContext.Exception;
-			var wrappedError = new WrappedApiError<InternalServerApiError>($"{exception.GetType()}: {exception.Message}");
+			var apiError = new InternalServerApiError(exception);
+			var wrappedError = new WrappedApiError<InternalServerApiError>(apiError);
             actionExecutedContext.Response = actionExecutedContext.Request.CreateErrorResponse(
                 HttpStatusCode.InternalServerError, wrappedError);
 		}

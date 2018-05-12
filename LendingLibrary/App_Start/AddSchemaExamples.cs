@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using LendingLibrary.Models;
 using Swashbuckle.Swagger;
 
@@ -24,27 +23,10 @@ namespace LendingLibrary
                     };
                     break;
                 case nameof(UnauthorizedApiError):
-                    var unauth = new UnauthorizedApiError("You must log in to use this API");
-					unauth.Details = new ApiError[] {
-						new ApiError {
-							Code = HttpStatusCode.InternalServerError.ToString(),
-							Message = "Something happened in the auth function"
-						}
-					};
-					unauth.InnerError = new InnerApiError
-					{
-						Code = "BadPassword",
-						InnerError = new InnerApiError
-						{
-							Code = "BlankPassword"
-						}
-					};
-					schema.example = unauth;
+					schema.example = new UnauthorizedApiError("You must log in to use this API");
 					break;
                 case nameof(ForbiddenApiError):
-					var forbidden = new ForbiddenApiError("You are not allowed to view that resource");
-					forbidden.Target = "Books";
-					schema.example = forbidden;
+					schema.example = new ForbiddenApiError("You are not allowed to view that resource");
 					break;
                 case nameof(NotFoundApiError):
                     schema.example = new NotFoundApiError("That resource was not found");

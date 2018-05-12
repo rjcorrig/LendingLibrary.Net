@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Newtonsoft.Json;
@@ -186,6 +187,29 @@ namespace LendingLibrary.Models
 			: base(HttpStatusCode.InternalServerError, message)
         {
         }
+
+		public InternalServerApiError(Exception exception)
+		{
+			Code = HttpStatusCode.InternalServerError.ToString();
+			Message = exception.Message;
+
+            // Surface the top exception type
+			InnerError = new InnerApiError
+			{
+				Code = exception.GetType().ToString()
+    		};
+
+            // Build a chain of inner errors matching the exception chain
+			var innerError = InnerError;
+			for (var innerException = exception.InnerException; innerException != null; innerException = innerException.InnerException)
+			{
+				innerError.InnerError = new InnerApiError
+				{
+					Code = innerException.GetType().ToString()
+				};
+				innerError = innerError.InnerError;
+			}
+		}
 
 		public InternalServerApiError()
             : this("Internal Server Error")
