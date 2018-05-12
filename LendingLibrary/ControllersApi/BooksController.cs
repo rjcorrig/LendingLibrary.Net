@@ -74,10 +74,15 @@ namespace LendingLibrary.ControllersApi
         [SwaggerResponse(404, "No book with that id exists", typeof(WrappedApiError<NotFoundApiError>))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
+            if (id <= 0)
+			{
+				throw new ArgumentException("Book id must be greater than zero.", nameof(id));
+			}
+
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
-                var notFoundError = new WrappedApiError<NotFoundApiError>($"No book with id {id} exists");
+				var notFoundError = new NotFoundApiError($"No book with id {id} exists").Wrap();
 
 				var notFound = ControllerContext.Request.CreateErrorResponse(
 					HttpStatusCode.NotFound, notFoundError);
@@ -91,7 +96,7 @@ namespace LendingLibrary.ControllersApi
                 var friendship = await repo.GetFriendshipBetweenUserIdsAsync(currentUserId, book.OwnerId);
                 if (friendship == null || !friendship.RequestApproved.HasValue)
                 {
-                    var forbiddenError = new WrappedApiError<ForbiddenApiError>("You must be friends with the owner to view this book");
+					var forbiddenError = new ForbiddenApiError("You must be friends with the owner to view this book").Wrap();
 
                     var forbidden = ControllerContext.Request.CreateErrorResponse(
                         HttpStatusCode.Forbidden,

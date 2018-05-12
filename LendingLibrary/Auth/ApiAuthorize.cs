@@ -32,7 +32,7 @@ namespace LendingLibrary.Auth
     {
 		protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
 		{
-			var wrappedError = new WrappedApiError<UnauthorizedApiError>("You must log in to access the API");
+			var wrappedError = new UnauthorizedApiError("You must log in to access the API").Wrap();
 
             actionContext.Response = actionContext.Request.CreateErrorResponse(
                 HttpStatusCode.Unauthorized, wrappedError);

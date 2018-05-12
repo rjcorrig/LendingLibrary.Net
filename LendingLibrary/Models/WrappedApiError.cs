@@ -109,6 +109,11 @@ namespace LendingLibrary.Models
 			: this(code.ToString(), message)
 		{
 		}
+
+		public virtual WrappedApiError<ApiError> Wrap()
+		{
+			return new WrappedApiError<ApiError>(this);
+		}
     }
     
     /// <summary>
