@@ -18,95 +18,124 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace LendingLibrary.Models
 {
-    /// <summary>
-    /// Encapsulates an HttpError object with properties usable by ApiExplorer
-    /// </summary>
-    public class ApiError
-    {
-        internal HttpError HttpError { get; private set; }
-
-        /// <summary>
-        /// The error code
-        /// </summary>
-        [Required]
-        public string Code {
-            get => HttpError["Code"].ToString();
-            set {
-                HttpError["Code"] = value;
-            } 
-        }
-
-        /// <summary>
-        /// The error message
-        /// </summary>
-        [Required]
-        public string Message {
-            get => HttpError["Message"].ToString();
-            set {
-                HttpError["Message"] = value;
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:LendingLibrary.Models.ApiError"/> class.
-        /// </summary>
-        public ApiError()
-        {
-            HttpError = new HttpError();
-        }
-
-        public ApiError(HttpError httpError)
-        {
-            HttpError = httpError;
-        }
-    }
-
-    /// <summary>
+	/// <summary>
     /// Wraps an error message returned from an API call
     /// </summary>
-    public class WrappedApiError
+    public class WrappedApiError<T> where T : ApiError, new()
     {
         /// <summary>
         /// The error object
         /// </summary>
         [Required]
-        public ApiError Error { get; private set; }
+		[JsonProperty(PropertyName = "error")]
+        public T Error { get; private set; }
 
-        public WrappedApiError(ApiError apiError)
+        public WrappedApiError(T apiError)
         {
             Error = apiError;
         }
 
-        public WrappedApiError(HttpError httpError)
+        public WrappedApiError(string message)
         {
-            Error = new ApiError(httpError);
-        }
-
-        public WrappedApiError(HttpStatusCode code, string message)
-        {
-            Error = new ApiError
+            Error = new T()
             {
-                Code = code.ToString(),
                 Message = message
             };
         }
     }
 
+	/// <summary>
+    /// Encapsulates an HttpError object with properties usable by ApiExplorer
+    /// </summary>
+    public class ApiError
+    {
+        /// <summary>
+		/// One of a server-defined set of error codes
+        /// </summary>
+        [Required]
+        [JsonProperty(PropertyName = "code")]
+		public string Code { get; set; }
+
+        /// <summary>
+		/// A human-readable representation of the error
+        /// </summary>
+        [Required]
+		[JsonProperty(PropertyName = "message")]
+		public string Message { get; set; }
+
+        /// <summary>
+        /// The target of the error
+        /// </summary>
+		[JsonProperty(PropertyName = "target")]
+		public string Target { get; set; }
+
+        /// <summary>
+		/// An array of details about specific errors that led to this reported error
+        /// </summary>
+		[JsonProperty(PropertyName = "details")]
+		public ApiError[] Details { get; set; }
+
+        /// <summary>
+		/// An object containing more specific information than the current object about the error
+        /// </summary>
+		[JsonProperty(PropertyName = "innererror")]
+		public InnerApiError InnerError { get; set; }
+
+		public ApiError()
+		{
+		}
+
+		public ApiError(string code, string message)
+		{
+			Code = code;
+			Message = message;
+		}
+
+		public ApiError(HttpStatusCode code, string message)
+			: this(code.ToString(), message)
+		{
+		}
+
+		public ApiError(int code, string message)
+			: this(code.ToString(), message)
+		{
+		}
+    }
+    
+    /// <summary>
+	/// An object containing more specific information than the containing object about the error
+    /// </summary>
+    public class InnerApiError
+	{
+		/// <summary>
+		/// A more specific error code than was provided by the containing error
+        /// </summary>
+        /// <value>The code.</value>
+		[JsonProperty(PropertyName = "code")]
+		public string Code { get; set; }
+
+        /// <summary>
+		/// An object containing more specific information than the current object about the error
+        /// </summary>
+		[JsonProperty(PropertyName = "innererror")]
+		public InnerApiError InnerError { get; set; }
+	}
+
     /// <summary>
     /// Wraps a NotFound error from an API call
     /// </summary>
-    public class WrappedNotFoundApiError : WrappedApiError
+    public class NotFoundApiError : ApiError
     {
-        public WrappedNotFoundApiError(string message)
-            : base(HttpStatusCode.NotFound, message)
+        public NotFoundApiError(string message)
+			: base(HttpStatusCode.NotFound, message)
         {
         }
 
-        public WrappedNotFoundApiError()
+        public NotFoundApiError()
             : this("Not Found")
         {
         }
@@ -115,14 +144,14 @@ namespace LendingLibrary.Models
     /// <summary>
     /// Wraps a Forbidden error from an API call
     /// </summary>
-    public class WrappedForbiddenApiError : WrappedApiError
+    public class ForbiddenApiError : ApiError
     {
-        public WrappedForbiddenApiError(string message)
-            : base(HttpStatusCode.Forbidden, message)
+        public ForbiddenApiError(string message)
+			: base(HttpStatusCode.Forbidden, message)
         {
         }
 
-        public WrappedForbiddenApiError()
+        public ForbiddenApiError()
             : this("Forbidden")
         {
         }
@@ -131,15 +160,31 @@ namespace LendingLibrary.Models
     /// <summary>
     /// Wraps an Unauthorized error from an API call
     /// </summary>
-    public class WrappedUnauthorizedApiError : WrappedApiError
+    public class UnauthorizedApiError : ApiError
     {
-        public WrappedUnauthorizedApiError(string message)
+        public UnauthorizedApiError(string message)
             : base(HttpStatusCode.Unauthorized, message)
         {
         }
 
-        public WrappedUnauthorizedApiError()
+        public UnauthorizedApiError()
             : this("Unauthorized")
+        {
+        }
+    }
+
+	/// <summary>
+    /// Wraps a general exception or error from an API call
+    /// </summary>
+    public class InternalServerApiError : ApiError
+    {
+		public InternalServerApiError(string message)
+			: base(HttpStatusCode.InternalServerError, message)
+        {
+        }
+
+		public InternalServerApiError()
+            : this("Internal Server Error")
         {
         }
     }

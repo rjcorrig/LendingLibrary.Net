@@ -33,8 +33,7 @@ namespace LendingLibrary.ExceptionFilters
 		public override void OnException(HttpActionExecutedContext actionExecutedContext)
 		{
             var exception = actionExecutedContext.Exception;
-            var wrappedError = new WrappedApiError(HttpStatusCode.InternalServerError,
-                                                   $"{exception.GetType()}: {exception.Message}");
+			var wrappedError = new WrappedApiError<InternalServerApiError>($"{exception.GetType()}: {exception.Message}");
             actionExecutedContext.Response = actionExecutedContext.Request.CreateErrorResponse(
                 HttpStatusCode.InternalServerError, wrappedError);
 		}

@@ -25,13 +25,13 @@ namespace LendingLibrary.Utils.Extensions
 {
     public static class HttpRequestMessageExtensions
     {
-        public static HttpResponseMessage CreateErrorResponse(this HttpRequestMessage request, HttpStatusCode statusCode, WrappedApiError error)
+		public static HttpResponseMessage CreateErrorResponse<T>(this HttpRequestMessage request, HttpStatusCode statusCode, WrappedApiError<T> error) where T : ApiError, new()
         {
             ApiError apiError = error.Error;
             HttpError httpError = new HttpError()
             {
                 {
-                    "Error", apiError.HttpError
+                    "Error", apiError
                 }
             };
             return request.CreateErrorResponse(statusCode, httpError);

@@ -16,26 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Controllers;
 using LendingLibrary.Models;
-using LendingLibrary.Utils.Extensions;
-
-namespace LendingLibrary.Auth
+using NUnit.Framework;
+using System;
+namespace LendingLibrary.Tests.Models
 {
-    /// <summary>
-    /// Returns an Unauthorized error object as per Microsoft Web API Guidelines
-    /// </summary>
-    public class ApiAuthorize : AuthorizeAttribute
+    [TestFixture()]
+    public class WrappedApiErrorTests
     {
-		protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
-		{
-			var wrappedError = new WrappedApiError<UnauthorizedApiError>("You must log in to access the API");
-
-            actionContext.Response = actionContext.Request.CreateErrorResponse(
-                HttpStatusCode.Unauthorized, wrappedError);
-		}
-	}
+        [Test()]
+        public void ApiError_default_ctor_creates_HttpError()
+        {
+			var apiError = new ApiError();
+        }
+    }
 }
