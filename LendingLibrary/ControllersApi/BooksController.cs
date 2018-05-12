@@ -74,11 +74,6 @@ namespace LendingLibrary.ControllersApi
         [SwaggerResponse(404, "No book with that id exists", typeof(WrappedApiError<NotFoundApiError>))]
         public async Task<IHttpActionResult> GetBook(int id)
         {
-            if (id <= 0)
-			{
-				throw new ArgumentException("Book id must be greater than zero.", nameof(id));
-			}
-
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
             {
