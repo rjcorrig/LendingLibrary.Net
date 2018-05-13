@@ -43,14 +43,6 @@ namespace LendingLibrary.Models
         {
             Error = apiError;
         }
-
-        public WrappedApiError(string message)
-        {
-            Error = new T()
-            {
-                Message = message
-            };
-        }
     }
 
 	/// <summary>
