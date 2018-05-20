@@ -17,24 +17,31 @@
 */
 
 using System.Net;
-using System.Net.Http;
-using System.Web.Http.Filters;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http.ExceptionHandling;
+using System.Web.Http.Results;
 using LendingLibrary.Models;
 using LendingLibrary.Utils.Extensions;
 
-namespace LendingLibrary.ExceptionFilters
+namespace LendingLibrary.GlobalHandlers
 {
-    /// <summary>
-    /// Returns an InternalServerError error object as per Microsoft Web API Guidelines
-    /// </summary>
-    public class GlobalExceptionFilterAttribute : ExceptionFilterAttribute
+    public class GlobalExceptionHandler : IExceptionHandler
     {
-		public override void OnException(HttpActionExecutedContext actionExecutedContext)
-		{
-            var exception = actionExecutedContext.Exception;
-			var apiError = new InternalServerApiError(exception);
-            actionExecutedContext.Response = actionExecutedContext.Request.CreateErrorResponse(
-                HttpStatusCode.InternalServerError, apiError);
-		}
-	}
+        public Task HandleAsync(ExceptionHandlerContext context, CancellationToken cancellationToken)
+        {
+            var exception = context.Exception;
+            var apiError = new InternalServerApiError(exception);
+
+            // Catches an unhandled exception thrown anywhere in Web Api and wraps it in
+            // a WrappedApiError object
+            context.Result = new ResponseMessageResult(
+                context.Request.CreateErrorResponse(
+                    HttpStatusCode.InternalServerError, apiError
+                )
+            );
+
+            return Task.FromResult(0);
+        }
+    }
 }

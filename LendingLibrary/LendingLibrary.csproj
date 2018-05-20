@@ -160,6 +160,9 @@
     <Reference Include="Swashbuckle.Core">
       <HintPath>..\packages\Swashbuckle.Core.5.6.0\lib\net40\Swashbuckle.Core.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http.Tracing">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Tracing.5.2.3\lib\net45\System.Web.Http.Tracing.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\" />
@@ -175,7 +178,7 @@
     <Folder Include="ControllersApi\" />
     <Folder Include="Auth\" />
     <Folder Include="SwaggerScripts\" />
-    <Folder Include="ExceptionFilters\" />
+    <Folder Include="GlobalHandlers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -225,8 +228,9 @@
     <Compile Include="Models\WrappedApiError.cs" />
     <Compile Include="Utils\HttpRequestMessageExtensions.cs" />
     <Compile Include="App_Start\AddSchemaExamples.cs" />
-    <Compile Include="ExceptionFilters\GlobalExceptionFilterAttribute.cs" />
     <Compile Include="Auth\ApiAuthorize.cs" />
+    <Compile Include="GlobalHandlers\GlobalExceptionHandler.cs" />
+    <Compile Include="GlobalHandlers\GlobalMessageHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

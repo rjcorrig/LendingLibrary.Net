@@ -67,12 +67,12 @@ namespace LendingLibrary.ControllersApi
         /// </summary>
         /// <remarks>Returns a single book object, or a NotFound or Forbidden response</remarks>
         /// <param name="id">The id of the Book</param>
-        [Route("{id:int}")]
+        [Route("{id}")]
         [ResponseType(typeof(BookDTO))]
         [SwaggerResponse(401, "The client is not logged in", typeof(WrappedApiError<UnauthorizedApiError>))]
         [SwaggerResponse(403, "The book does not belong to the logged in account", typeof(WrappedApiError<ForbiddenApiError>))]
         [SwaggerResponse(404, "No book with that id exists", typeof(WrappedApiError<NotFoundApiError>))]
-        public async Task<IHttpActionResult> GetBook(int id)
+		public async Task<IHttpActionResult> GetBook([FromUri]int id)
         {
             var book = await repo.GetBookByIdAsync(id);
             if (book == null)
