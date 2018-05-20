@@ -23,11 +23,11 @@ namespace LendingLibrary
                     };
                     break;
                 case nameof(UnauthorizedApiError):
-					schema.example = new UnauthorizedApiError("You must log in to use this API");
-					break;
+                    schema.example = new UnauthorizedApiError("You must log in to use this API");
+                    break;
                 case nameof(ForbiddenApiError):
-					schema.example = new ForbiddenApiError("You are not allowed to view that resource");
-					break;
+                    schema.example = new ForbiddenApiError("You are not allowed to view that resource");
+                    break;
                 case nameof(NotFoundApiError):
                     schema.example = new NotFoundApiError("That resource was not found");
                     break;

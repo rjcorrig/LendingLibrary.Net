@@ -30,12 +30,12 @@ namespace LendingLibrary.Auth
     /// </summary>
     public class ApiAuthorize : AuthorizeAttribute
     {
-		protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
-		{
-			var apiError = new UnauthorizedApiError("You must log in to access the API");
+        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        {
+            var apiError = new UnauthorizedApiError("You must log in to access the API");
 
             actionContext.Response = actionContext.Request.CreateErrorResponse(
                 HttpStatusCode.Unauthorized, apiError);
-		}
-	}
+        }
+    }
 }

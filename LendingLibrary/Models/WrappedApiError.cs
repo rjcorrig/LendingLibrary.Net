@@ -23,7 +23,7 @@ using Newtonsoft.Json;
 
 namespace LendingLibrary.Models
 {
-	/// <summary>
+    /// <summary>
     /// Wraps an error message returned from an API call
     /// </summary>
     public class WrappedApiError<T> where T : ApiError, new()
@@ -32,12 +32,12 @@ namespace LendingLibrary.Models
         /// The error object
         /// </summary>
         [Required]
-		[JsonProperty(PropertyName = "error")]
+        [JsonProperty(PropertyName = "error")]
         public T Error { get; set; }
 
-		public WrappedApiError()
-		{
-		}
+        public WrappedApiError()
+        {
+        }
 
         public WrappedApiError(T apiError)
         {
@@ -45,7 +45,7 @@ namespace LendingLibrary.Models
         }
     }
 
-	/// <summary>
+    /// <summary>
     /// An API Error object conforming to Microsoft API guidelines
     /// </summary>
     public class ApiError
@@ -55,77 +55,77 @@ namespace LendingLibrary.Models
         /// </summary>
         [Required]
         [JsonProperty(PropertyName = "code")]
-		public string Code { get; set; }
+        public string Code { get; set; }
 
         /// <summary>
 		/// A human-readable representation of the error
         /// </summary>
         [Required]
-		[JsonProperty(PropertyName = "message")]
-		public string Message { get; set; }
+        [JsonProperty(PropertyName = "message")]
+        public string Message { get; set; }
 
         /// <summary>
         /// The target of the error
         /// </summary>
 		[JsonProperty(PropertyName = "target")]
-		public string Target { get; set; }
+        public string Target { get; set; }
 
         /// <summary>
 		/// An array of details about specific errors that led to this reported error
         /// </summary>
 		[JsonProperty(PropertyName = "details")]
-		public ApiError[] Details { get; set; }
+        public ApiError[] Details { get; set; }
 
         /// <summary>
 		/// An object containing more specific information than the current object about the error
         /// </summary>
 		[JsonProperty(PropertyName = "innererror")]
-		public InnerApiError InnerError { get; set; }
+        public InnerApiError InnerError { get; set; }
 
-		public ApiError()
-		{
-		}
+        public ApiError()
+        {
+        }
 
-		public ApiError(string code, string message)
-		{
-			Code = code;
-			Message = message;
-		}
+        public ApiError(string code, string message)
+        {
+            Code = code;
+            Message = message;
+        }
 
-		public ApiError(HttpStatusCode code, string message)
-			: this(code.ToString(), message)
-		{
-		}
+        public ApiError(HttpStatusCode code, string message)
+            : this(code.ToString(), message)
+        {
+        }
 
-		public ApiError(int code, string message)
-			: this(code.ToString(), message)
-		{
-		}
+        public ApiError(int code, string message)
+            : this(code.ToString(), message)
+        {
+        }
 
-		public virtual WrappedApiError<ApiError> Wrap()
-		{
-			return new WrappedApiError<ApiError>(this);
-		}
+        public virtual WrappedApiError<ApiError> Wrap()
+        {
+            return new WrappedApiError<ApiError>(this);
+        }
     }
-    
+
     /// <summary>
-	/// An object containing more specific information than the containing object about the error
+    /// An object containing more specific information than the containing object about the error
     /// </summary>
     public class InnerApiError
-	{
-		/// <summary>
-		/// A more specific error code than was provided by the containing error
+    {
+        /// <summary>
+        /// A more specific error code than was provided by the containing error
         /// </summary>
         /// <value>The code.</value>
-		[JsonProperty(PropertyName = "code")]
-		public string Code { get; set; }
+        [JsonProperty(PropertyName = "code")]
+        public string Code { get; set; }
 
         /// <summary>
 		/// An object containing more specific information than the current object about the error
         /// </summary>
 		[JsonProperty(PropertyName = "innererror")]
-		public InnerApiError InnerError { get; set; }
-	}
+        public InnerApiError InnerError { get; set; }
+    }
 
     /// <summary>
     /// Wraps a NotFound error from an API call
@@ -133,7 +133,7 @@ namespace LendingLibrary.Models
     public class NotFoundApiError : ApiError
     {
         public NotFoundApiError(string message)
-			: base(HttpStatusCode.NotFound, message)
+            : base(HttpStatusCode.NotFound, message)
         {
         }
 
@@ -149,7 +149,7 @@ namespace LendingLibrary.Models
     public class ForbiddenApiError : ApiError
     {
         public ForbiddenApiError(string message)
-			: base(HttpStatusCode.Forbidden, message)
+            : base(HttpStatusCode.Forbidden, message)
         {
         }
 
@@ -175,40 +175,40 @@ namespace LendingLibrary.Models
         }
     }
 
-	/// <summary>
+    /// <summary>
     /// Wraps a general exception or error from an API call
     /// </summary>
     public class InternalServerApiError : ApiError
     {
-		public InternalServerApiError(string message)
-			: base(HttpStatusCode.InternalServerError, message)
+        public InternalServerApiError(string message)
+            : base(HttpStatusCode.InternalServerError, message)
         {
         }
 
-		public InternalServerApiError(Exception exception)
-		{
-			Code = HttpStatusCode.InternalServerError.ToString();
-			Message = exception.Message;
+        public InternalServerApiError(Exception exception)
+        {
+            Code = HttpStatusCode.InternalServerError.ToString();
+            Message = exception.Message;
 
             // Surface the top exception type
-			InnerError = new InnerApiError
-			{
-				Code = exception.GetType().ToString()
-    		};
+            InnerError = new InnerApiError
+            {
+                Code = exception.GetType().ToString()
+            };
 
             // Build a chain of inner errors matching the exception chain
-			var innerError = InnerError;
-			for (var innerException = exception.InnerException; innerException != null; innerException = innerException.InnerException)
-			{
-				innerError.InnerError = new InnerApiError
-				{
-					Code = innerException.GetType().ToString()
-				};
-				innerError = innerError.InnerError;
-			}
-		}
+            var innerError = InnerError;
+            for (var innerException = exception.InnerException; innerException != null; innerException = innerException.InnerException)
+            {
+                innerError.InnerError = new InnerApiError
+                {
+                    Code = innerException.GetType().ToString()
+                };
+                innerError = innerError.InnerError;
+            }
+        }
 
-		public InternalServerApiError()
+        public InternalServerApiError()
             : this("Internal Server Error")
         {
         }

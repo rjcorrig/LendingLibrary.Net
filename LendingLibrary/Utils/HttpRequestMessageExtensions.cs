@@ -25,7 +25,7 @@ namespace LendingLibrary.Utils.Extensions
 {
     public static class HttpRequestMessageExtensions
     {
-		public static HttpResponseMessage CreateErrorResponse<T>(this HttpRequestMessage request, HttpStatusCode statusCode, WrappedApiError<T> error) where T : ApiError, new()
+        public static HttpResponseMessage CreateErrorResponse<T>(this HttpRequestMessage request, HttpStatusCode statusCode, WrappedApiError<T> error) where T : ApiError, new()
         {
             ApiError apiError = error.Error;
             HttpError httpError = new HttpError()
@@ -37,10 +37,10 @@ namespace LendingLibrary.Utils.Extensions
             return request.CreateErrorResponse(statusCode, httpError);
         }
 
-		public static HttpResponseMessage CreateErrorResponse(this HttpRequestMessage request, HttpStatusCode statusCode, ApiError error)
+        public static HttpResponseMessage CreateErrorResponse(this HttpRequestMessage request, HttpStatusCode statusCode, ApiError error)
         {
-			var wrappedError = error.Wrap();
-			return request.CreateErrorResponse(statusCode, wrappedError);
+            var wrappedError = error.Wrap();
+            return request.CreateErrorResponse(statusCode, wrappedError);
         }
     }
 }
