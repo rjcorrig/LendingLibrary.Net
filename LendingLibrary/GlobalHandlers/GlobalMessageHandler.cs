@@ -25,8 +25,21 @@ using LendingLibrary.Utils.Extensions;
 
 namespace LendingLibrary.GlobalHandlers
 {
+    /// <summary>
+    /// Last-chance interceptor of messages returned from the Web Api Framework.
+    /// </summary>
     public class GlobalMessageHandler : DelegatingHandler
     {
+        /// <summary>
+        /// Inspect all responses for HttpError content and ensure they follow 
+        /// the Microsoft API Guidance for error responses
+        /// </summary>
+        /// <returns>
+        /// An HttpResponseMessage containing either data from an action
+        /// or a WrappedApiError object.
+        /// </returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var response = await base.SendAsync(request, cancellationToken);
@@ -54,6 +67,16 @@ namespace LendingLibrary.GlobalHandlers
             }
 
             return response;
+        }
+
+        /// <summary>
+        /// Passes through to the protected SendAsync for unit test purposes
+        /// </summary>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public virtual async Task<HttpResponseMessage> SendAsyncTestHook(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            return await SendAsync(request, cancellationToken);
         }
     }
 }

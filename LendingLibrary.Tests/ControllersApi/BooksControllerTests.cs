@@ -46,7 +46,7 @@ namespace LendingLibrary.Tests.ControllersApi
             {
                 Assert.AreEqual(userId, book.OwnerId);
             }
-        }    
+        }
 
         [Test()]
         public async Task GetBook_returns_OkNegotiatedContentResult_if_mine()
@@ -95,10 +95,10 @@ namespace LendingLibrary.Tests.ControllersApi
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.Forbidden, result.Response.StatusCode);
 
-			var error = await result.Response.Content.ReadAsAsync<WrappedApiError<ForbiddenApiError>>();
+            var error = await result.Response.Content.ReadAsAsync<WrappedApiError<ForbiddenApiError>>();
             Assert.IsNotNull(error);
-			var innerError = error.Error;
-			Assert.AreEqual(HttpStatusCode.Forbidden.ToString(), innerError.Code);
+            var innerError = error.Error;
+            Assert.AreEqual(HttpStatusCode.Forbidden.ToString(), innerError.Code);
         }
 
         [Test()]
@@ -116,10 +116,10 @@ namespace LendingLibrary.Tests.ControllersApi
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.NotFound, result.Response.StatusCode);
 
-			var error = await result.Response.Content.ReadAsAsync<WrappedApiError<NotFoundApiError>>();
+            var error = await result.Response.Content.ReadAsAsync<WrappedApiError<NotFoundApiError>>();
             Assert.IsNotNull(error);
-			var innerError = error.Error;
-			Assert.AreEqual(HttpStatusCode.NotFound.ToString(), innerError.Code);
+            var innerError = error.Error;
+            Assert.AreEqual(HttpStatusCode.NotFound.ToString(), innerError.Code);
         }
     }
 }

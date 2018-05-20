@@ -111,6 +111,7 @@
     <Compile Include="Utils\Geocodio.cs" />
     <Compile Include="Models\GeoPoint.cs" />
     <Compile Include="ControllersApi\BooksControllerTests.cs" />
+    <Compile Include="GlobalHandlers\GlobalMessageHandlerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -121,6 +122,7 @@
     <Folder Include="ActionFilters\" />
     <Folder Include="Utils\" />
     <Folder Include="ControllersApi\" />
+    <Folder Include="GlobalHandlers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LendingLibrary\LendingLibrary.csproj">
