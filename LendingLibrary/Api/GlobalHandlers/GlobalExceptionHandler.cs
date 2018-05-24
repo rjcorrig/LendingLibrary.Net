@@ -21,10 +21,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Results;
-using LendingLibrary.Models;
-using LendingLibrary.Utils.Extensions;
+using LendingLibrary.Api.Models;
+using LendingLibrary.Api.Utils.Extensions;
 
-namespace LendingLibrary.GlobalHandlers
+namespace LendingLibrary.Api.GlobalHandlers
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {

@@ -20,10 +20,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
-using LendingLibrary.Models;
-using LendingLibrary.Utils.Extensions;
+using LendingLibrary.Api.Models;
+using LendingLibrary.Api.Utils.Extensions;
 
-namespace LendingLibrary.GlobalHandlers
+namespace LendingLibrary.Api.GlobalHandlers
 {
     /// <summary>
     /// Last-chance interceptor of messages returned from the Web Api Framework.

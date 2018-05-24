@@ -16,9 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using LendingLibrary.GlobalHandlers;
-using LendingLibrary.Models;
-using LendingLibrary.Utils.Extensions;
+using LendingLibrary.Api.GlobalHandlers;
+using LendingLibrary.Api.Models;
+using LendingLibrary.Api.Utils.Extensions;
 using NUnit.Framework;
 using System.Net;
 using System.Net.Http;

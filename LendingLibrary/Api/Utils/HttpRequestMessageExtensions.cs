@@ -19,23 +19,28 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using LendingLibrary.Models;
-using LendingLibrary.Utils.Extensions;
+using LendingLibrary.Api.Models;
 
-namespace LendingLibrary.Auth
+namespace LendingLibrary.Api.Utils.Extensions
 {
-    /// <summary>
-    /// Returns an Unauthorized error object as per Microsoft Web API Guidelines
-    /// </summary>
-    public class ApiAuthorize : AuthorizeAttribute
+    public static class HttpRequestMessageExtensions
     {
-        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        public static HttpResponseMessage CreateErrorResponse<T>(this HttpRequestMessage request, HttpStatusCode statusCode, WrappedApiError<T> error) where T : ApiError, new()
         {
-            var apiError = new UnauthorizedApiError("You must log in to access the API");
+            ApiError apiError = error.Error;
+            HttpError httpError = new HttpError()
+            {
+                {
+                    "Error", apiError
+                }
+            };
+            return request.CreateErrorResponse(statusCode, httpError);
+        }
 
-            actionContext.Response = actionContext.Request.CreateErrorResponse(
-                HttpStatusCode.Unauthorized, apiError);
+        public static HttpResponseMessage CreateErrorResponse(this HttpRequestMessage request, HttpStatusCode statusCode, ApiError error)
+        {
+            var wrappedError = error.Wrap();
+            return request.CreateErrorResponse(statusCode, wrappedError);
         }
     }
 }

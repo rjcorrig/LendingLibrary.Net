@@ -21,7 +21,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Newtonsoft.Json;
 
-namespace LendingLibrary.Models
+namespace LendingLibrary.Api.Models
 {
     /// <summary>
     /// Wraps an error message returned from an API call

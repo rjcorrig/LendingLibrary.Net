@@ -16,15 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-using LendingLibrary.ControllersApi;
-using LendingLibrary.Models;
+using LendingLibrary.Api.Controllers;
+using LendingLibrary.Api.Models;
 using LendingLibrary.Tests.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Http.Results;
 
 namespace LendingLibrary.Tests.ControllersApi

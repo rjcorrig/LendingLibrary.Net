@@ -175,10 +175,14 @@
     <Folder Include="Views\Error\" />
     <Folder Include="ActionFilters\" />
     <Folder Include="App_Data\" />
-    <Folder Include="ControllersApi\" />
     <Folder Include="Auth\" />
     <Folder Include="SwaggerScripts\" />
-    <Folder Include="GlobalHandlers\" />
+    <Folder Include="Api\" />
+    <Folder Include="Api\Controllers\" />
+    <Folder Include="Api\Models\" />
+    <Folder Include="Api\Utils\" />
+    <Folder Include="Api\GlobalHandlers\" />
+    <Folder Include="Api\Filters\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
@@ -220,17 +224,18 @@
     <Compile Include="Models\SeedImporter.cs" />
     <Compile Include="Models\FriendshipsViewModels.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
-    <Compile Include="ControllersApi\BooksController.cs" />
-    <Compile Include="ControllersApi\BaseController.cs" />
     <Compile Include="Auth\ChallengeResult.cs" />
     <Compile Include="Auth\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
-    <Compile Include="Models\WrappedApiError.cs" />
-    <Compile Include="Utils\HttpRequestMessageExtensions.cs" />
     <Compile Include="App_Start\AddSchemaExamples.cs" />
-    <Compile Include="Auth\ApiAuthorize.cs" />
-    <Compile Include="GlobalHandlers\GlobalExceptionHandler.cs" />
-    <Compile Include="GlobalHandlers\GlobalMessageHandler.cs" />
+    <Compile Include="Api\Controllers\BaseController.cs" />
+    <Compile Include="Api\Controllers\BooksController.cs" />
+    <Compile Include="Api\Models\BookDTO.cs" />
+    <Compile Include="Api\Models\WrappedApiError.cs" />
+    <Compile Include="Api\Utils\HttpRequestMessageExtensions.cs" />
+    <Compile Include="Api\GlobalHandlers\GlobalExceptionHandler.cs" />
+    <Compile Include="Api\GlobalHandlers\GlobalMessageHandler.cs" />
+    <Compile Include="Api\Filters\ApiAuthorize.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

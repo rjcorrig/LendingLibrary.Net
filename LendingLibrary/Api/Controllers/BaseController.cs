@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System;
 using System.Web.Http;
 
-namespace LendingLibrary.ControllersApi
+namespace LendingLibrary.Api.Controllers
 {
     public class BaseController : ApiController
     {
@@ -41,7 +41,7 @@ namespace LendingLibrary.ControllersApi
             repo = new Repository(db);
             this.db = repo.Db;
 
-            GetUserId = getUserId;        
+            GetUserId = getUserId;
         }
 
         protected async Task<ApplicationUser> GetCurrentUserAsync()
@@ -50,7 +50,7 @@ namespace LendingLibrary.ControllersApi
             {
                 return await repo.GetUserByIdAsync(GetUserId());
             }
-            else 
+            else
             {
                 return await repo.GetUserByIdAsync(User.Identity.GetUserId());
             }

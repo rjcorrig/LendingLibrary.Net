@@ -24,13 +24,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using LendingLibrary.Api.Models;
 using LendingLibrary.Models;
 using Swashbuckle.Swagger.Annotations;
 using Unity.Attributes;
-using LendingLibrary.Utils.Extensions;
-using LendingLibrary.Auth;
+using LendingLibrary.Api.Utils.Extensions;
+using LendingLibrary.Api.Filters;
 
-namespace LendingLibrary.ControllersApi
+namespace LendingLibrary.Api.Controllers
 {
     [ApiAuthorize]
     [RoutePrefix("api/books")]

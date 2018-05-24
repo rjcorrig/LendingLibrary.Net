@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
-using LendingLibrary.GlobalHandlers;
+using LendingLibrary.Api.GlobalHandlers;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 

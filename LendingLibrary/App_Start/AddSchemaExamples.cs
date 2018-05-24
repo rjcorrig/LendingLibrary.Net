@@ -1,5 +1,5 @@
 ﻿using System;
-using LendingLibrary.Models;
+using LendingLibrary.Api.Models;
 using Swashbuckle.Swagger;
 
 namespace LendingLibrary
