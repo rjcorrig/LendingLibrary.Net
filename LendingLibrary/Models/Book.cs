@@ -24,15 +24,17 @@ namespace LendingLibrary.Models
     public class Book
     {
         public virtual int ID { get; set; }
+        [MaxLength(13)]
         public virtual string ISBN { get; set; }
-        [Required]
+        [Required, MaxLength(256)]
         public virtual string Title { get; set; }
-        [Required]
+        [Required, MaxLength(256)]
         public virtual string Author { get; set; }
         public virtual string OwnerId { get; set; }
         public virtual ApplicationUser Owner { get; set; }
         [Range(0, 5)]
         public virtual double Rating { get; set; }
+        [MaxLength(25)]
         public virtual string Genre { get; set; }
     }
 }

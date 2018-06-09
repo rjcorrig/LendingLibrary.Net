@@ -48,20 +48,25 @@ namespace LendingLibrary.Models
 
         #region Custom
 
-        [Required]
+        [Required, MaxLength(60)]
         public virtual string GivenName { get; set; }
-        [Required]
+        [MaxLength(60)]
         public virtual string FamilyName { get; set; }
         [Required]
         public virtual DateTime BirthDate { get; set; }
+        [MaxLength(255)]
         public virtual string About { get; set; }
-        [Required]
+        [Required, MaxLength(100)]
         public virtual string Address1 { get; set; }
+        [MaxLength(100)]
         public virtual string Address2 { get; set; }
-        [Required]
+        [Required, MaxLength(50)]
         public virtual string City { get; set; }
+        [MaxLength(30)]
         public virtual string State { get; set; }
+        [MaxLength(10)]
         public virtual string Postal { get; set; }
+        [MaxLength(30)]
         public virtual string Country { get; set; }
         [Range(-90.0, 90.0)]
         public virtual double? Latitude { get; set; }
@@ -115,7 +120,7 @@ namespace LendingLibrary.Models
             {
                 // Yes, and we approved it
                 return FriendshipStatus.Approved;
-            } 
+            }
             else
             {
                 // Yes, but we haven't approved it yet

@@ -33,7 +33,7 @@ namespace LendingLibrary.Models
     {
         public virtual string UserId { get; set; }
         public virtual string FriendId { get; set; }
-        [Display(Name = "Request Sent")]
+        [Required, Display(Name = "Request Sent")]
         public virtual DateTime RequestSent { get; set; }
         [Display(Name = "Request Approved")]
         public virtual DateTime? RequestApproved { get; set; }
