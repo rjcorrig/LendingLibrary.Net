@@ -236,6 +236,7 @@
     <Compile Include="Api\GlobalHandlers\GlobalExceptionHandler.cs" />
     <Compile Include="Api\GlobalHandlers\GlobalMessageHandler.cs" />
     <Compile Include="Api\Filters\ApiAuthorize.cs" />
+    <Compile Include="Models\EntityConfigurations.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Web.config" />

@@ -55,18 +55,16 @@ namespace LendingLibrary.Models
         #region Custom
         static ApplicationDbContext()
         {
-            Database.SetInitializer<ApplicationDbContext>(new LendingLibraryDbInitializer());
+            Database.SetInitializer(new LendingLibraryDbInitializer());
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Friendship>().HasKey(u => new { u.UserId, u.FriendId });
-            modelBuilder.Entity<Friendship>().Property(u => u.UserId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
-            modelBuilder.Entity<Friendship>().Property(u => u.FriendId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
-            modelBuilder.Entity<ApplicationUser>().HasMany(u => u.Friendships).WithRequired(f => f.User).HasForeignKey(f => f.UserId).WillCascadeOnDelete(false);
-            modelBuilder.Entity<ApplicationUser>().HasMany(u => u.Users).WithRequired(f => f.Friend).HasForeignKey(f => f.FriendId).WillCascadeOnDelete(false);
+            modelBuilder.Configurations.Add(new ApplicationUserConfiguration());
+            modelBuilder.Configurations.Add(new BookConfiguration());
+            modelBuilder.Configurations.Add(new FriendshipConfiguration());
         }
 
         public virtual IDbSet<Book> Books { get; set; }
