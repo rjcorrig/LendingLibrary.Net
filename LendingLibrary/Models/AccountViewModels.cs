@@ -67,14 +67,15 @@ namespace LendingLibrary.Models
 
     public class RegisterViewModel
     {
-        [Required]
-        [Display(Name ="Given Name")]
+        [Required, StringLength(60)]
+        [Display(Name = "Given Name")]
         public string GivenName { get; set; }
 
-        [Required]
+        [StringLength(60)]
         [Display(Name = "Family Name")]
         public string FamilyName { get; set; }
 
+        [StringLength(255)]
         [Display(Name = "About Me")]
         public string About { get; set; }
 
@@ -94,20 +95,29 @@ namespace LendingLibrary.Models
         [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
-        [Display(Name ="Street Address")]
+        [Required, StringLength(100)]
+        [Display(Name = "Street Address")]
         public string Address1 { get; set; }
+
+        [StringLength(100)]
         [Display(Name = "Street Address 2")]
         public string Address2 { get; set; }
-        [Required]
+
+        [Required, StringLength(50)]
         public string City { get; set; }
+
+        [StringLength(30)]
         public string State { get; set; }
-        [Display(Name ="Zip or Post Code")]
+
+        [StringLength(10)]
+        [Display(Name = "Zip or Post Code")]
         public string Postal { get; set; }
+
+        [StringLength(30)]
         public string Country { get; set; }
 
         [Required]
-        [Display(Name ="Date of Birth")]
+        [Display(Name = "Date of Birth")]
         public DateTime? BirthDate { get; set; }
 
         public RegisterViewModel()
@@ -117,17 +127,19 @@ namespace LendingLibrary.Models
         }
     }
 
-    public class EditAccountViewModel {
+    public class EditAccountViewModel
+    {
         public string Id { get; set; }
 
-        [Required]
+        [Required, StringLength(60)]
         [Display(Name = "Given Name")]
         public string GivenName { get; set; }
 
-        [Required]
+        [StringLength(60)]
         [Display(Name = "Family Name")]
         public string FamilyName { get; set; }
 
+        [StringLength(255)]
         [Display(Name = "About Me")]
         public string About { get; set; }
 
@@ -136,16 +148,25 @@ namespace LendingLibrary.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
+        [Required, StringLength(100)]
         [Display(Name = "Street Address")]
         public string Address1 { get; set; }
+
+        [StringLength(100)]
         [Display(Name = "Street Address 2")]
         public string Address2 { get; set; }
-        [Required]
+
+        [Required, StringLength(50)]
         public string City { get; set; }
+
+        [StringLength(30)]
         public string State { get; set; }
+
+        [StringLength(10)]
         [Display(Name = "Zip or Post Code")]
         public string Postal { get; set; }
+
+        [StringLength(30)]
         public string Country { get; set; }
 
         [Required]
@@ -154,11 +175,13 @@ namespace LendingLibrary.Models
 
         public string PhoneNumber { get; set; }
 
-        public EditAccountViewModel() {
-            
+        public EditAccountViewModel()
+        {
+
         }
 
-        public EditAccountViewModel(ApplicationUser account) {
+        public EditAccountViewModel(ApplicationUser account)
+        {
             Id = account.Id;
             GivenName = account.GivenName;
             FamilyName = account.FamilyName;
