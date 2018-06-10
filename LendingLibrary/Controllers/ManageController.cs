@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using LendingLibrary.Models;
+using Unity.Attributes;
 
 namespace LendingLibrary.Controllers
 {
@@ -15,6 +16,7 @@ namespace LendingLibrary.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        [InjectionConstructor]
         public ManageController()
         {
         }
@@ -31,9 +33,9 @@ namespace LendingLibrary.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -330,7 +332,7 @@ namespace LendingLibrary.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -381,6 +383,6 @@ namespace LendingLibrary.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }
