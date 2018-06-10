@@ -48,25 +48,25 @@ namespace LendingLibrary.Models
 
         #region Custom
 
-        [Required, MaxLength(60)]
+        [Required, StringLength(60)]
         public virtual string GivenName { get; set; }
-        [MaxLength(60)]
+        [StringLength(60)]
         public virtual string FamilyName { get; set; }
         [Required]
         public virtual DateTime BirthDate { get; set; }
-        [MaxLength(255)]
+        [StringLength(255)]
         public virtual string About { get; set; }
-        [Required, MaxLength(100)]
+        [Required, StringLength(100)]
         public virtual string Address1 { get; set; }
-        [MaxLength(100)]
+        [StringLength(100)]
         public virtual string Address2 { get; set; }
-        [Required, MaxLength(50)]
+        [Required, StringLength(50)]
         public virtual string City { get; set; }
-        [MaxLength(30)]
+        [StringLength(30)]
         public virtual string State { get; set; }
-        [MaxLength(10)]
+        [StringLength(10)]
         public virtual string Postal { get; set; }
-        [MaxLength(30)]
+        [StringLength(30)]
         public virtual string Country { get; set; }
         [Range(-90.0, 90.0)]
         public virtual double? Latitude { get; set; }
